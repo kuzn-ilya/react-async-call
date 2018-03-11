@@ -9,6 +9,9 @@ cache:
 
 before_install:
   - npm install codecov
+  - npm install react
+  - npm install prop-types
+  - npm install fbjs
 
 after_success:
   - cat ./coverage/lcov.info | ./node_modules/codecov/bin/codecov
