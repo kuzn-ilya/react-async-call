@@ -1,0 +1,63 @@
+{
+  "name": "react-promise-renderer",
+  "version": "0.0.1",
+  "description": "Declarative promise handling in React",
+  "main": "lib/index.js",
+  "module": "lib/index.es.js",
+  "jsnext:main": "lib/index.es.js",
+  "umd:main": "lib/index.umd.js",
+  "author": "Ilya Kuznetsov <kuzn.ilya@gmail.com>",
+  "repository": "https://github.com/kuzn-ilya/react-promise-renderer",
+  "license": "MIT",
+  "keywords": [
+    "react",
+    "reactjs",
+    "render",
+    "props",
+    "promise",
+    "fetch"
+  ],
+  "scripts": {
+    "clean": "rimraf lib",
+    "build": "npm run clean && npm run rollup && npm run minify",
+    "minify": "npm run minify:cjs && npm run minify:umd",
+    "minify:cjs": "uglifyjs lib/index.js -cm toplevel -o lib/index.js -p relative --in-source-map lib/index.js.map --source-map lib/index.js.map",
+    "minify:umd": "uglifyjs lib/index.umd.js -cm -o lib/index.umd.js -p relative --in-source-map lib/index.umd.js.map --source-map lib/index.umd.js.map",
+    "test": "jest src",
+    "test:watch": "jest src --watch",
+    "format": "prettier --write **/*.{js,jsx,json,d.ts} !lib/** !.vscode/**",
+    "rollup": "rollup -c",
+    "release": "npm run test && npm run build && npm version patch && npm publish && git push --tags"
+  },
+  "files": [
+    "lib"
+  ],
+  "peerDependencies": {
+    "fbjs": "^0.8.0",
+    "prop-types": "^15.0.0",
+    "react": "^14.0.0 || ^15.0.0 || ^16.0.0"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.0",
+    "babel-jest": "^22.4.1",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-react": "^6.24.1",
+    "enzyme": "^3.3.0",
+    "enzyme-adapter-react-16": "^1.1.1",
+    "fbjs": "^0.8.16",
+    "jest": "^22.4.2",
+    "prettier": "^1.11.1",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
+    "rimraf": "^2.6.2",
+    "rollup": "^0.56.5",
+    "rollup-plugin-babel": "^3.0.3",
+    "uglifyjs": "^2.4.11"
+  },
+  "dependencies": {
+    "prop-types": "^15.6.1"
+  }
+}
