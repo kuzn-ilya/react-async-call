@@ -17,14 +17,12 @@ interface IRendererProps<QueryResult> {
 
 interface IQueryTypes<QueryParams, QueryResult> {
   Pending: React.ComponentType<{}>
-  Renderer: React.ComponentType<IRendererProps<QueryResult>>
-  new (): React.ComponentType<IPromiseRendererProps<QueryParams, QueryResult>>
+  Resolved: React.ComponentType<IRendererProps<QueryResult>>
+  new (): React.Component<IPromiseRendererProps<QueryParams, QueryResult>>
 }
 
 declare function createPromiseRenderer<QueryParams, QueryResult>(
   queryFunc: (params: QueryParams) => Promise<QueryResult>,
 ): IQueryTypes<QueryParams, QueryResult>
 
-declare module 'react-promise-renderer' {
-  export = createPromiseRenderer
-}
+export default createPromiseRenderer
