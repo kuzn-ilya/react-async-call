@@ -21,8 +21,8 @@ expect.extend({
 
 describe('PromiseRenderer', () => {
   it('should throw a warning if a function is not passed to createPromiseRenderer', () => {
-    const PromiseRenderer = createPromiseRenderer()
-    expect(() => shallow(<PromiseRenderer />)).toThrow(
+    const PromiseRenderer = createPromiseRenderer(undefined)
+    expect(() => shallow(<PromiseRenderer params={{}} />)).toThrow(
       'Function should be passed to createPromiseRenderer as a first argument but got undefined.',
     )
   })

@@ -12,7 +12,7 @@ const Spread = ({ children }) => children
 export const createPromiseRenderer = fn => {
   const resultPropName = `__react-promise-renderer__${counter++}`
 
-  class Pending extends React.Component {
+  class Pending extends React.PureComponent {
     static contextTypes = {
       [resultPropName]: PropTypes.object,
     }
@@ -30,7 +30,7 @@ export const createPromiseRenderer = fn => {
     }
   }
 
-  class Resolved extends React.Component {
+  class Resolved extends React.PureComponent {
     static contextTypes = {
       [resultPropName]: PropTypes.object,
     }
