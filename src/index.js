@@ -107,3 +107,5 @@ export const createPromiseRenderer = fn => {
 
   return PromiseRenderer
 }
+
+export default createPromiseRenderer

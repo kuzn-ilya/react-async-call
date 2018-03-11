@@ -9,29 +9,23 @@
   "author": "Ilya Kuznetsov <kuzn.ilya@gmail.com>",
   "repository": "https://github.com/kuzn-ilya/react-promise-renderer",
   "license": "MIT",
-  "keywords": [
-    "react",
-    "reactjs",
-    "render",
-    "props",
-    "promise",
-    "fetch"
-  ],
+  "typings": "index.d.ts",
+  "keywords": ["react", "reactjs", "render", "props", "promise", "fetch"],
   "scripts": {
     "clean": "rimraf lib",
     "build": "npm run clean && npm run rollup && npm run minify",
     "minify": "npm run minify:cjs && npm run minify:umd",
-    "minify:cjs": "uglifyjs lib/index.js -cm toplevel -o lib/index.js -p relative --in-source-map lib/index.js.map --source-map lib/index.js.map",
-    "minify:umd": "uglifyjs lib/index.umd.js -cm -o lib/index.umd.js -p relative --in-source-map lib/index.umd.js.map --source-map lib/index.umd.js.map",
+    "minify:cjs":
+      "uglifyjs lib/index.js -cm toplevel -o lib/index.js -p relative --in-source-map lib/index.js.map --source-map lib/index.js.map",
+    "minify:umd":
+      "uglifyjs lib/index.umd.js -cm -o lib/index.umd.js -p relative --in-source-map lib/index.umd.js.map --source-map lib/index.umd.js.map",
     "test": "jest src",
     "test:watch": "jest src --watch",
     "format": "prettier --write **/*.{js,jsx,json,d.ts} !lib/** !.vscode/**",
     "rollup": "rollup -c",
     "release": "npm run test && npm run build && npm version patch && npm publish && git push --tags"
   },
-  "files": [
-    "lib"
-  ],
+  "files": ["lib"],
   "peerDependencies": {
     "fbjs": "^0.8.0",
     "prop-types": "^15.0.0",
@@ -56,8 +50,5 @@
     "rollup": "^0.56.5",
     "rollup-plugin-babel": "^3.0.3",
     "uglifyjs": "^2.4.11"
-  },
-  "dependencies": {
-    "prop-types": "^15.6.1"
   }
 }

@@ -2,7 +2,7 @@ import * as React from 'react'
 import Enzyme, { shallow, mount } from 'enzyme'
 import Adapter from 'enzyme-adapter-react-16'
 
-import { createPromiseRenderer } from '../index'
+import createPromiseRenderer from '../index'
 
 Enzyme.configure({ adapter: new Adapter() })
 
