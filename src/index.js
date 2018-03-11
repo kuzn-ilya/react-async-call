@@ -52,7 +52,7 @@ export const createPromiseRenderer = fn => {
     }
   }
 
-  class PromiseRenderer extends React.Component {
+  return class extends React.PureComponent {
     static childContextTypes = {
       [resultPropName]: PropTypes.object.isRequired,
     }
@@ -62,6 +62,7 @@ export const createPromiseRenderer = fn => {
 
     state = {
       loading: true,
+      rejected: false,
     }
 
     getChildContext() {
@@ -89,23 +90,23 @@ export const createPromiseRenderer = fn => {
 
     callQueryFunc = params => {
       this.setState({ loading: true })
-      fn(params).then(value => {
-        this.setState({ loading: false, result: value })
-        return value
-      })
+      fn(params)
+        .then(value => {
+          this.setState({ loading: false, result: value })
+          return value
+        })
+        .catch(reason => this.setState({ rejected: true, rejectReason: reason }))
     }
 
     render() {
       return (
         this.props.children !== undefined &&
         (isFunction(this.props.children)
-          ? this.props.children(this.state.loading, this.state.result)
+          ? this.props.children(this.state.loading, this.state.result, this.state.rejected, this.state.rejectReason)
           : this.props.children)
       )
     }
   }
-
-  return PromiseRenderer
 }
 
 export default createPromiseRenderer

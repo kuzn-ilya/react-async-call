@@ -88,7 +88,7 @@ describe('PromiseRenderer', () => {
 
     const PromiseRenderer = createPromiseRenderer(fn)
     const container = shallow(<PromiseRenderer params={{}}>{children}</PromiseRenderer>)
-    expect(children).toHaveBeenLastCalledWith(true, undefined)
+    expect(children).toHaveBeenLastCalledWith(true, undefined, false, undefined)
   })
 
   it('should call children fn and pass both false and promise result as arguments to it if promise has been resolved', () => {
@@ -100,8 +100,21 @@ describe('PromiseRenderer', () => {
     const PromiseRenderer = createPromiseRenderer(fn)
     const container = shallow(<PromiseRenderer params={{}}>{children}</PromiseRenderer>)
 
-    expect(children).toHaveBeenLastCalledWith(true, undefined)
-    promise.then(() => expect(children).toHaveBeenLastCalledWith(false, 42))
+    expect(children).toHaveBeenLastCalledWith(true, undefined, false, undefined)
+    promise.then(() => expect(children).toHaveBeenLastCalledWith(false, 42, false, undefined))
+  })
+
+  it('should call children fn and pass both true and rejection reason as third and fourth arguments to it if promise has been rejected', () => {
+    const promise = Promise.reject('rejected')
+    const fn = () => promise
+
+    const children = jest.fn(() => null)
+
+    const PromiseRenderer = createPromiseRenderer(fn)
+    const container = shallow(<PromiseRenderer params={{}}>{children}</PromiseRenderer>)
+
+    expect(children).toHaveBeenLastCalledWith(true, undefined, false, undefined)
+    promise.catch(() => expect(children).toHaveBeenLastCalledWith(false, undefined, true, 'rejected'))
   })
 
   it('should render children as is if children property is not a function', () => {
