@@ -7,8 +7,6 @@ const isFunction = value => !!(value && value.constructor && value.call && value
 
 let counter = 1
 
-const Spread = ({ children }) => children
-
 export const createPromiseRenderer = fn => {
   const resultPropName = `__react-promise-renderer__${counter++}`
 
@@ -26,7 +24,7 @@ export const createPromiseRenderer = fn => {
     }
 
     render() {
-      return this.state.loading ? <Spread>{this.props.children}</Spread> : null
+      return this.state.loading ? this.props.children : null
     }
   }
 
@@ -44,11 +42,9 @@ export const createPromiseRenderer = fn => {
     }
 
     render() {
-      return this.state.loading || this.state.rejected ? null : isFunction(this.props.children) ? (
-        this.props.children(this.state.result)
-      ) : (
-        <Spread>{this.props.children}</Spread>
-      )
+      return this.state.loading || this.state.rejected
+        ? null
+        : isFunction(this.props.children) ? this.props.children(this.state.result) : this.props.children
     }
   }
 
@@ -66,13 +62,9 @@ export const createPromiseRenderer = fn => {
     }
 
     render() {
-      return this.state.rejected ? (
-        isFunction(this.props.children) ? (
-          this.props.children(this.state.rejectReason)
-        ) : (
-          <Spread>{this.props.children}</Spread>
-        )
-      ) : null
+      return this.state.rejected
+        ? isFunction(this.props.children) ? this.props.children(this.state.rejectReason) : this.props.children
+        : null
     }
   }
 

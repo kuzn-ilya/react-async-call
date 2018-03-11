@@ -126,6 +126,19 @@ describe('PromiseRenderer', () => {
     const container = shallow(<PromiseRenderer params={{}}>abcdef</PromiseRenderer>)
     expect(container.text()).toBe('abcdef')
   })
+
+  it('should render children as is if children property is array', () => {
+    const PromiseRenderer = createPromiseRenderer(() => Promise.resolve())
+    const container = mount(
+      <PromiseRenderer params={{}}>
+        <div>abcdef</div>
+        <div>12345</div>
+      </PromiseRenderer>,
+    )
+    expect(container.children().length).toBe(2)
+    expect(container.childAt(0).text()).toBe('abcdef')
+    expect(container.childAt(1).text()).toBe('12345')
+  })
 })
 
 describe('Pending', () => {
@@ -141,8 +154,27 @@ describe('Pending', () => {
     expect(container.children().exists()).toBe(true)
     const pendingContainer = container.childAt(0)
     expect(pendingContainer).toBeDefined()
-    expect(pendingContainer.children().exists()).toBe(true)
     expect(pendingContainer.text()).toBe('abcdef')
+  })
+
+  it("should render Pending's children array if promise has not been resolved yet", () => {
+    const PromiseRenderer = createPromiseRenderer(() => Promise.resolve())
+    const container = mount(
+      <PromiseRenderer params={{}}>
+        <PromiseRenderer.Pending>
+          <div>abcdef</div>
+          <div>bcdefg</div>
+        </PromiseRenderer.Pending>
+      </PromiseRenderer>,
+    )
+
+    expect(container).toBeDefined()
+    expect(container.children().exists()).toBe(true)
+    const pendingContainer = container.childAt(0)
+    expect(pendingContainer).toBeDefined()
+    expect(pendingContainer.children().length).toBe(2)
+    expect(pendingContainer.childAt(0).text()).toBe('abcdef')
+    expect(pendingContainer.childAt(1).text()).toBe('bcdefg')
   })
 
   it("should not render Pending's children if promise has been resolved", () => {
@@ -236,11 +268,33 @@ describe('Rejected', () => {
       expect(container.children().exists()).toBe(true)
       const rejectedContainer = container.childAt(0)
       expect(rejectedContainer).toBeDefined()
-      expect(rejectedContainer.children().exists()).toBe(true)
       expect(rejectedContainer.text()).toBe('abcdef')
     })
   })
 
+  it("should render Rejected's children array if promise has been rejected", () => {
+    const promise = Promise.reject('error')
+    const PromiseRenderer = createPromiseRenderer(() => promise)
+    const container = mount(
+      <PromiseRenderer params={{}}>
+        <PromiseRenderer.Rejected>
+          <div>abcdef</div>
+          <div>cdefgh</div>
+        </PromiseRenderer.Rejected>
+      </PromiseRenderer>,
+    )
+
+    expect(container).toBeDefined()
+    process.nextTick(() => {
+      container.update()
+      expect(container.children().exists()).toBe(true)
+      const rejectedContainer = container.childAt(0)
+      expect(rejectedContainer).toBeDefined()
+      expect(rejectedContainer.children().length).toBe(2)
+      expect(rejectedContainer.childAt(0).text()).toBe('abcdef')
+      expect(rejectedContainer.childAt(1).text()).toBe('cdefgh')
+    })
+  })
   it("should call Rejected's children fn if promise has been rejected", () => {
     const PromiseRenderer = createPromiseRenderer(() => Promise.reject('error:'))
     const children = jest.fn(rejectReason => rejectReason + 'abcdef')
@@ -313,8 +367,31 @@ describe('Resolved', () => {
       expect(container.children().exists()).toBe(true)
       const resolvedContainer = container.childAt(0)
       expect(resolvedContainer).toBeDefined()
-      expect(resolvedContainer.children().exists()).toBe(true)
       expect(resolvedContainer.text()).toBe('abcdef')
+    })
+  })
+
+  it("should render Resolved's children array if promise has been resolved", () => {
+    const promise = Promise.resolve()
+    const PromiseRenderer = createPromiseRenderer(() => promise)
+    const container = mount(
+      <PromiseRenderer params={{}}>
+        <PromiseRenderer.Resolved>
+          <div>abcdef</div>
+          <div>qwerty</div>
+        </PromiseRenderer.Resolved>
+      </PromiseRenderer>,
+    )
+
+    expect(container).toBeDefined()
+    process.nextTick(() => {
+      container.update()
+      expect(container.children().exists()).toBe(true)
+      const resolvedContainer = container.childAt(0)
+      expect(resolvedContainer).toBeDefined()
+      expect(resolvedContainer.children().length).toBe(2)
+      expect(resolvedContainer.childAt(0).text()).toBe('abcdef')
+      expect(resolvedContainer.childAt(1).text()).toBe('qwerty')
     })
   })
 
