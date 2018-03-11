@@ -9,15 +9,22 @@ interface IPromiseRendererProps<QueryParams, QueryResult> {
   children?: PromiseRendererChildrenFunction<QueryResult> | RenderResult
 }
 
-type RendererChildrenFunction<QueryResult> = (result: QueryResult) => RenderResult
+type ResolvedChildrenFunction<QueryResult> = (result: QueryResult) => RenderResult
 
-interface IRendererProps<QueryResult> {
-  children?: RendererChildrenFunction<QueryResult> | RenderResult
+interface IResolvedProps<QueryResult> {
+  children?: ResolvedChildrenFunction<QueryResult> | RenderResult
+}
+
+type RejectedChildrenFunction = (reason: any) => RenderResult
+
+interface IRejectedProps {
+  children?: RejectedChildrenFunction | RenderResult
 }
 
 interface IQueryTypes<QueryParams, QueryResult> {
   Pending: React.ComponentType<{}>
-  Resolved: React.ComponentType<IRendererProps<QueryResult>>
+  Resolved: React.ComponentType<IResolvedProps<QueryResult>>
+  Rejected: React.ComponentType<IRejectedProps>
   new (): React.Component<IPromiseRendererProps<QueryParams, QueryResult>>
 }
 

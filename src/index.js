@@ -44,11 +44,35 @@ export const createPromiseRenderer = fn => {
     }
 
     render() {
-      return this.state.loading ? null : isFunction(this.props.children) ? (
+      return this.state.loading || this.state.rejected ? null : isFunction(this.props.children) ? (
         this.props.children(this.state.result)
       ) : (
         <Spread>{this.props.children}</Spread>
       )
+    }
+  }
+
+  class Rejected extends React.PureComponent {
+    static contextTypes = {
+      [resultPropName]: PropTypes.object,
+    }
+
+    state = this.context[resultPropName]
+
+    componentWillReceiveProps(_, nextContext) {
+      if (!shallowEqual(nextContext[resultPropName], this.context[resultPropName])) {
+        this.setState(nextContext[resultPropName])
+      }
+    }
+
+    render() {
+      return this.state.rejected ? (
+        isFunction(this.props.children) ? (
+          this.props.children(this.state.rejectReason)
+        ) : (
+          <Spread>{this.props.children}</Spread>
+        )
+      ) : null
     }
   }
 
@@ -59,6 +83,7 @@ export const createPromiseRenderer = fn => {
 
     static Pending = Pending
     static Resolved = Resolved
+    static Rejected = Rejected
 
     state = {
       loading: true,
@@ -92,10 +117,10 @@ export const createPromiseRenderer = fn => {
       this.setState({ loading: true })
       fn(params)
         .then(value => {
-          this.setState({ loading: false, result: value })
+          this.setState({ loading: false, rejected: false, result: value })
           return value
         })
-        .catch(reason => this.setState({ rejected: true, rejectReason: reason }))
+        .catch(reason => this.setState({ loading: false, rejected: true, rejectReason: reason }))
     }
 
     render() {
