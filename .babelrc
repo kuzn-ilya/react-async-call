@@ -1,0 +1,30 @@
+{
+  "presets": [
+    [
+      "env",
+      {
+        "modules": false,
+        "loose": true,
+        "targets": {
+          "browsers": ["last 2 versions", "ie >= 9"]
+        }
+      }
+    ],
+    "react"
+  ],
+  "env": {
+    "test": {
+      "presets": [
+        [
+          "env",
+          {
+            "loose": true
+          }
+        ],
+        "react"
+      ],
+      "plugins": ["transform-class-properties", "transform-object-rest-spread"]
+    }
+  },
+  "plugins": ["transform-class-properties", "transform-object-rest-spread"]
+}
