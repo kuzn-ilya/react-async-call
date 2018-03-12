@@ -15,11 +15,15 @@ export const createPromiseRenderer = fn => {
       [resultPropName]: PropTypes.object,
     }
 
-    state = this.context[resultPropName]
+    state = {
+      loading: this.context[resultPropName],
+    }
 
     componentWillReceiveProps(_, nextContext) {
-      if (!shallowEqual(nextContext[resultPropName], this.context[resultPropName])) {
-        this.setState(nextContext[resultPropName])
+      if (this.state.loading !== this.context[resultPropName].loading) {
+        this.setState({
+          loading: nextContext[resultPropName],
+        })
       }
     }
 
@@ -33,32 +37,50 @@ export const createPromiseRenderer = fn => {
       [resultPropName]: PropTypes.object,
     }
 
-    state = this.context[resultPropName]
+    state = {
+      resolved: !this.context[resultPropName].loading && !this.context[resultPropName].rejected,
+    }
 
     componentWillReceiveProps(_, nextContext) {
-      if (!shallowEqual(nextContext[resultPropName], this.context[resultPropName])) {
-        this.setState(nextContext[resultPropName])
+      if (this.state.resolved !== (!nextContext[resultPropName].loading && !nextContext[resultPropName].rejected)) {
+        this.setState({ resolved: !nextContext[resultPropName].loading && !nextContext[resultPropName].rejected })
       }
     }
 
     render() {
-      return this.state.loading || this.state.rejected
-        ? null
-        : isFunction(this.props.children) ? this.props.children(this.state.result) : this.props.children
+      return this.state.resolved
+        ? isFunction(this.props.children) ? this.props.children(this.state.result) : this.props.children
+        : null
     }
   }
 
-  class Rejected extends React.PureComponent {
+  class Rejected extends React.Component {
     static contextTypes = {
       [resultPropName]: PropTypes.object,
     }
 
-    state = this.context[resultPropName]
+    state = {
+      rejected: this.context[resultPropName].rejected,
+      rejectReason: this.context[resultPropName].rejectReason,
+    }
 
     componentWillReceiveProps(_, nextContext) {
-      if (!shallowEqual(nextContext[resultPropName], this.context[resultPropName])) {
-        this.setState(nextContext[resultPropName])
+      if (
+        nextContext[resultPropName].rejected !== this.state.rejected ||
+        nextContext[resultPropName].rejectReason !== this.state.rejectReason
+      ) {
+        this.setState({
+          rejected: nextContext[resultPropName].rejected,
+          rejectReason: nextContext[resultPropName].rejectReason,
+        })
       }
+    }
+
+    shouldComponentUpdate(nextProps, nextState, nextContext) {
+      return (
+        nextContext[resultPropName].rejected !== this.state.rejected ||
+        nextContext[resultPropName].rejectReason !== this.state.rejectReason
+      )
     }
 
     render() {

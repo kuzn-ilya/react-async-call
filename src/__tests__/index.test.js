@@ -93,7 +93,7 @@ describe('PromiseRenderer', () => {
     expect(children).toHaveBeenLastCalledWith(true, undefined, false, undefined)
   })
 
-  it('should call children fn and pass both false and promise result as arguments to it if promise has been resolved', () => {
+  it('should call children fn and pass both false and promise result as arguments to it if promise has been resolved', done => {
     const promise = Promise.resolve(42)
     const fn = () => promise
 
@@ -103,10 +103,13 @@ describe('PromiseRenderer', () => {
     const container = shallow(<PromiseRenderer params={{}}>{children}</PromiseRenderer>)
 
     expect(children).toHaveBeenLastCalledWith(true, undefined, false, undefined)
-    process.nextTick(() => expect(children).toHaveBeenLastCalledWith(false, 42, false, undefined))
+    process.nextTick(() => {
+      expect(children).toHaveBeenLastCalledWith(false, 42, false, undefined)
+      done()
+    })
   })
 
-  it('should call children fn and pass both true and rejection reason as third and fourth arguments to it if promise has been rejected', () => {
+  it('should call children fn and pass both true and rejection reason as third and fourth arguments to it if promise has been rejected', done => {
     const promise = Promise.reject('rejected')
     const fn = () => promise
 
@@ -118,6 +121,7 @@ describe('PromiseRenderer', () => {
     expect(children).toHaveBeenLastCalledWith(true, undefined, false, undefined)
     process.nextTick(() => {
       expect(children).toHaveBeenLastCalledWith(false, undefined, true, 'rejected')
+      done()
     })
   })
 
@@ -177,7 +181,7 @@ describe('Pending', () => {
     expect(pendingContainer.childAt(1).text()).toBe('bcdefg')
   })
 
-  it("should not render Pending's children if promise has been resolved", () => {
+  it("should not render Pending's children if promise has been resolved", done => {
     const promise = Promise.resolve()
     const PromiseRenderer = createPromiseRenderer(() => promise)
     const container = mount(
@@ -194,10 +198,11 @@ describe('Pending', () => {
       const pendingContainer = container.childAt(0)
       expect(pendingContainer).toBeDefined()
       expect(pendingContainer.children().exists()).toBe(false)
+      done()
     })
   })
 
-  it("should not render Pending's children if promise has been rejected", () => {
+  it("should not render Pending's children if promise has been rejected", done => {
     const promise = Promise.reject('error')
     const PromiseRenderer = createPromiseRenderer(() => promise)
     const container = mount(
@@ -214,6 +219,7 @@ describe('Pending', () => {
       const pendingContainer = container.childAt(0)
       expect(pendingContainer).toBeDefined()
       expect(pendingContainer.children().exists()).toBe(false)
+      done()
     })
   })
 })
@@ -234,7 +240,7 @@ describe('Rejected', () => {
     expect(rejectedContainer.children().exists()).toBe(false)
   })
 
-  it("should not render Rejected's children if promise has been resolved", () => {
+  it("should not render Rejected's children if promise has been resolved", done => {
     const promise = Promise.resolve()
     const PromiseRenderer = createPromiseRenderer(() => promise)
     const container = mount(
@@ -250,10 +256,11 @@ describe('Rejected', () => {
       const rejectedContainer = container.childAt(0)
       expect(rejectedContainer).toBeDefined()
       expect(rejectedContainer.children().exists()).toBe(false)
+      done()
     })
   })
 
-  it("should render Rejected's children if promise has been rejected", () => {
+  it("should render Rejected's children if promise has been rejected", done => {
     const promise = Promise.reject('error')
     const PromiseRenderer = createPromiseRenderer(() => promise)
     const container = mount(
@@ -269,10 +276,11 @@ describe('Rejected', () => {
       const rejectedContainer = container.childAt(0)
       expect(rejectedContainer).toBeDefined()
       expect(rejectedContainer.text()).toBe('abcdef')
+      done()
     })
   })
 
-  it("should render Rejected's children array if promise has been rejected", () => {
+  it("should render Rejected's children array if promise has been rejected", done => {
     const promise = Promise.reject('error')
     const PromiseRenderer = createPromiseRenderer(() => promise)
     const container = mount(
@@ -293,9 +301,10 @@ describe('Rejected', () => {
       expect(rejectedContainer.children().length).toBe(2)
       expect(rejectedContainer.childAt(0).text()).toBe('abcdef')
       expect(rejectedContainer.childAt(1).text()).toBe('cdefgh')
+      done()
     })
   })
-  it("should call Rejected's children fn if promise has been rejected", () => {
+  it("should call Rejected's children fn if promise has been rejected", done => {
     const PromiseRenderer = createPromiseRenderer(() => Promise.reject('error:'))
     const children = jest.fn(rejectReason => rejectReason + 'abcdef')
     const container = mount(
@@ -314,6 +323,7 @@ describe('Rejected', () => {
       const rejectedContainer = container.childAt(0)
       expect(rejectedContainer).toBeDefined()
       expect(rejectedContainer.text()).toBe('error:abcdef')
+      done()
     })
   })
 })
@@ -334,7 +344,7 @@ describe('Resolved', () => {
     expect(resolvedContainer.children().exists()).toBe(false)
   })
 
-  it("should not render Resolved's children if promise has been rejected", () => {
+  it("should not render Resolved's children if promise has been rejected", done => {
     const promise = Promise.reject('error')
     const PromiseRenderer = createPromiseRenderer(() => promise)
     const container = mount(
@@ -349,10 +359,11 @@ describe('Resolved', () => {
       const resolvedContainer = container.childAt(0)
       expect(resolvedContainer).toBeDefined()
       expect(resolvedContainer.children().exists()).toBe(false)
+      done()
     })
   })
 
-  it("should render Resolved's children if promise has been resolved", () => {
+  it("should render Resolved's children if promise has been resolved", done => {
     const promise = Promise.resolve()
     const PromiseRenderer = createPromiseRenderer(() => promise)
     const container = mount(
@@ -368,10 +379,11 @@ describe('Resolved', () => {
       const resolvedContainer = container.childAt(0)
       expect(resolvedContainer).toBeDefined()
       expect(resolvedContainer.text()).toBe('abcdef')
+      done()
     })
   })
 
-  it("should render Resolved's children array if promise has been resolved", () => {
+  it("should render Resolved's children array if promise has been resolved", done => {
     const promise = Promise.resolve()
     const PromiseRenderer = createPromiseRenderer(() => promise)
     const container = mount(
@@ -392,6 +404,7 @@ describe('Resolved', () => {
       expect(resolvedContainer.children().length).toBe(2)
       expect(resolvedContainer.childAt(0).text()).toBe('abcdef')
       expect(resolvedContainer.childAt(1).text()).toBe('qwerty')
+      done()
     })
   })
 
@@ -408,7 +421,7 @@ describe('Resolved', () => {
     expect(children).not.toHaveBeenCalled()
   })
 
-  it("should call Resolved's children fn if promise has been resolved", () => {
+  it("should call Resolved's children fn if promise has been resolved", done => {
     const promise = Promise.resolve()
     const PromiseRenderer = createPromiseRenderer(() => promise)
     const children = jest.fn(result => 'abcdef')
@@ -424,32 +437,34 @@ describe('Resolved', () => {
       const resolvedContainer = container.childAt(0)
       expect(resolvedContainer).toBeDefined()
       expect(resolvedContainer.text()).toBe('abcdef')
+      done()
     })
   })
 
-  // fit('should not clash two promise renderers', () => {
-  //   const firstPromise = Promise.resolve('first')
-  //   const secondPromise = Promise.resolve('second')
-  //   const FirstPromiseRenderer = createPromiseRenderer(() => firstPromise)
-  //   const SecondPromiseRenderer = createPromiseRenderer(() => secondPromise)
-  //   const firstChildrenFn = jest.fn(result => null)
-  //   const secondChildrenFn = jest.fn(result => null)
-  //   const container = mount(
-  //     <FirstPromiseRenderer params={{}}>
-  //       <SecondPromiseRenderer params={{}}>
-  //         <FirstPromiseRenderer.Resolved>{firstChildrenFn}</FirstPromiseRenderer.Resolved>
-  //         <SecondPromiseRenderer.Resolved>{secondChildrenFn}</SecondPromiseRenderer.Resolved>
-  //       </SecondPromiseRenderer>
-  //     </FirstPromiseRenderer>,
-  //   )
+  xit('should not clash two promise renderers', done => {
+    const firstPromise = Promise.resolve('first')
+    const secondPromise = Promise.resolve('second')
+    const FirstPromiseRenderer = createPromiseRenderer(() => firstPromise)
+    const SecondPromiseRenderer = createPromiseRenderer(() => secondPromise)
+    const firstChildrenFn = jest.fn(result => null)
+    const secondChildrenFn = jest.fn(result => null)
+    const container = mount(
+      <FirstPromiseRenderer params={{}}>
+        <SecondPromiseRenderer params={{}}>
+          <FirstPromiseRenderer.Resolved>{firstChildrenFn}</FirstPromiseRenderer.Resolved>
+          <SecondPromiseRenderer.Resolved>{secondChildrenFn}</SecondPromiseRenderer.Resolved>
+        </SecondPromiseRenderer>
+      </FirstPromiseRenderer>,
+    )
 
-  //   expect(container).toBeDefined()
-  //   process.nextTick(() => {
-  //     expect(firstChildrenFn).toHaveBeenCalledTimes(1)
-  //     expect(firstChildrenFn).toHaveBeenCalledWith('first')
+    expect(container).toBeDefined()
+    process.nextTick(() => {
+      expect(firstChildrenFn).toHaveBeenCalledTimes(1)
+      expect(firstChildrenFn).toHaveBeenCalledWith('first')
 
-  //     expect(secondChildrenFn).toHaveBeenCalledTimes(1)
-  //     expect(secondChildrenFn).toHaveBeenCalledWith('second')
-  //   })
-  // })
+      expect(secondChildrenFn).toHaveBeenCalledTimes(1)
+      expect(secondChildrenFn).toHaveBeenCalledWith('second')
+      done()
+    })
+  })
 })

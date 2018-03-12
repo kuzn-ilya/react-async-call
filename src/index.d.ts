@@ -29,7 +29,7 @@ interface IQueryTypes<QueryParams, QueryResult> {
 }
 
 declare function createPromiseRenderer<QueryParams, QueryResult>(
-  queryFunc: (params: QueryParams) => Promise<QueryResult>,
+  queryFunc: (params: QueryParams) => PromiseLike<QueryResult>,
 ): IQueryTypes<QueryParams, QueryResult>
 
 export default createPromiseRenderer
