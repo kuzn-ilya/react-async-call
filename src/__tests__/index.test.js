@@ -17,6 +17,16 @@ expect.extend({
           message: () => `expected ${received} to be a React component`,
           pass: false,
         },
+  toHaveEmptyRender: received =>
+    received.isEmptyRender()
+      ? {
+          message: () => `expected\n${received.debug()}\nnot to have an empty render`,
+          pass: true,
+        }
+      : {
+          message: () => `expected\n${received.debug()}\nto have an empty render`,
+          pass: false,
+        },
 })
 
 describe('PromiseRenderer', () => {
@@ -158,6 +168,7 @@ describe('Pending', () => {
     expect(container.children().exists()).toBe(true)
     const pendingContainer = container.childAt(0)
     expect(pendingContainer).toBeDefined()
+    expect(pendingContainer).not.toHaveEmptyRender()
     expect(pendingContainer.text()).toBe('abcdef')
   })
 
@@ -197,7 +208,28 @@ describe('Pending', () => {
       expect(container.children().exists()).toBe(true)
       const pendingContainer = container.childAt(0)
       expect(pendingContainer).toBeDefined()
-      expect(pendingContainer.children().exists()).toBe(false)
+      expect(pendingContainer).toHaveEmptyRender()
+      done()
+    })
+  })
+
+  it("should not render Pending's children if promise has been resolved and returned truthy value", done => {
+    const promise = Promise.resolve('abcdef')
+    const PromiseRenderer = createPromiseRenderer(() => promise)
+    const container = mount(
+      <PromiseRenderer params={{}}>
+        <PromiseRenderer.Pending>abcdef</PromiseRenderer.Pending>
+      </PromiseRenderer>,
+    )
+
+    expect(container).toBeDefined()
+    process.nextTick(() => {
+      container.update()
+      expect(container).toBeDefined()
+      expect(container.children().exists()).toBe(true)
+      const pendingContainer = container.childAt(0)
+      expect(pendingContainer).toBeDefined()
+      expect(pendingContainer).toHaveEmptyRender()
       done()
     })
   })
@@ -218,7 +250,7 @@ describe('Pending', () => {
       expect(container.children().exists()).toBe(true)
       const pendingContainer = container.childAt(0)
       expect(pendingContainer).toBeDefined()
-      expect(pendingContainer.children().exists()).toBe(false)
+      expect(pendingContainer).toHaveEmptyRender()
       done()
     })
   })
@@ -237,7 +269,7 @@ describe('Rejected', () => {
     expect(container.children().exists()).toBe(true)
     const rejectedContainer = container.childAt(0)
     expect(rejectedContainer).toBeDefined()
-    expect(rejectedContainer.children().exists()).toBe(false)
+    expect(rejectedContainer).toHaveEmptyRender()
   })
 
   it("should not render Rejected's children if promise has been resolved", done => {
@@ -255,7 +287,7 @@ describe('Rejected', () => {
       expect(container.children().exists()).toBe(true)
       const rejectedContainer = container.childAt(0)
       expect(rejectedContainer).toBeDefined()
-      expect(rejectedContainer.children().exists()).toBe(false)
+      expect(rejectedContainer).toHaveEmptyRender()
       done()
     })
   })
@@ -275,6 +307,7 @@ describe('Rejected', () => {
       expect(container.children().exists()).toBe(true)
       const rejectedContainer = container.childAt(0)
       expect(rejectedContainer).toBeDefined()
+      expect(rejectedContainer).not.toHaveEmptyRender()
       expect(rejectedContainer.text()).toBe('abcdef')
       done()
     })
@@ -341,7 +374,7 @@ describe('Resolved', () => {
     expect(container.children().exists()).toBe(true)
     const resolvedContainer = container.childAt(0)
     expect(resolvedContainer).toBeDefined()
-    expect(resolvedContainer.children().exists()).toBe(false)
+    expect(resolvedContainer).toHaveEmptyRender()
   })
 
   it("should not render Resolved's children if promise has been rejected", done => {
@@ -358,7 +391,7 @@ describe('Resolved', () => {
       expect(container.children().exists()).toBe(true)
       const resolvedContainer = container.childAt(0)
       expect(resolvedContainer).toBeDefined()
-      expect(resolvedContainer.children().exists()).toBe(false)
+      expect(resolvedContainer).toHaveEmptyRender()
       done()
     })
   })
@@ -378,6 +411,7 @@ describe('Resolved', () => {
       expect(container.children().exists()).toBe(true)
       const resolvedContainer = container.childAt(0)
       expect(resolvedContainer).toBeDefined()
+      expect(resolvedContainer).not.toHaveEmptyRender()
       expect(resolvedContainer.text()).toBe('abcdef')
       done()
     })

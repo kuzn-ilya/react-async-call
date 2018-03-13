@@ -22,7 +22,7 @@ export const createPromiseRenderer = fn => {
     componentWillReceiveProps(_, nextContext) {
       if (this.state.loading !== this.context[contextPropName].loading) {
         this.setState({
-          loading: nextContext[contextPropName],
+          loading: nextContext[contextPropName].loading,
         })
       }
     }
@@ -122,7 +122,7 @@ export const createPromiseRenderer = fn => {
     componentDidMount() {
       invariant(
         isFunction(fn),
-        'Function should be passed to createPromiseRenderer as a first argument but got undefined.',
+        'Function should be passed to createPromiseRenderer as a first argument but got %s.',
         fn,
       )
       this.callQueryFunc(this.props.params)
@@ -137,10 +137,7 @@ export const createPromiseRenderer = fn => {
     callQueryFunc = params => {
       this.setState({ loading: true })
       fn(params)
-        .then(value => {
-          this.setState({ loading: false, rejected: false, result: value })
-          return value
-        })
+        .then(value => this.setState({ loading: false, rejected: false, result: value }))
         .catch(reason => this.setState({ loading: false, rejected: true, rejectReason: reason }))
     }
 
