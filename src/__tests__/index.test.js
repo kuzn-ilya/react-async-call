@@ -441,6 +441,24 @@ describe('Resolved', () => {
     })
   })
 
+  it("should pass promise resolve result to call Resolved's children fn if promise has been resolved", done => {
+    const promise = Promise.resolve('abcdef')
+    const PromiseRenderer = createPromiseRenderer(() => promise)
+    const children = jest.fn(result => null)
+    const container = mount(
+      <PromiseRenderer params={{}}>
+        <PromiseRenderer.Resolved>{children}</PromiseRenderer.Resolved>
+      </PromiseRenderer>,
+    )
+
+    expect(container).toBeDefined()
+    process.nextTick(() => {
+      expect(children).toHaveBeenCalledTimes(1)
+      expect(children).toHaveBeenCalledWith('abcdef')
+      done()
+    })
+  })
+
   xit('should not clash two promise renderers', done => {
     const firstPromise = Promise.resolve('first')
     const secondPromise = Promise.resolve('second')

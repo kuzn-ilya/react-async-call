@@ -8,21 +8,21 @@ const isFunction = value => !!(value && value.constructor && value.call && value
 let counter = 1
 
 export const createPromiseRenderer = fn => {
-  const resultPropName = `__react-promise-renderer__${counter++}`
+  const contextPropName = `__react-promise-renderer__${counter++}`
 
   class Pending extends React.PureComponent {
     static contextTypes = {
-      [resultPropName]: PropTypes.object,
+      [contextPropName]: PropTypes.object,
     }
 
     state = {
-      loading: this.context[resultPropName],
+      loading: this.context[contextPropName],
     }
 
     componentWillReceiveProps(_, nextContext) {
-      if (this.state.loading !== this.context[resultPropName].loading) {
+      if (this.state.loading !== this.context[contextPropName].loading) {
         this.setState({
-          loading: nextContext[resultPropName],
+          loading: nextContext[contextPropName],
         })
       }
     }
@@ -34,16 +34,23 @@ export const createPromiseRenderer = fn => {
 
   class Resolved extends React.PureComponent {
     static contextTypes = {
-      [resultPropName]: PropTypes.object,
+      [contextPropName]: PropTypes.object,
     }
 
     state = {
-      resolved: !this.context[resultPropName].loading && !this.context[resultPropName].rejected,
+      resolved: !this.context[contextPropName].loading && !this.context[contextPropName].rejected,
+      result: this.context[contextPropName].result,
     }
 
     componentWillReceiveProps(_, nextContext) {
-      if (this.state.resolved !== (!nextContext[resultPropName].loading && !nextContext[resultPropName].rejected)) {
-        this.setState({ resolved: !nextContext[resultPropName].loading && !nextContext[resultPropName].rejected })
+      if (
+        this.state.resolved !== (!nextContext[contextPropName].loading && !nextContext[contextPropName].rejected) ||
+        this.state.result !== nextContext[contextPropName].result
+      ) {
+        this.setState({
+          resolved: !nextContext[contextPropName].loading && !nextContext[contextPropName].rejected,
+          result: nextContext[contextPropName].result,
+        })
       }
     }
 
@@ -56,30 +63,30 @@ export const createPromiseRenderer = fn => {
 
   class Rejected extends React.Component {
     static contextTypes = {
-      [resultPropName]: PropTypes.object,
+      [contextPropName]: PropTypes.object,
     }
 
     state = {
-      rejected: this.context[resultPropName].rejected,
-      rejectReason: this.context[resultPropName].rejectReason,
+      rejected: this.context[contextPropName].rejected,
+      rejectReason: this.context[contextPropName].rejectReason,
     }
 
     componentWillReceiveProps(_, nextContext) {
       if (
-        nextContext[resultPropName].rejected !== this.state.rejected ||
-        nextContext[resultPropName].rejectReason !== this.state.rejectReason
+        nextContext[contextPropName].rejected !== this.state.rejected ||
+        nextContext[contextPropName].rejectReason !== this.state.rejectReason
       ) {
         this.setState({
-          rejected: nextContext[resultPropName].rejected,
-          rejectReason: nextContext[resultPropName].rejectReason,
+          rejected: nextContext[contextPropName].rejected,
+          rejectReason: nextContext[contextPropName].rejectReason,
         })
       }
     }
 
     shouldComponentUpdate(nextProps, nextState, nextContext) {
       return (
-        nextContext[resultPropName].rejected !== this.state.rejected ||
-        nextContext[resultPropName].rejectReason !== this.state.rejectReason
+        nextContext[contextPropName].rejected !== this.state.rejected ||
+        nextContext[contextPropName].rejectReason !== this.state.rejectReason
       )
     }
 
@@ -92,7 +99,7 @@ export const createPromiseRenderer = fn => {
 
   return class extends React.PureComponent {
     static childContextTypes = {
-      [resultPropName]: PropTypes.object.isRequired,
+      [contextPropName]: PropTypes.object.isRequired,
     }
 
     static Pending = Pending
@@ -106,7 +113,7 @@ export const createPromiseRenderer = fn => {
 
     getChildContext() {
       return {
-        [resultPropName]: {
+        [contextPropName]: {
           ...this.state,
         },
       }
