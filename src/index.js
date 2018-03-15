@@ -32,6 +32,7 @@ export const createPromiseRenderer = fn => {
     shouldComponentUpdate(_, nextState, nextContext) {
       return nextContext[contextPropName].loading !== this.state.loading
     }
+
     render() {
       return this.state.loading ? this.props.children : null
     }
@@ -40,7 +41,8 @@ export const createPromiseRenderer = fn => {
   class Resolved extends React.Component {
     static contextTypes = {
       [contextPropName]: PropTypes.shape({
-        resolved: PropTypes.bool,
+        loading: PropTypes.bool,
+        rejected: PropTypes.bool,
         result: PropTypes.any,
       }),
     }
@@ -64,7 +66,7 @@ export const createPromiseRenderer = fn => {
 
     shouldComponentUpdate(_, nextState, nextContext) {
       return (
-        nextContext[contextPropName].resolved !== this.state.resolved ||
+        (!nextContext[contextPropName].loading && !nextContext[contextPropName].rejected !== this.state.resolved) ||
         nextContext[contextPropName].result !== this.state.result
       )
     }
@@ -115,7 +117,7 @@ export const createPromiseRenderer = fn => {
     }
   }
 
-  return class extends React.PureComponent {
+  return class extends React.Component {
     static childContextTypes = {
       [contextPropName]: PropTypes.shape({
         loading: PropTypes.bool,
@@ -123,6 +125,10 @@ export const createPromiseRenderer = fn => {
         rejectReason: PropTypes.any,
         result: PropTypes.any,
       }),
+    }
+
+    static propTypes = {
+      params: PropTypes.any.isRequired,
     }
 
     static Pending = Pending

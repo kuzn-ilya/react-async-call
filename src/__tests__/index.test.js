@@ -524,21 +524,26 @@ describe('Resolved', () => {
     done()
   })
 
-  xit('should not clash two promise renderers', async done => {
-    const FirstPromiseRenderer = createPromiseRenderer(() => Promise.resolve())
-    const SecondPromiseRenderer = createPromiseRenderer(() => Promise.resolve())
-    const firstChildren = jest.fn(result => 'abcdef')
+  it('should not clash two promise renderers', async done => {
+    const FirstPromiseRenderer = createPromiseRenderer(() => Promise.resolve('first'))
+    const SecondPromiseRenderer = createPromiseRenderer(() => Promise.resolve('second'))
+    const firstChild = jest.fn(result => 'abc')
+    const secondChild = jest.fn(result => 'def')
     const container = mount(
-      <FirstPromiseRenderer params={{}}>
-        <SecondPromiseRenderer params={{}}>
-          <FirstPromiseRenderer.Resolved>{firstChildren}</FirstPromiseRenderer.Resolved>
-        </SecondPromiseRenderer>
-      </FirstPromiseRenderer>,
+      <SecondPromiseRenderer params={{}}>
+        <FirstPromiseRenderer params={{}}>
+          <FirstPromiseRenderer.Resolved>{firstChild}</FirstPromiseRenderer.Resolved>
+          <SecondPromiseRenderer.Resolved>{secondChild}</SecondPromiseRenderer.Resolved>
+        </FirstPromiseRenderer>
+      </SecondPromiseRenderer>,
     )
 
     expect(container).toBeDefined()
     await flushPromises()
-    expect(firstChildren).toHaveBeenCalledTimes(1)
+    expect(firstChild).toHaveBeenCalledTimes(1)
+    expect(firstChild).toHaveBeenCalledWith('first')
+    expect(secondChild).toHaveBeenCalledTimes(1)
+    expect(secondChild).toHaveBeenCalledWith('second')
     done()
   })
 })
