@@ -10,31 +10,39 @@ let counter = 1
 export const createPromiseRenderer = fn => {
   const contextPropName = `__react-promise-renderer__${counter++}`
 
-  class Pending extends React.PureComponent {
+  class Pending extends React.Component {
     static contextTypes = {
-      [contextPropName]: PropTypes.object,
+      [contextPropName]: PropTypes.shape({
+        loading: PropTypes.bool,
+      }),
     }
 
     state = {
-      loading: this.context[contextPropName],
+      loading: this.context[contextPropName].loading,
     }
 
     componentWillReceiveProps(_, nextContext) {
-      if (this.state.loading !== this.context[contextPropName].loading) {
+      if (this.state.loading !== nextContext[contextPropName].loading) {
         this.setState({
           loading: nextContext[contextPropName].loading,
         })
       }
     }
 
+    shouldComponentUpdate(_, nextState, nextContext) {
+      return nextContext[contextPropName].loading !== this.state.loading
+    }
     render() {
       return this.state.loading ? this.props.children : null
     }
   }
 
-  class Resolved extends React.PureComponent {
+  class Resolved extends React.Component {
     static contextTypes = {
-      [contextPropName]: PropTypes.object,
+      [contextPropName]: PropTypes.shape({
+        resolved: PropTypes.bool,
+        result: PropTypes.any,
+      }),
     }
 
     state = {
@@ -54,6 +62,13 @@ export const createPromiseRenderer = fn => {
       }
     }
 
+    shouldComponentUpdate(_, nextState, nextContext) {
+      return (
+        nextContext[contextPropName].resolved !== this.state.resolved ||
+        nextContext[contextPropName].result !== this.state.result
+      )
+    }
+
     render() {
       return this.state.resolved
         ? isFunction(this.props.children) ? this.props.children(this.state.result) : this.props.children
@@ -63,7 +78,10 @@ export const createPromiseRenderer = fn => {
 
   class Rejected extends React.Component {
     static contextTypes = {
-      [contextPropName]: PropTypes.object,
+      [contextPropName]: PropTypes.shape({
+        rejected: PropTypes.bool,
+        rejectReason: PropTypes.any,
+      }),
     }
 
     state = {
@@ -83,7 +101,7 @@ export const createPromiseRenderer = fn => {
       }
     }
 
-    shouldComponentUpdate(nextProps, nextState, nextContext) {
+    shouldComponentUpdate(_, nextState, nextContext) {
       return (
         nextContext[contextPropName].rejected !== this.state.rejected ||
         nextContext[contextPropName].rejectReason !== this.state.rejectReason
@@ -99,7 +117,12 @@ export const createPromiseRenderer = fn => {
 
   return class extends React.PureComponent {
     static childContextTypes = {
-      [contextPropName]: PropTypes.object.isRequired,
+      [contextPropName]: PropTypes.shape({
+        loading: PropTypes.bool,
+        rejected: PropTypes.bool,
+        rejectReason: PropTypes.any,
+        result: PropTypes.any,
+      }),
     }
 
     static Pending = Pending
