@@ -98,7 +98,7 @@ describe('PromiseRenderer', () => {
     expect(fn).toHaveBeenCalledTimes(1)
   })
 
-  it('should call children fn and pass true as the first argument to it if promise has not been resolved yet', () => {
+  it('should call children fn and pass { running: true, rejected: false } as an argument to it if promise has not been resolved yet', () => {
     const fn = () => Promise.resolve()
     const children = jest.fn(() => null)
 
@@ -107,7 +107,7 @@ describe('PromiseRenderer', () => {
     expect(children).toHaveBeenLastCalledWith({ running: true, rejected: false })
   })
 
-  it('should call children fn and pass both false and promise result as arguments to it if promise has been resolved', async done => {
+  it('should call children fn and pass { running: false, result: 42, rejected: false } as an argument to it if promise has been resolved', async done => {
     const promise = Promise.resolve(42)
     const fn = () => promise
 
@@ -123,7 +123,7 @@ describe('PromiseRenderer', () => {
     done()
   })
 
-  it('should call children fn and pass both true and rejection reason as third and fourth arguments to it if promise has been rejected', async done => {
+  it("should call children fn and pass { running: false, rejected: true, rejectReason: 'rejected' } as an arguments to it if promise has been rejected", async done => {
     const promise = Promise.reject('rejected')
     const fn = () => promise
 
@@ -155,6 +155,38 @@ describe('PromiseRenderer', () => {
     expect(container.children().length).toBe(2)
     expect(container.childAt(0).text()).toBe('abcdef')
     expect(container.childAt(1).text()).toBe('12345')
+  })
+
+  it('should call children fn and pass { running: true, rejected: false, result: undefined } as an arguments to it if promise has been called the second time after resolving', async done => {
+    const promise = Promise.resolve('resolved')
+    const fn = () => promise
+
+    const children = jest.fn(() => null)
+
+    const PromiseRenderer = createPromiseRenderer(fn)
+    const container = mount(<PromiseRenderer params={{ a: 1 }}>{children}</PromiseRenderer>)
+
+    await flushPromises()
+    container.setProps({ params: { a: 2 } })
+
+    expect(children).toHaveBeenLastCalledWith({ running: true, rejected: false, result: undefined })
+    done()
+  })
+
+  it('should call children fn and pass { running: true, rejected: false, rejectedResult: undefined } as an arguments to it if promise has been called the second time after rejection', async done => {
+    const promise = Promise.reject('rejected')
+    const fn = () => promise
+
+    const children = jest.fn(() => null)
+
+    const PromiseRenderer = createPromiseRenderer(fn)
+    const container = mount(<PromiseRenderer params={{ a: 1 }}>{children}</PromiseRenderer>)
+
+    await flushPromises()
+    container.setProps({ params: { a: 2 } })
+
+    expect(children).toHaveBeenLastCalledWith({ running: true, rejected: false, rejectReason: undefined })
+    done()
   })
 })
 
@@ -395,6 +427,27 @@ describe('Rejected', () => {
     expect(rejectedContainer.text()).toBe('error:abcdef')
     done()
   })
+
+  it("should not render Rejected's children if promise has not been resolved the second time", async done => {
+    const PromiseRenderer = createPromiseRenderer(value => Promise.reject(value))
+    const children = jest.fn(result => result)
+    const container = mount(
+      <PromiseRenderer params="first">
+        <PromiseRenderer.Rejected>{children}</PromiseRenderer.Rejected>
+      </PromiseRenderer>,
+    )
+
+    expect(container).toBeDefined()
+    await flushPromises()
+    container.update()
+
+    container.setProps({ params: 'second' })
+    const rejectedContainer = container.childAt(0)
+    expect(rejectedContainer).toBeDefined()
+    expect(rejectedContainer).toHaveEmptyRender()
+
+    done()
+  })
 })
 
 describe('Resolved', () => {
@@ -544,6 +597,27 @@ describe('Resolved', () => {
     expect(firstChild).toHaveBeenCalledWith('first')
     expect(secondChild).toHaveBeenCalledTimes(1)
     expect(secondChild).toHaveBeenCalledWith('second')
+    done()
+  })
+
+  it("should not render Resolved's children if promise has not been resolved the second time", async done => {
+    const PromiseRenderer = createPromiseRenderer(value => Promise.resolve(value))
+    const children = jest.fn(result => result)
+    const container = mount(
+      <PromiseRenderer params="first">
+        <PromiseRenderer.Resolved>{children}</PromiseRenderer.Resolved>
+      </PromiseRenderer>,
+    )
+
+    expect(container).toBeDefined()
+    await flushPromises()
+    container.update()
+
+    container.setProps({ params: 'second' })
+    const resolvedContainer = container.childAt(0)
+    expect(resolvedContainer).toBeDefined()
+    expect(resolvedContainer).toHaveEmptyRender()
+
     done()
   })
 })

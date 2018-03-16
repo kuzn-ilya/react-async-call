@@ -164,7 +164,7 @@ export const createPromiseRenderer = fn => {
     }
 
     callQueryFunc = params => {
-      this.setState({ running: true })
+      this.setState({ running: true, result: undefined, rejected: false, rejectReason: undefined })
       fn(params)
         .then(value => this.setState({ running: false, rejected: false, result: value }))
         .catch(reason => this.setState({ running: false, rejected: true, rejectReason: reason }))
