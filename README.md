@@ -56,6 +56,14 @@ const SecondExample = () => (
 )
 ```
 
-### Fetching Data
+### Data Fetching
 
-[![Fetching Data](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/py0qypxkr0)
+[![Data Fetching](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/py0qypxkr0)
+
+### Incremental Data Fetching
+
+[![Incremental Data Fetching](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/qxxnmwnmp6)
+
+## Links
+
+* [Change Log](https://github.com/kuzn-ilya/react-promise-renderer/blob/master/CHANGELOG.md)
