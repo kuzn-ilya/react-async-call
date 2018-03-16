@@ -27,6 +27,16 @@ expect.extend({
           message: () => `expected\n${received.debug()}\nto have an empty render`,
           pass: false,
         },
+  toBeFunction: received =>
+    received && received.constructor && received.call && received.apply
+      ? {
+          message: () => `expected ${received} not to be a function`,
+          pass: true,
+        }
+      : {
+          message: () => `expected ${received} to be a function`,
+          pass: false,
+        },
 })
 
 function flushPromises() {
@@ -46,7 +56,7 @@ describe('react-promise-renderer', () => {
   })
 
   describe('PromiseRenderer', () => {
-    it('should throw a warning if a function is not passed to createPromiseRenderer', () => {
+    it('should throw an error if a function is not passed to createPromiseRenderer', () => {
       const PromiseRenderer = createPromiseRenderer(undefined)
       expect(() => shallow(<PromiseRenderer params={{}} />)).toThrow(
         'Function should be passed to createPromiseRenderer as a first argument but got undefined.',
@@ -63,6 +73,8 @@ describe('react-promise-renderer', () => {
       expect(PromiseRenderer.Resolved).toBeReactComponent()
       expect(PromiseRenderer.Rejected).toBeDefined()
       expect(PromiseRenderer.Rejected).toBeReactComponent()
+      expect(PromiseRenderer.Executor).toBeDefined()
+      expect(PromiseRenderer.Executor).toBeReactComponent()
     })
 
     it('should call function passed to createPromiseRenderer on mount', () => {
@@ -70,6 +82,7 @@ describe('react-promise-renderer', () => {
 
       const PromiseRenderer = createPromiseRenderer(fn)
       const container = shallow(<PromiseRenderer params={{}} />)
+      expect(container).toBeDefined()
       expect(fn).toHaveBeenCalled()
     })
 
@@ -78,6 +91,7 @@ describe('react-promise-renderer', () => {
 
       const PromiseRenderer = createPromiseRenderer(fn)
       const container = shallow(<PromiseRenderer params="abcdef" />)
+      expect(container).toBeDefined()
       expect(fn).toHaveBeenLastCalledWith('abcdef')
     })
 
@@ -87,6 +101,7 @@ describe('react-promise-renderer', () => {
       const params = {}
       const PromiseRenderer = createPromiseRenderer(fn)
       const container = shallow(<PromiseRenderer params={params} />)
+      expect(container).toBeDefined()
 
       container.setProps({ params })
       expect(fn).toHaveBeenCalledTimes(1)
@@ -96,6 +111,8 @@ describe('react-promise-renderer', () => {
       const fn = jest.fn(value => Promise.resolve())
       const PromiseRenderer = createPromiseRenderer(fn)
       const container = shallow(<PromiseRenderer params={'abc'} />)
+      expect(container).toBeDefined()
+
       expect(fn).toHaveBeenLastCalledWith('abc')
 
       container.setProps({ params: 'bcd' })
@@ -106,17 +123,47 @@ describe('react-promise-renderer', () => {
       const fn = jest.fn(value => Promise.resolve())
       const PromiseRenderer = createPromiseRenderer(fn)
       const container = shallow(<PromiseRenderer params={{ a: 1 }} />)
+      expect(container).toBeDefined()
       container.setProps({ params: { a: 1 } })
       expect(fn).toHaveBeenCalledTimes(1)
     })
 
-    it('should call children fn and pass { running: true, rejected: false } as an argument to it if promise has not been resolved yet', () => {
+    it('should throw an error if fn does not return promise', () => {
+      const PromiseRenderer = createPromiseRenderer(() => void 0)
+      expect(() => shallow(<PromiseRenderer params={{}} />)).toThrow(
+        'Function supplied to "createPromiseRenderer" function should return a promise.',
+      )
+    })
+
+    it('should expose execute method via ref', () => {
+      const PromiseRenderer = createPromiseRenderer(() => Promise.resolve(null))
+      const container = shallow(<PromiseRenderer params={{}} />)
+      expect(container).toBeDefined()
+
+      expect(container.instance().execute).toBeFunction()
+    })
+
+    it('should be called twice if "execute" function is called explicitly', () => {
+      const fn = jest.fn(() => Promise.resolve())
+      const PromiseRenderer = createPromiseRenderer(fn)
+      const container = shallow(<PromiseRenderer params={{}} />)
+
+      expect(container).toBeDefined()
+      container.instance().execute()
+      expect(fn).toHaveBeenCalledTimes(2)
+    })
+
+    it('should call children fn and pass { running: true, rejected: false, execute: <fn> } as an argument to it if promise has not been resolved yet', () => {
       const fn = () => Promise.resolve()
       const children = jest.fn(() => null)
 
       const PromiseRenderer = createPromiseRenderer(fn)
       const container = shallow(<PromiseRenderer params={{}}>{children}</PromiseRenderer>)
-      expect(children).toHaveBeenLastCalledWith({ running: true, rejected: false })
+      expect(children).toHaveBeenLastCalledWith({
+        running: true,
+        rejected: false,
+        execute: container.instance().execute,
+      })
     })
 
     it('should call children fn and pass { running: false, result: 42, rejected: false } as an argument to it if promise has been resolved', async done => {
@@ -128,10 +175,19 @@ describe('react-promise-renderer', () => {
       const PromiseRenderer = createPromiseRenderer(fn)
       const container = shallow(<PromiseRenderer params={{}}>{children}</PromiseRenderer>)
 
-      expect(children).toHaveBeenLastCalledWith({ running: true, rejected: false })
+      expect(children).toHaveBeenLastCalledWith({
+        running: true,
+        rejected: false,
+        execute: container.instance().execute,
+      })
 
       await flushPromises()
-      expect(children).toHaveBeenLastCalledWith({ running: false, result: 42, rejected: false })
+      expect(children).toHaveBeenLastCalledWith({
+        running: false,
+        result: 42,
+        rejected: false,
+        execute: container.instance().execute,
+      })
       done()
     })
 
@@ -144,9 +200,18 @@ describe('react-promise-renderer', () => {
       const PromiseRenderer = createPromiseRenderer(fn)
       const container = mount(<PromiseRenderer params={{}}>{children}</PromiseRenderer>)
 
-      expect(children).toHaveBeenLastCalledWith({ running: true, rejected: false })
+      expect(children).toHaveBeenLastCalledWith({
+        running: true,
+        rejected: false,
+        execute: container.instance().execute,
+      })
       await flushPromises()
-      expect(children).toHaveBeenLastCalledWith({ running: false, rejected: true, rejectReason: 'rejected' })
+      expect(children).toHaveBeenLastCalledWith({
+        running: false,
+        rejected: true,
+        rejectReason: 'rejected',
+        execute: container.instance().execute,
+      })
       done()
     })
 
@@ -177,7 +242,12 @@ describe('react-promise-renderer', () => {
       await flushPromises()
       container.setProps({ params: 'second' })
 
-      expect(children).toHaveBeenLastCalledWith({ running: true, rejected: false, result: 'first' })
+      expect(children).toHaveBeenLastCalledWith({
+        running: true,
+        rejected: false,
+        result: 'first',
+        execute: container.instance().execute,
+      })
       done()
     })
 
@@ -193,7 +263,12 @@ describe('react-promise-renderer', () => {
       await flushPromises()
       container.setProps({ params: { a: 2 } })
 
-      expect(children).toHaveBeenLastCalledWith({ running: true, rejected: false, rejectReason: undefined })
+      expect(children).toHaveBeenLastCalledWith({
+        running: true,
+        rejected: false,
+        rejectReason: undefined,
+        execute: container.instance().execute,
+      })
       done()
     })
   })
@@ -674,6 +749,35 @@ describe('react-promise-renderer', () => {
       expect(divContainer).toBeDefined()
       expect(divContainer.text()).toBe('first')
       done()
+    })
+  })
+
+  describe('Executor', () => {
+    // The test below is disabled for now because jest do not catch React errors properly
+    // See the following issues for further details:
+    // https://github.com/facebook/react/issues/11098
+    // https://github.com/airbnb/enzyme/issues/1280
+    xit('should throw an error if children is not passed', () => {
+      const PromiseRenderer = createPromiseRenderer(value => Promise.resolve(value))
+      expect(() =>
+        mount(
+          <PromiseRenderer params="first">
+            <PromiseRenderer.Executor />
+          </PromiseRenderer>,
+        ),
+      ).toThrow('<Executor /> component children cannot be empty and should contain only one function as a child.')
+    })
+
+    it("should pass execute fn as a children's argument", () => {
+      const PromiseRenderer = createPromiseRenderer(value => Promise.resolve(value))
+      const children = jest.fn(execute => null)
+      const container = mount(
+        <PromiseRenderer params={{}}>
+          <PromiseRenderer.Executor>{children}</PromiseRenderer.Executor>
+        </PromiseRenderer>,
+      )
+      expect(container).toBeDefined()
+      expect(children).toHaveBeenCalledWith(container.instance().execute)
     })
   })
 })

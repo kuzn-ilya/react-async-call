@@ -117,6 +117,48 @@ export const createPromiseRenderer = fn => {
     }
   }
 
+  class Executor extends React.Component {
+    static contextTypes = {
+      [contextPropName]: PropTypes.shape({
+        execute: PropTypes.func.isRequired,
+      }),
+    }
+
+    static propTypes = {
+      children: PropTypes.func.isRequired,
+    }
+
+    state = {
+      execute: this.context[contextPropName].execute,
+    }
+
+    checkChildren(props) {
+      invariant(
+        isFunction(props.children),
+        '<Executor /> component children cannot be empty and should contain only one function as a child.',
+      )
+    }
+
+    componentDidMount() {
+      this.checkChildren(this.props)
+    }
+
+    componentWillReceiveProps(nextProps, nextContext) {
+      this.checkChildren(nextProps)
+      if (nextContext[contextPropName].execute !== this.state.execute) {
+        this.setState({ execute: nextContext[contextPropName].execute })
+      }
+    }
+
+    shouldComponentUpdate(_, nextState, nextContext) {
+      return nextContext[contextPropName].execute !== this.state.execute
+    }
+
+    render() {
+      return this.props.children(this.state.execute)
+    }
+  }
+
   return class extends React.Component {
     static childContextTypes = {
       [contextPropName]: PropTypes.shape({
@@ -124,6 +166,7 @@ export const createPromiseRenderer = fn => {
         rejected: PropTypes.bool,
         rejectReason: PropTypes.any,
         result: PropTypes.any,
+        execute: PropTypes.func,
       }),
     }
 
@@ -139,6 +182,7 @@ export const createPromiseRenderer = fn => {
     static Running = Running
     static Resolved = Resolved
     static Rejected = Rejected
+    static Executor = Executor
 
     state = {
       running: true,
@@ -149,6 +193,7 @@ export const createPromiseRenderer = fn => {
       return {
         [contextPropName]: {
           ...this.state,
+          execute: this.execute,
         },
       }
     }
@@ -170,7 +215,12 @@ export const createPromiseRenderer = fn => {
 
     callQueryFunc = params => {
       this.setState({ running: true, rejected: false, rejectReason: undefined })
-      fn(params)
+      const promise = fn(params)
+      invariant(
+        promise && promise.then && isFunction(promise.then),
+        'Function supplied to "createPromiseRenderer" function should return a promise.',
+      )
+      promise
         .then(value =>
           this.setState({
             running: false,
@@ -179,6 +229,10 @@ export const createPromiseRenderer = fn => {
           }),
         )
         .catch(reason => this.setState({ running: false, rejected: true, rejectReason: reason }))
+    }
+
+    execute = () => {
+      this.callQueryFunc()
     }
 
     render() {
@@ -190,6 +244,7 @@ export const createPromiseRenderer = fn => {
               result: this.state.result,
               rejected: this.state.rejected,
               rejectReason: this.state.rejectReason,
+              execute: this.execute,
             })
           : this.props.children)
       )

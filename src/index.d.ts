@@ -7,6 +7,7 @@ interface IPromiseRendererChildrenFunctionParams<QueryResult> {
   result?: QueryResult
   rejected: boolean
   rejectReason: any
+  execute: () => void
 }
 
 type PromiseRendererChildrenFunction<QueryResult> = (
@@ -31,10 +32,16 @@ interface IRejectedProps {
   children?: RejectedChildrenFunction | RenderResult
 }
 
+type ExecutorChildrenFunction = () => RenderResult
+interface IExecutorProps {
+  children: ExecutorChildrenFunction
+}
+
 interface IQueryTypes<QueryParams, QueryResult> {
   Running: React.ComponentType<{}>
   Resolved: React.ComponentType<IResolvedProps<QueryResult>>
   Rejected: React.ComponentType<IRejectedProps>
+  Executor: React.ComponentType<IExecutorProps>
   new (): React.Component<IPromiseRendererProps<QueryParams, QueryResult>>
 }
 
