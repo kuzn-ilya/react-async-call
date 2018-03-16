@@ -13,52 +13,52 @@ export const createPromiseRenderer = fn => {
   class Running extends React.Component {
     static contextTypes = {
       [contextPropName]: PropTypes.shape({
-        loading: PropTypes.bool,
+        running: PropTypes.bool,
       }),
     }
 
     state = {
-      loading: this.context[contextPropName].loading,
+      running: this.context[contextPropName].running,
     }
 
     componentWillReceiveProps(_, nextContext) {
-      if (this.state.loading !== nextContext[contextPropName].loading) {
+      if (this.state.running !== nextContext[contextPropName].running) {
         this.setState({
-          loading: nextContext[contextPropName].loading,
+          running: nextContext[contextPropName].running,
         })
       }
     }
 
     shouldComponentUpdate(_, nextState, nextContext) {
-      return nextContext[contextPropName].loading !== this.state.loading
+      return nextContext[contextPropName].running !== this.state.running
     }
 
     render() {
-      return this.state.loading ? this.props.children : null
+      return this.state.running ? this.props.children : null
     }
   }
 
   class Resolved extends React.Component {
     static contextTypes = {
       [contextPropName]: PropTypes.shape({
-        loading: PropTypes.bool,
+        running: PropTypes.bool,
         rejected: PropTypes.bool,
         result: PropTypes.any,
       }),
     }
 
     state = {
-      resolved: !this.context[contextPropName].loading && !this.context[contextPropName].rejected,
+      resolved: !this.context[contextPropName].running && !this.context[contextPropName].rejected,
       result: this.context[contextPropName].result,
     }
 
     componentWillReceiveProps(_, nextContext) {
       if (
-        this.state.resolved !== (!nextContext[contextPropName].loading && !nextContext[contextPropName].rejected) ||
+        this.state.resolved !== (!nextContext[contextPropName].running && !nextContext[contextPropName].rejected) ||
         this.state.result !== nextContext[contextPropName].result
       ) {
         this.setState({
-          resolved: !nextContext[contextPropName].loading && !nextContext[contextPropName].rejected,
+          resolved: !nextContext[contextPropName].running && !nextContext[contextPropName].rejected,
           result: nextContext[contextPropName].result,
         })
       }
@@ -66,7 +66,7 @@ export const createPromiseRenderer = fn => {
 
     shouldComponentUpdate(_, nextState, nextContext) {
       return (
-        (!nextContext[contextPropName].loading && !nextContext[contextPropName].rejected !== this.state.resolved) ||
+        (!nextContext[contextPropName].running && !nextContext[contextPropName].rejected !== this.state.resolved) ||
         nextContext[contextPropName].result !== this.state.result
       )
     }
@@ -120,7 +120,7 @@ export const createPromiseRenderer = fn => {
   return class extends React.Component {
     static childContextTypes = {
       [contextPropName]: PropTypes.shape({
-        loading: PropTypes.bool,
+        running: PropTypes.bool,
         rejected: PropTypes.bool,
         rejectReason: PropTypes.any,
         result: PropTypes.any,
@@ -136,7 +136,7 @@ export const createPromiseRenderer = fn => {
     static Rejected = Rejected
 
     state = {
-      loading: true,
+      running: true,
       rejected: false,
     }
 
@@ -164,17 +164,17 @@ export const createPromiseRenderer = fn => {
     }
 
     callQueryFunc = params => {
-      this.setState({ loading: true })
+      this.setState({ running: true })
       fn(params)
-        .then(value => this.setState({ loading: false, rejected: false, result: value }))
-        .catch(reason => this.setState({ loading: false, rejected: true, rejectReason: reason }))
+        .then(value => this.setState({ running: false, rejected: false, result: value }))
+        .catch(reason => this.setState({ running: false, rejected: true, rejectReason: reason }))
     }
 
     render() {
       return (
         this.props.children !== undefined &&
         (isFunction(this.props.children)
-          ? this.props.children(this.state.loading, this.state.result, this.state.rejected, this.state.rejectReason)
+          ? this.props.children(this.state.running, this.state.result, this.state.rejected, this.state.rejectReason)
           : this.props.children)
       )
     }

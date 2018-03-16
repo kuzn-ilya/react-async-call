@@ -2,7 +2,12 @@ import * as React from 'react'
 
 export type RenderResult = JSX.Element | Array<JSX.Element> | string | number | null | false
 
-type PromiseRendererChildrenFunction<QueryResult> = (loading: boolean, result?: QueryResult) => RenderResult
+type PromiseRendererChildrenFunction<QueryResult> = (
+  running: boolean,
+  result: QueryResult | undefined,
+  rejected: boolean,
+  rejectReason: any,
+) => RenderResult
 
 interface IPromiseRendererProps<QueryParams, QueryResult> {
   params: QueryParams
