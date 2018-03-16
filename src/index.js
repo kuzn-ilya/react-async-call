@@ -174,7 +174,12 @@ export const createPromiseRenderer = fn => {
       return (
         this.props.children !== undefined &&
         (isFunction(this.props.children)
-          ? this.props.children(this.state.running, this.state.result, this.state.rejected, this.state.rejectReason)
+          ? this.props.children({
+              running: this.state.running,
+              result: this.state.result,
+              rejected: this.state.rejected,
+              rejectReason: this.state.rejectReason,
+            })
           : this.props.children)
       )
     }

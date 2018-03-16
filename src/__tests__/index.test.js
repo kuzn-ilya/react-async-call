@@ -104,7 +104,7 @@ describe('PromiseRenderer', () => {
 
     const PromiseRenderer = createPromiseRenderer(fn)
     const container = shallow(<PromiseRenderer params={{}}>{children}</PromiseRenderer>)
-    expect(children).toHaveBeenLastCalledWith(true, undefined, false, undefined)
+    expect(children).toHaveBeenLastCalledWith({ running: true, rejected: false })
   })
 
   it('should call children fn and pass both false and promise result as arguments to it if promise has been resolved', async done => {
@@ -116,10 +116,10 @@ describe('PromiseRenderer', () => {
     const PromiseRenderer = createPromiseRenderer(fn)
     const container = shallow(<PromiseRenderer params={{}}>{children}</PromiseRenderer>)
 
-    expect(children).toHaveBeenLastCalledWith(true, undefined, false, undefined)
+    expect(children).toHaveBeenLastCalledWith({ running: true, rejected: false })
 
     await flushPromises()
-    expect(children).toHaveBeenLastCalledWith(false, 42, false, undefined)
+    expect(children).toHaveBeenLastCalledWith({ running: false, result: 42, rejected: false })
     done()
   })
 
@@ -132,9 +132,9 @@ describe('PromiseRenderer', () => {
     const PromiseRenderer = createPromiseRenderer(fn)
     const container = mount(<PromiseRenderer params={{}}>{children}</PromiseRenderer>)
 
-    expect(children).toHaveBeenLastCalledWith(true, undefined, false, undefined)
+    expect(children).toHaveBeenLastCalledWith({ running: true, rejected: false })
     await flushPromises()
-    expect(children).toHaveBeenLastCalledWith(false, undefined, true, 'rejected')
+    expect(children).toHaveBeenLastCalledWith({ running: false, rejected: true, rejectReason: 'rejected' })
     done()
   })
 

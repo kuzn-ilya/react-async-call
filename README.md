@@ -22,9 +22,9 @@ const PromiseRenderer = createPromiseRenderer(value => Promise.resolve(42))
 // Execute function on mount
 const firstExample = () => (
   <PromiseRenderer>
-    {(pending, result, rejected, rejectReason)=>(
-      pending && <div>Loading...</div>
-      !pending && !rejected && <div>The result of function call is {result}</div>
+    {({running, result, rejected, rejectReason})=>(
+      running && <div>Loading...</div>
+      !running && !rejected && <div>The result of function call is {result}</div>
       rejected && <div>Error: {rejectReason}</div>
     )}
   </PromiseRenderer>
@@ -33,18 +33,14 @@ const firstExample = () => (
 // The same as the first, but more declarative
 const secondExample = () => (
   <PromiseRenderer>
-    <PromiseRenderer.Pending>
+    <PromiseRenderer.Running>
       <div>Loading...</div>
     </PromiseRenderer.Pending>
-    <PromiseRenderer.Resolved>
-      {(result) =>
-        <div>The result of function call is {result}</div>
-      }
+    <PromiseRenderer.Running>
+      {result => <div>The result of function call is {result}</div>}
     </PromiseRenderer.Resolved>
     <PromiseRenderer.Rejected>
-      {(reason) =>
-        <div>Error: {reason}</div>
-      }
+      {reason => <div>Error: {reason}</div>}
     </PromiseRenderer.Rejected>
   </PromiseRenderer>
 )
