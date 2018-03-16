@@ -14,34 +14,48 @@ Declarative promise handling in React
 
 ## Usage
 
+### Basic Usage - Classic Way
+
+[![Basic Usage - Classic Way](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/n28n77vqj)
+
 ```jsx
 import createPromiseRenderer from 'react-promise-renderer'
 
 const PromiseRenderer = createPromiseRenderer(value => Promise.resolve(42))
 
-// Execute function on mount
-const firstExample = () => (
+const FirstExample = () => (
   <PromiseRenderer>
-    {({running, result, rejected, rejectReason})=>(
-      running && <div>Loading...</div>
-      !running && !rejected && <div>The result of function call is {result}</div>
-      rejected && <div>Error: {rejectReason}</div>
+    {({ running, result, rejected, rejectReason }) => (
+      <div>
+        {running && <div>Loading...</div>}
+        {!running && !rejected && <div>The result of function call is {result}</div>}
+        {rejected && <div>Error: {rejectReason}</div>}
+      </div>
     )}
   </PromiseRenderer>
 )
+```
 
-// The same as the first, but more declarative
-const secondExample = () => (
+### Basic Usage - Declarative Way
+
+[![Basic Usage - Declarative Way](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/n3jm0opz3p)
+
+```jsx
+import createPromiseRenderer from 'react-promise-renderer'
+
+const PromiseRenderer = createPromiseRenderer(value => Promise.resolve(42))
+
+const SecondExample = () => (
   <PromiseRenderer>
     <PromiseRenderer.Running>
       <div>Loading...</div>
     </PromiseRenderer.Running>
-    <PromiseRenderer.Resolved>
-      {result => <div>The result of function call is {result}</div>}
-    </PromiseRenderer.Resolved>
-    <PromiseRenderer.Rejected>
-      {reason => <div>Error: {reason}</div>}
-    </PromiseRenderer.Rejected>
+    <PromiseRenderer.Resolved>{result => <div>The result of function call is {result}</div>}</PromiseRenderer.Resolved>
+    <PromiseRenderer.Rejected>{reason => <div>Error: {reason}</div>}</PromiseRenderer.Rejected>
   </PromiseRenderer>
 )
 ```
+
+### Fetching Data
+
+[![Fetching Data](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/py0qypxkr0)
