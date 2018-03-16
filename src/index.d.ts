@@ -15,6 +15,7 @@ type PromiseRendererChildrenFunction<QueryResult> = (
 
 interface IPromiseRendererProps<QueryParams, QueryResult> {
   params: QueryParams
+  mergeResult?: (prevResult: QueryResult, currentResult: QueryResult) => QueryResult
   children?: PromiseRendererChildrenFunction<QueryResult> | RenderResult
 }
 

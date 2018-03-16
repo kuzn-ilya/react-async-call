@@ -129,6 +129,11 @@ export const createPromiseRenderer = fn => {
 
     static propTypes = {
       params: PropTypes.any.isRequired,
+      mergeResult: PropTypes.func,
+    }
+
+    static defaultProps = {
+      mergeResult: (_, currentResult) => currentResult,
     }
 
     static Running = Running
@@ -166,7 +171,13 @@ export const createPromiseRenderer = fn => {
     callQueryFunc = params => {
       this.setState({ running: true, rejected: false, rejectReason: undefined })
       fn(params)
-        .then(value => this.setState({ running: false, rejected: false, result: value }))
+        .then(value =>
+          this.setState({
+            running: false,
+            rejected: false,
+            result: this.state.result === undefined ? value : this.props.mergeResult(this.state.result, value),
+          }),
+        )
         .catch(reason => this.setState({ running: false, rejected: true, rejectReason: reason }))
     }
 

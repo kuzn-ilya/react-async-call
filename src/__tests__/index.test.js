@@ -198,6 +198,51 @@ describe('react-promise-renderer', () => {
     })
   })
 
+  describe('mergeResult', () => {
+    it('should not call mergeResult callback if promise has been called the first time', async done => {
+      const fn = value => Promise.resolve()
+      const mergeResult = jest.fn(() => void 0)
+      const PromiseRenderer = createPromiseRenderer(fn)
+      const container = mount(<PromiseRenderer params={0} mergeResult={mergeResult} />)
+      await flushPromises()
+      expect(mergeResult).not.toHaveBeenCalled()
+
+      done()
+    })
+
+    it('should call mergeResult callback if promise has been called the second time', async done => {
+      const fn = value => Promise.resolve(value)
+      const mergeResult = jest.fn((prevResult, currentResult) => void 0)
+      const PromiseRenderer = createPromiseRenderer(fn)
+      const container = mount(<PromiseRenderer params={0} mergeResult={mergeResult} />)
+
+      container.setProps({ params: 1 })
+      await flushPromises()
+      expect(mergeResult).toHaveBeenCalledTimes(1)
+      expect(mergeResult).toHaveBeenCalledWith(0, 1)
+
+      done()
+    })
+
+    it('should pass returning value of mergeResult callback to a children function', async done => {
+      const fn = value => Promise.resolve(value)
+      const mergeResult = (prevResult, currentResult) => prevResult + currentResult
+      const children = jest.fn(result => null)
+      const PromiseRenderer = createPromiseRenderer(fn)
+      const container = mount(
+        <PromiseRenderer params={10} mergeResult={mergeResult}>
+          {({ result }) => children(result)}
+        </PromiseRenderer>,
+      )
+
+      container.setProps({ params: 32 })
+      await flushPromises()
+      expect(children).toHaveBeenLastCalledWith(42)
+
+      done()
+    })
+  })
+
   describe('Running', () => {
     it("should render Running's children if promise has not been resolved yet", () => {
       const PromiseRenderer = createPromiseRenderer(() => Promise.resolve())
