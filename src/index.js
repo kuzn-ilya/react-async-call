@@ -10,7 +10,7 @@ let counter = 1
 export const createPromiseRenderer = fn => {
   const contextPropName = `__react-promise-renderer__${counter++}`
 
-  class Pending extends React.Component {
+  class Running extends React.Component {
     static contextTypes = {
       [contextPropName]: PropTypes.shape({
         loading: PropTypes.bool,
@@ -131,7 +131,7 @@ export const createPromiseRenderer = fn => {
       params: PropTypes.any.isRequired,
     }
 
-    static Pending = Pending
+    static Running = Running
     static Resolved = Resolved
     static Rejected = Rejected
 

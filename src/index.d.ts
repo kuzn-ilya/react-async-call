@@ -22,7 +22,7 @@ interface IRejectedProps {
 }
 
 interface IQueryTypes<QueryParams, QueryResult> {
-  Pending: React.ComponentType<{}>
+  Running: React.ComponentType<{}>
   Resolved: React.ComponentType<IResolvedProps<QueryResult>>
   Rejected: React.ComponentType<IRejectedProps>
   new (): React.Component<IPromiseRendererProps<QueryParams, QueryResult>>

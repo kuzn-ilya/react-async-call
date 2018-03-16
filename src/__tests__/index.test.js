@@ -41,12 +41,12 @@ describe('PromiseRenderer', () => {
     )
   })
 
-  it('should return a component class with static Pending and Resolved component classes', () => {
+  it('should return a component class with static Running and Resolved component classes', () => {
     const PromiseRenderer = createPromiseRenderer(() => Promise.resolve())
     expect(PromiseRenderer).toBeDefined()
     expect(PromiseRenderer).toBeReactComponent()
-    expect(PromiseRenderer.Pending).toBeDefined()
-    expect(PromiseRenderer.Pending).toBeReactComponent()
+    expect(PromiseRenderer.Running).toBeDefined()
+    expect(PromiseRenderer.Running).toBeReactComponent()
     expect(PromiseRenderer.Resolved).toBeDefined()
     expect(PromiseRenderer.Resolved).toBeReactComponent()
     expect(PromiseRenderer.Rejected).toBeDefined()
@@ -158,49 +158,49 @@ describe('PromiseRenderer', () => {
   })
 })
 
-describe('Pending', () => {
-  it("should render Pending's children if promise has not been resolved yet", () => {
+describe('Running', () => {
+  it("should render Running's children if promise has not been resolved yet", () => {
     const PromiseRenderer = createPromiseRenderer(() => Promise.resolve())
     const container = mount(
       <PromiseRenderer params={{}}>
-        <PromiseRenderer.Pending>abcdef</PromiseRenderer.Pending>
+        <PromiseRenderer.Running>abcdef</PromiseRenderer.Running>
       </PromiseRenderer>,
     )
 
     expect(container).toBeDefined()
     expect(container.children().exists()).toBe(true)
-    const pendingContainer = container.childAt(0)
-    expect(pendingContainer).toBeDefined()
-    expect(pendingContainer).not.toHaveEmptyRender()
-    expect(pendingContainer.text()).toBe('abcdef')
+    const runningContainer = container.childAt(0)
+    expect(runningContainer).toBeDefined()
+    expect(runningContainer).not.toHaveEmptyRender()
+    expect(runningContainer.text()).toBe('abcdef')
   })
 
-  it("should render Pending's children array if promise has not been resolved yet", () => {
+  it("should render Running's children array if promise has not been resolved yet", () => {
     const PromiseRenderer = createPromiseRenderer(() => Promise.resolve())
     const container = mount(
       <PromiseRenderer params={{}}>
-        <PromiseRenderer.Pending>
+        <PromiseRenderer.Running>
           <div>abcdef</div>
           <div>bcdefg</div>
-        </PromiseRenderer.Pending>
+        </PromiseRenderer.Running>
       </PromiseRenderer>,
     )
 
     expect(container).toBeDefined()
     expect(container.children().exists()).toBe(true)
-    const pendingContainer = container.childAt(0)
-    expect(pendingContainer).toBeDefined()
-    expect(pendingContainer.children().length).toBe(2)
-    expect(pendingContainer.childAt(0).text()).toBe('abcdef')
-    expect(pendingContainer.childAt(1).text()).toBe('bcdefg')
+    const runningContainer = container.childAt(0)
+    expect(runningContainer).toBeDefined()
+    expect(runningContainer.children().length).toBe(2)
+    expect(runningContainer.childAt(0).text()).toBe('abcdef')
+    expect(runningContainer.childAt(1).text()).toBe('bcdefg')
   })
 
-  it("should not render Pending's children if promise has been resolved", async done => {
+  it("should not render Running's children if promise has been resolved", async done => {
     const promise = Promise.resolve()
     const PromiseRenderer = createPromiseRenderer(() => promise)
     const container = mount(
       <PromiseRenderer params={{}}>
-        <PromiseRenderer.Pending>abcdef</PromiseRenderer.Pending>
+        <PromiseRenderer.Running>abcdef</PromiseRenderer.Running>
       </PromiseRenderer>,
     )
 
@@ -209,18 +209,18 @@ describe('Pending', () => {
     container.update()
     expect(container).toBeDefined()
     expect(container.children().exists()).toBe(true)
-    const pendingContainer = container.childAt(0)
-    expect(pendingContainer).toBeDefined()
-    expect(pendingContainer).toHaveEmptyRender()
+    const runningContainer = container.childAt(0)
+    expect(runningContainer).toBeDefined()
+    expect(runningContainer).toHaveEmptyRender()
     done()
   })
 
-  it("should not render Pending's children if promise has been resolved and returned truthy value", async done => {
+  it("should not render Running's children if promise has been resolved and returned truthy value", async done => {
     const promise = Promise.resolve('abcdef')
     const PromiseRenderer = createPromiseRenderer(() => promise)
     const container = mount(
       <PromiseRenderer params={{}}>
-        <PromiseRenderer.Pending>abcdef</PromiseRenderer.Pending>
+        <PromiseRenderer.Running>abcdef</PromiseRenderer.Running>
       </PromiseRenderer>,
     )
 
@@ -230,18 +230,18 @@ describe('Pending', () => {
     container.update()
     expect(container).toBeDefined()
     expect(container.children().exists()).toBe(true)
-    const pendingContainer = container.childAt(0)
-    expect(pendingContainer).toBeDefined()
-    expect(pendingContainer).toHaveEmptyRender()
+    const runningContainer = container.childAt(0)
+    expect(runningContainer).toBeDefined()
+    expect(runningContainer).toHaveEmptyRender()
     done()
   })
 
-  it("should not render Pending's children if promise has been rejected", async done => {
+  it("should not render Running's children if promise has been rejected", async done => {
     const promise = Promise.reject('error')
     const PromiseRenderer = createPromiseRenderer(() => promise)
     const container = mount(
       <PromiseRenderer params={{}}>
-        <PromiseRenderer.Pending>abcdef</PromiseRenderer.Pending>
+        <PromiseRenderer.Running>abcdef</PromiseRenderer.Running>
       </PromiseRenderer>,
     )
 
@@ -250,17 +250,17 @@ describe('Pending', () => {
     container.update()
     expect(container).toBeDefined()
     expect(container.children().exists()).toBe(true)
-    const pendingContainer = container.childAt(0)
-    expect(pendingContainer).toBeDefined()
-    expect(pendingContainer).toHaveEmptyRender()
+    const runningContainer = container.childAt(0)
+    expect(runningContainer).toBeDefined()
+    expect(runningContainer).toHaveEmptyRender()
     done()
   })
 
-  it("should render Pending's children whenever render-returning function is called second time", async done => {
+  it("should render Running's children whenever render-returning function is called second time", async done => {
     const PromiseRenderer = createPromiseRenderer(x => Promise.resolve('abcdef'))
     const container = mount(
       <PromiseRenderer params={1}>
-        <PromiseRenderer.Pending>abcdef</PromiseRenderer.Pending>
+        <PromiseRenderer.Running>abcdef</PromiseRenderer.Running>
       </PromiseRenderer>,
     )
 
@@ -268,26 +268,26 @@ describe('Pending', () => {
     {
       await flushPromises()
       container.update()
-      const pendingContainer = container.childAt(0)
-      expect(pendingContainer).toBeDefined()
-      expect(pendingContainer).toHaveEmptyRender()
+      const runningContainer = container.childAt(0)
+      expect(runningContainer).toBeDefined()
+      expect(runningContainer).toHaveEmptyRender()
     }
 
     {
       container.setProps({ params: 2 })
       container.update()
-      const pendingContainer = container.childAt(0)
-      expect(pendingContainer).toBeDefined()
-      expect(pendingContainer).not.toHaveEmptyRender()
-      expect(pendingContainer.text()).toBe('abcdef')
+      const runningContainer = container.childAt(0)
+      expect(runningContainer).toBeDefined()
+      expect(runningContainer).not.toHaveEmptyRender()
+      expect(runningContainer.text()).toBe('abcdef')
     }
 
     {
       await flushPromises()
       container.update()
-      const pendingContainer = container.childAt(0)
-      expect(pendingContainer).toBeDefined()
-      expect(pendingContainer).toHaveEmptyRender()
+      const runningContainer = container.childAt(0)
+      expect(runningContainer).toBeDefined()
+      expect(runningContainer).toHaveEmptyRender()
     }
 
     done()
