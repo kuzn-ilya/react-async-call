@@ -35,8 +35,8 @@ const secondExample = () => (
   <PromiseRenderer>
     <PromiseRenderer.Running>
       <div>Loading...</div>
-    </PromiseRenderer.Pending>
-    <PromiseRenderer.Running>
+    </PromiseRenderer.Running>
+    <PromiseRenderer.Resolved>
       {result => <div>The result of function call is {result}</div>}
     </PromiseRenderer.Resolved>
     <PromiseRenderer.Rejected>
