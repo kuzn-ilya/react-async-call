@@ -693,98 +693,50 @@ describe('react-promise-renderer', () => {
       done()
     })
 
-    it("should not call Resolved's children fn if promise has not been resolved yet", () => {
-      const PromiseRenderer = createPromiseRenderer(() => Promise.resolve())
-      const children = jest.fn(result => null)
+    it("should not render Resolved's children if promise has not been resolved the second time", async done => {
+      const fn = jest.fn(value => Promise.resolve(value))
+      const PromiseRenderer = createPromiseRenderer(fn)
       const container = mount(
-        <PromiseRenderer params={{}}>
-          <PromiseRenderer.Resolved>{children}</PromiseRenderer.Resolved>
-        </PromiseRenderer>,
-      )
-
-      expect(container).toBeDefined()
-      expect(children).not.toHaveBeenCalled()
-    })
-
-    it("should call Resolved's children fn if promise has been resolved", async done => {
-      const promise = Promise.resolve()
-      const PromiseRenderer = createPromiseRenderer(() => promise)
-      const children = jest.fn(result => 'abcdef')
-      const container = mount(
-        <PromiseRenderer params={{}}>
-          <PromiseRenderer.Resolved>{children}</PromiseRenderer.Resolved>
+        <PromiseRenderer params="first">
+          <PromiseRenderer.Resolved>abcdef</PromiseRenderer.Resolved>
         </PromiseRenderer>,
       )
 
       expect(container).toBeDefined()
       await flushPromises()
-      expect(container.children().exists()).toBe(true)
+      container.instance().execute()
+
+      expect(fn).toHaveBeenCalledTimes(2)
       const resolvedContainer = container.childAt(0)
       expect(resolvedContainer).toBeDefined()
-      expect(resolvedContainer.text()).toBe('abcdef')
-      done()
-    })
-
-    it("should pass promise resolve result to call Resolved's children fn if promise has been resolved", async done => {
-      const promise = Promise.resolve('abcdef')
-      const PromiseRenderer = createPromiseRenderer(() => promise)
-      const children = jest.fn(result => null)
-      const container = mount(
-        <PromiseRenderer params={{}}>
-          <PromiseRenderer.Resolved>{children}</PromiseRenderer.Resolved>
-        </PromiseRenderer>,
-      )
-
-      expect(container).toBeDefined()
-      await flushPromises()
-      expect(children).toHaveBeenCalledTimes(1)
-      expect(children).toHaveBeenCalledWith('abcdef')
+      expect(resolvedContainer).toHaveEmptyRender()
       done()
     })
 
     it('should not clash two promise renderers', async done => {
       const FirstPromiseRenderer = createPromiseRenderer(() => Promise.resolve('first'))
       const SecondPromiseRenderer = createPromiseRenderer(() => Promise.resolve('second'))
-      const firstChild = jest.fn(result => 'abc')
-      const secondChild = jest.fn(result => 'def')
-      const container = mount(
+      const secondContainer = mount(
         <SecondPromiseRenderer params={{}}>
           <FirstPromiseRenderer params={{}}>
-            <FirstPromiseRenderer.Resolved>{firstChild}</FirstPromiseRenderer.Resolved>
-            <SecondPromiseRenderer.Resolved>{secondChild}</SecondPromiseRenderer.Resolved>
+            <FirstPromiseRenderer.Resolved>first</FirstPromiseRenderer.Resolved>
+            <SecondPromiseRenderer.Resolved>second</SecondPromiseRenderer.Resolved>
           </FirstPromiseRenderer>
         </SecondPromiseRenderer>,
       )
 
-      expect(container).toBeDefined()
+      expect(secondContainer).toBeDefined()
       await flushPromises()
-      expect(firstChild).toHaveBeenCalledTimes(1)
-      expect(firstChild).toHaveBeenCalledWith('first')
-      expect(secondChild).toHaveBeenCalledTimes(1)
-      expect(secondChild).toHaveBeenCalledWith('second')
-      done()
-    })
 
-    it("should not render Resolved's children if promise has not been resolved the second time", async done => {
-      const PromiseRenderer = createPromiseRenderer(value => Promise.resolve(value))
-      const children = jest.fn(result => <div>{result}</div>)
-      const container = mount(
-        <PromiseRenderer params="first">
-          <PromiseRenderer.Resolved>{children}</PromiseRenderer.Resolved>
-        </PromiseRenderer>,
-      )
+      const firstContainer = secondContainer.childAt(0)
+      expect(firstContainer).toBeDefined()
 
-      expect(container).toBeDefined()
-      await flushPromises()
-      container.update()
-
-      container.setProps({ params: 'second' })
-      const resolvedContainer = container.childAt(0)
-      expect(resolvedContainer).toBeDefined()
-      expect(resolvedContainer).not.toHaveEmptyRender()
-      const divContainer = resolvedContainer.childAt(0)
-      expect(divContainer).toBeDefined()
-      expect(divContainer.text()).toBe('first')
+      const firstChild = firstContainer.childAt(0)
+      expect(firstChild).toBeDefined()
+      expect(firstChild.text()).toBe('first')
+      const secondChild = firstContainer.childAt(1)
+      expect(secondChild).toBeDefined()
+      expect(secondChild.text()).toBe('second')
       done()
     })
   })

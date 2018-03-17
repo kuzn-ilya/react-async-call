@@ -58,7 +58,6 @@ export const createPromiseRenderer = (fn, displayName) => {
       [contextPropName]: PropTypes.shape({
         running: PropTypes.bool,
         rejected: PropTypes.bool,
-        result: PropTypes.any,
       }),
     }
     static displayName = `${rootDisplayName}.Resolved`
@@ -68,7 +67,6 @@ export const createPromiseRenderer = (fn, displayName) => {
         this.context[contextPropName] &&
         !this.context[contextPropName].running &&
         !this.context[contextPropName].rejected,
-      result: this.context[contextPropName] && this.context[contextPropName].result,
     }
 
     updateState(context) {
@@ -77,13 +75,9 @@ export const createPromiseRenderer = (fn, displayName) => {
         `<${Resolved.displayName}> must be a child (direct or indirect) of <${rootDisplayName}>.`,
       )
 
-      if (
-        this.state.resolved !== (!context[contextPropName].running && !context[contextPropName].rejected) ||
-        this.state.result !== context[contextPropName].result
-      ) {
+      if (this.state.resolved !== (!context[contextPropName].running && !context[contextPropName].rejected)) {
         this.setState({
           resolved: !context[contextPropName].running && !context[contextPropName].rejected,
-          result: context[contextPropName].result,
         })
       }
     }
@@ -97,16 +91,11 @@ export const createPromiseRenderer = (fn, displayName) => {
     }
 
     shouldComponentUpdate(_, nextState, nextContext) {
-      return (
-        (!nextContext[contextPropName].running && !nextContext[contextPropName].rejected !== this.state.resolved) ||
-        nextContext[contextPropName].result !== this.state.result
-      )
+      return !nextContext[contextPropName].running && !nextContext[contextPropName].rejected !== this.state.resolved
     }
 
     render() {
-      return this.state.resolved
-        ? isFunction(this.props.children) ? this.props.children(this.state.result) : this.props.children
-        : null
+      return this.state.resolved ? this.props.children : null
     }
   }
 
@@ -117,6 +106,11 @@ export const createPromiseRenderer = (fn, displayName) => {
         rejectReason: PropTypes.any,
       }),
     }
+
+    static propTypes = {
+      children: PropTypes.oneOfType([PropTypes.node, PropTypes.func]),
+    }
+
     static displayName = `${rootDisplayName}.Rejected`
 
     state = {

@@ -19,12 +19,6 @@ interface IPromiseRendererProps<Params, Result> {
   children?: PromiseRendererChildrenFunction<Result> | RenderResult
 }
 
-type ResolvedChildrenFunction<Result> = (result: Result) => RenderResult
-
-interface IResolvedProps<Result> {
-  children?: ResolvedChildrenFunction<Result> | RenderResult
-}
-
 type RejectedChildrenFunction = (reason: any) => RenderResult
 
 interface IRejectedProps {
@@ -38,7 +32,7 @@ interface IExecutorProps {
 
 interface IQueryTypes<Params, Result> {
   Running: React.ComponentType<{}>
-  Resolved: React.ComponentType<IResolvedProps<Result>>
+  Resolved: React.ComponentType<{}>
   Rejected: React.ComponentType<IRejectedProps>
   Executor: React.ComponentType<IExecutorProps>
   new (): React.Component<IPromiseRendererProps<Params, Result>>
