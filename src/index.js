@@ -187,6 +187,7 @@ export const createPromiseRenderer = fn => {
     state = {
       running: true,
       rejected: false,
+      hasResult: false,
     }
 
     getChildContext() {
@@ -225,7 +226,8 @@ export const createPromiseRenderer = fn => {
           this.setState({
             running: false,
             rejected: false,
-            result: this.state.result === undefined ? value : this.props.mergeResult(this.state.result, value),
+            hasResult: true,
+            result: this.state.hasResult ? this.props.mergeResult(this.state.result, value) : value,
           }),
         )
         .catch(reason => this.setState({ running: false, rejected: true, rejectReason: reason }))
@@ -240,10 +242,7 @@ export const createPromiseRenderer = fn => {
         this.props.children !== undefined &&
         (isFunction(this.props.children)
           ? this.props.children({
-              running: this.state.running,
-              result: this.state.result,
-              rejected: this.state.rejected,
-              rejectReason: this.state.rejectReason,
+              ...this.state,
               execute: this.execute,
             })
           : this.props.children)

@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.1.13
+
+* Added `hasResult` property into children function argument of the root component.
+
 ## 0.1.12
 
 * Added ability to re-execute promise-returning function manualy (see an [issue #3](https://github.com/kuzn-ilya/react-promise-renderer/issues/3) for details):

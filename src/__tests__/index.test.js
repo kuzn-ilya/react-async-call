@@ -162,6 +162,7 @@ describe('react-promise-renderer', () => {
       expect(children).toHaveBeenLastCalledWith({
         running: true,
         rejected: false,
+        hasResult: false,
         execute: container.instance().execute,
       })
     })
@@ -178,6 +179,7 @@ describe('react-promise-renderer', () => {
       expect(children).toHaveBeenLastCalledWith({
         running: true,
         rejected: false,
+        hasResult: false,
         execute: container.instance().execute,
       })
 
@@ -186,6 +188,7 @@ describe('react-promise-renderer', () => {
         running: false,
         result: 42,
         rejected: false,
+        hasResult: true,
         execute: container.instance().execute,
       })
       done()
@@ -203,6 +206,7 @@ describe('react-promise-renderer', () => {
       expect(children).toHaveBeenLastCalledWith({
         running: true,
         rejected: false,
+        hasResult: false,
         execute: container.instance().execute,
       })
       await flushPromises()
@@ -210,6 +214,7 @@ describe('react-promise-renderer', () => {
         running: false,
         rejected: true,
         rejectReason: 'rejected',
+        hasResult: false,
         execute: container.instance().execute,
       })
       done()
@@ -246,6 +251,7 @@ describe('react-promise-renderer', () => {
         running: true,
         rejected: false,
         result: 'first',
+        hasResult: true,
         execute: container.instance().execute,
       })
       done()
@@ -267,6 +273,7 @@ describe('react-promise-renderer', () => {
         running: true,
         rejected: false,
         rejectReason: undefined,
+        hasResult: false,
         execute: container.instance().execute,
       })
       done()
@@ -536,7 +543,7 @@ describe('react-promise-renderer', () => {
 
     it("should call Rejected's children fn if promise has been rejected", async done => {
       const PromiseRenderer = createPromiseRenderer(() => Promise.reject('error:'))
-      const children = jest.fn(rejectReason => rejectReason + 'abcdef')
+      const children = jest.fn(reason => reason + 'abcdef')
       const container = mount(
         <PromiseRenderer params={{}}>
           <PromiseRenderer.Rejected>{children}</PromiseRenderer.Rejected>

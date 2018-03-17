@@ -67,3 +67,7 @@ const SecondExample = () => (
 ## Links
 
 * [Change Log](https://github.com/kuzn-ilya/react-promise-renderer/blob/master/CHANGELOG.md)
+
+## Credits
+
+* Great thanks to [@kitos](https://github.com/kitos) and [@ventrz](https://github.com/ventrz) for their invaluable help, support and bright ideas!
