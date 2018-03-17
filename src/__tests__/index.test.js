@@ -77,6 +77,15 @@ describe('react-promise-renderer', () => {
       expect(PromiseRenderer.Executor).toBeReactComponent()
     })
 
+    it('should expose default display names', () => {
+      const PromiseRenderer = createPromiseRenderer(() => Promise.resolve())
+      expect(PromiseRenderer.displayName).toBe('PromiseRenderer')
+      expect(PromiseRenderer.Running.displayName).toBe('PromiseRenderer.Running')
+      expect(PromiseRenderer.Resolved.displayName).toBe('PromiseRenderer.Resolved')
+      expect(PromiseRenderer.Rejected.displayName).toBe('PromiseRenderer.Rejected')
+      expect(PromiseRenderer.Executor.displayName).toBe('PromiseRenderer.Executor')
+    })
+
     it('should call function passed to createPromiseRenderer on mount', () => {
       const fn = jest.fn(() => Promise.resolve())
 
@@ -326,6 +335,13 @@ describe('react-promise-renderer', () => {
   })
 
   describe('Running', () => {
+    it('should throw an error if Running component rendered alone', () => {
+      const PromiseRenderer = createPromiseRenderer(() => Promise.resolve())
+      expect(() => shallow(<PromiseRenderer.Running />)).toThrow(
+        '<PromiseRenderer.Running> must be a child (direct or indirect) of <PromiseRenderer>.',
+      )
+    })
+
     it("should render Running's children if promise has not been resolved yet", () => {
       const PromiseRenderer = createPromiseRenderer(() => Promise.resolve())
       const container = mount(
@@ -462,6 +478,13 @@ describe('react-promise-renderer', () => {
   })
 
   describe('Rejected', () => {
+    it('should throw an error if Rejected component rendered alone', () => {
+      const PromiseRenderer = createPromiseRenderer(() => Promise.resolve())
+      expect(() => shallow(<PromiseRenderer.Rejected />)).toThrow(
+        '<PromiseRenderer.Rejected> must be a child (direct or indirect) of <PromiseRenderer>.',
+      )
+    })
+
     it("should not render Rejected's children if promise has not been resolved yet", () => {
       const PromiseRenderer = createPromiseRenderer(() => Promise.resolve())
       const container = mount(
@@ -586,6 +609,13 @@ describe('react-promise-renderer', () => {
   })
 
   describe('Resolved', () => {
+    it('should throw an error if Resolved component rendered alone', () => {
+      const PromiseRenderer = createPromiseRenderer(() => Promise.resolve())
+      expect(() => shallow(<PromiseRenderer.Resolved />)).toThrow(
+        '<PromiseRenderer.Resolved> must be a child (direct or indirect) of <PromiseRenderer>.',
+      )
+    })
+
     it("should not render Resolved's children if promise has not been resolved yet", () => {
       const PromiseRenderer = createPromiseRenderer(() => Promise.resolve())
       const container = mount(
@@ -760,6 +790,13 @@ describe('react-promise-renderer', () => {
   })
 
   describe('Executor', () => {
+    it('should throw an error if Executor component rendered alone', () => {
+      const PromiseRenderer = createPromiseRenderer(() => Promise.resolve())
+      expect(() => shallow(<PromiseRenderer.Executor>{() => void 0}</PromiseRenderer.Executor>)).toThrow(
+        '<PromiseRenderer.Executor> must be a child (direct or indirect) of <PromiseRenderer>.',
+      )
+    })
+
     // The test below is disabled for now because jest do not catch React errors properly
     // See the following issues for further details:
     // https://github.com/facebook/react/issues/11098

@@ -3,6 +3,8 @@
 ## 0.1.13
 
 * Added `hasResult` property into children function argument of the root component.
+* Added `displayName` properties to components.
+* Throw error if sub-component is not a child (direct or indirect) of root components.
 
 ## 0.1.12
 

@@ -7,8 +7,9 @@ const isFunction = value => !!(value && value.constructor && value.call && value
 
 let counter = 1
 
-export const createPromiseRenderer = fn => {
+export const createPromiseRenderer = (fn, displayName) => {
   const contextPropName = `__react-promise-renderer__${counter++}`
+  const rootDisplayName = `${displayName || 'PromiseRenderer'}`
 
   class Running extends React.Component {
     static contextTypes = {
@@ -16,17 +17,31 @@ export const createPromiseRenderer = fn => {
         running: PropTypes.bool,
       }),
     }
+    static displayName = `${rootDisplayName}.Running`
 
     state = {
-      running: this.context[contextPropName].running,
+      running: this.context[contextPropName] && this.context[contextPropName].running,
+    }
+
+    updateState(context) {
+      invariant(
+        context[contextPropName],
+        `<${Running.displayName}> must be a child (direct or indirect) of <${rootDisplayName}>.`,
+      )
+
+      if (this.state.running !== context[contextPropName].running) {
+        this.setState({
+          running: context[contextPropName].running,
+        })
+      }
+    }
+
+    componentDidMount() {
+      this.updateState(this.context)
     }
 
     componentWillReceiveProps(_, nextContext) {
-      if (this.state.running !== nextContext[contextPropName].running) {
-        this.setState({
-          running: nextContext[contextPropName].running,
-        })
-      }
+      this.updateState(nextContext)
     }
 
     shouldComponentUpdate(_, nextState, nextContext) {
@@ -46,22 +61,39 @@ export const createPromiseRenderer = fn => {
         result: PropTypes.any,
       }),
     }
+    static displayName = `${rootDisplayName}.Resolved`
 
     state = {
-      resolved: !this.context[contextPropName].running && !this.context[contextPropName].rejected,
-      result: this.context[contextPropName].result,
+      resolved:
+        this.context[contextPropName] &&
+        !this.context[contextPropName].running &&
+        !this.context[contextPropName].rejected,
+      result: this.context[contextPropName] && this.context[contextPropName].result,
+    }
+
+    updateState(context) {
+      invariant(
+        context[contextPropName],
+        `<${Resolved.displayName}> must be a child (direct or indirect) of <${rootDisplayName}>.`,
+      )
+
+      if (
+        this.state.resolved !== (!context[contextPropName].running && !context[contextPropName].rejected) ||
+        this.state.result !== context[contextPropName].result
+      ) {
+        this.setState({
+          resolved: !context[contextPropName].running && !context[contextPropName].rejected,
+          result: context[contextPropName].result,
+        })
+      }
+    }
+
+    componentDidMount() {
+      this.updateState(this.context)
     }
 
     componentWillReceiveProps(_, nextContext) {
-      if (
-        this.state.resolved !== (!nextContext[contextPropName].running && !nextContext[contextPropName].rejected) ||
-        this.state.result !== nextContext[contextPropName].result
-      ) {
-        this.setState({
-          resolved: !nextContext[contextPropName].running && !nextContext[contextPropName].rejected,
-          result: nextContext[contextPropName].result,
-        })
-      }
+      this.updateState(nextContext)
     }
 
     shouldComponentUpdate(_, nextState, nextContext) {
@@ -85,22 +117,36 @@ export const createPromiseRenderer = fn => {
         rejectReason: PropTypes.any,
       }),
     }
+    static displayName = `${rootDisplayName}.Rejected`
 
     state = {
-      rejected: this.context[contextPropName].rejected,
-      rejectReason: this.context[contextPropName].rejectReason,
+      rejected: this.context[contextPropName] && this.context[contextPropName].rejected,
+      rejectReason: this.context[contextPropName] && this.context[contextPropName].rejectReason,
+    }
+
+    updateState(context) {
+      invariant(
+        context[contextPropName],
+        `<${Rejected.displayName}> must be a child (direct or indirect) of <${rootDisplayName}>.`,
+      )
+
+      if (
+        context[contextPropName].rejected !== this.state.rejected ||
+        context[contextPropName].rejectReason !== this.state.rejectReason
+      ) {
+        this.setState({
+          rejected: context[contextPropName].rejected,
+          rejectReason: context[contextPropName].rejectReason,
+        })
+      }
+    }
+
+    componentDidMount() {
+      this.updateState(this.context)
     }
 
     componentWillReceiveProps(_, nextContext) {
-      if (
-        nextContext[contextPropName].rejected !== this.state.rejected ||
-        nextContext[contextPropName].rejectReason !== this.state.rejectReason
-      ) {
-        this.setState({
-          rejected: nextContext[contextPropName].rejected,
-          rejectReason: nextContext[contextPropName].rejectReason,
-        })
-      }
+      this.updateState(nextContext)
     }
 
     shouldComponentUpdate(_, nextState, nextContext) {
@@ -123,31 +169,33 @@ export const createPromiseRenderer = fn => {
         execute: PropTypes.func.isRequired,
       }),
     }
+    static displayName = `${rootDisplayName}.Executor`
 
     static propTypes = {
       children: PropTypes.func.isRequired,
     }
 
     state = {
-      execute: this.context[contextPropName].execute,
+      execute: this.context[contextPropName] && this.context[contextPropName].execute,
     }
 
-    checkChildren(props) {
+    updateState(context) {
       invariant(
-        isFunction(props.children),
-        '<Executor /> component children cannot be empty and should contain only one function as a child.',
+        context[contextPropName],
+        `<${Executor.displayName}> must be a child (direct or indirect) of <${rootDisplayName}>.`,
       )
+
+      if (context[contextPropName].execute !== this.state.execute) {
+        this.setState({ execute: context[contextPropName].execute })
+      }
     }
 
     componentDidMount() {
-      this.checkChildren(this.props)
+      this.updateState(this.context)
     }
 
-    componentWillReceiveProps(nextProps, nextContext) {
-      this.checkChildren(nextProps)
-      if (nextContext[contextPropName].execute !== this.state.execute) {
-        this.setState({ execute: nextContext[contextPropName].execute })
-      }
+    componentWillReceiveProps(_, nextContext) {
+      this.updateState(nextContext)
     }
 
     shouldComponentUpdate(_, nextState, nextContext) {
@@ -178,6 +226,8 @@ export const createPromiseRenderer = fn => {
     static defaultProps = {
       mergeResult: (_, currentResult) => currentResult,
     }
+
+    static displayName = rootDisplayName
 
     static Running = Running
     static Resolved = Resolved
