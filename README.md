@@ -62,7 +62,7 @@ const SecondExample = () => (
 
 ### Incremental Data Fetching
 
-[![Incremental Data Fetching](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/qxxnmwnmp6)
+[![Incremental Data Fetching](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/mzzvlmj65y)
 
 ## Links
 
