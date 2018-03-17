@@ -75,6 +75,8 @@ describe('react-promise-renderer', () => {
       expect(PromiseRenderer.Rejected).toBeReactComponent()
       expect(PromiseRenderer.Executor).toBeDefined()
       expect(PromiseRenderer.Executor).toBeReactComponent()
+      expect(PromiseRenderer.Result).toBeDefined()
+      expect(PromiseRenderer.Result).toBeReactComponent()
     })
 
     it('should expose default display names', () => {
@@ -84,6 +86,7 @@ describe('react-promise-renderer', () => {
       expect(PromiseRenderer.Resolved.displayName).toBe('PromiseRenderer.Resolved')
       expect(PromiseRenderer.Rejected.displayName).toBe('PromiseRenderer.Rejected')
       expect(PromiseRenderer.Executor.displayName).toBe('PromiseRenderer.Executor')
+      expect(PromiseRenderer.Result.displayName).toBe('PromiseRenderer.Result')
     })
 
     it('should call function passed to createPromiseRenderer on mount', () => {
@@ -761,7 +764,7 @@ describe('react-promise-renderer', () => {
             <PromiseRenderer.Executor />
           </PromiseRenderer>,
         ),
-      ).toThrow('<Executor /> component children cannot be empty and should contain only one function as a child.')
+      ).toThrow()
     })
 
     it("should pass execute fn as a children's argument", () => {
@@ -774,6 +777,90 @@ describe('react-promise-renderer', () => {
       )
       expect(container).toBeDefined()
       expect(children).toHaveBeenCalledWith(container.instance().execute)
+    })
+  })
+
+  describe('Result', () => {
+    it('should throw an error if Result component rendered alone', () => {
+      const PromiseRenderer = createPromiseRenderer(() => Promise.resolve())
+      expect(() => shallow(<PromiseRenderer.Result>{() => {}}</PromiseRenderer.Result>)).toThrow(
+        '<PromiseRenderer.Result> must be a child (direct or indirect) of <PromiseRenderer>.',
+      )
+    })
+
+    // The test below is disabled for now because jest do not catch React errors properly
+    // See the following issues for further details:
+    // https://github.com/facebook/react/issues/11098
+    // https://github.com/airbnb/enzyme/issues/1280
+    xit('should throw an error if children is not passed', () => {
+      const PromiseRenderer = createPromiseRenderer(value => Promise.resolve(value))
+      expect(() =>
+        mount(
+          <PromiseRenderer params="first">
+            <PromiseRenderer.Result />
+          </PromiseRenderer>,
+        ),
+      ).toThrow()
+    })
+
+    it('should not call children function if promise has not been resolved yet', () => {
+      const PromiseRenderer = createPromiseRenderer(() => Promise.resolve())
+      const children = jest.fn(() => null)
+      const container = mount(
+        <PromiseRenderer params={{}}>
+          <PromiseRenderer.Result>{children}</PromiseRenderer.Result>
+        </PromiseRenderer>,
+      )
+
+      expect(container).toBeDefined()
+      expect(container.children().exists()).toBe(true)
+      const resultContainer = container.childAt(0)
+      expect(resultContainer).toBeDefined()
+      expect(resultContainer).toHaveEmptyRender()
+
+      expect(children).not.toHaveBeenCalled()
+    })
+
+    it('should not call children function if promise has been rejected', async done => {
+      const PromiseRenderer = createPromiseRenderer(() => Promise.reject('error'))
+      const children = jest.fn(() => null)
+      const container = mount(
+        <PromiseRenderer params={{}}>
+          <PromiseRenderer.Result>{children}</PromiseRenderer.Result>
+        </PromiseRenderer>,
+      )
+
+      expect(container).toBeDefined()
+      await flushPromises()
+      expect(container.children().exists()).toBe(true)
+      const resultContainer = container.childAt(0)
+      expect(resultContainer).toBeDefined()
+      expect(resultContainer).toHaveEmptyRender()
+
+      expect(children).not.toHaveBeenCalled()
+
+      done()
+    })
+
+    it('should call children function and render its result if promise has been resolved', async done => {
+      const PromiseRenderer = createPromiseRenderer(() => Promise.resolve(42))
+      const children = jest.fn(value => 'result')
+      const container = mount(
+        <PromiseRenderer params={{}}>
+          <PromiseRenderer.Result>{children}</PromiseRenderer.Result>
+        </PromiseRenderer>,
+      )
+
+      expect(container).toBeDefined()
+      await flushPromises()
+      container.update()
+      expect(container.children().exists()).toBe(true)
+      const resultContainer = container.childAt(0)
+      expect(resultContainer).toBeDefined()
+      expect(resultContainer).not.toHaveEmptyRender()
+      expect(resultContainer.text()).toBe('result')
+      expect(children).toHaveBeenCalledWith(42)
+      done()
     })
   })
 })

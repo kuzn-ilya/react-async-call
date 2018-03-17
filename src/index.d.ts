@@ -30,11 +30,18 @@ interface IExecutorProps {
   children: ExecutorChildrenFunction
 }
 
+type ResultChildrenFunction<Result> = (result: Result) => RenderResult
+
+interface IResultProps<Result> {
+  children: ResultChildrenFunction<Result>
+}
+
 interface IQueryTypes<Params, Result> {
   Running: React.ComponentType<{}>
   Resolved: React.ComponentType<{}>
   Rejected: React.ComponentType<IRejectedProps>
   Executor: React.ComponentType<IExecutorProps>
+  Result: React.ComponentType<IResultProps<Result>>
   new (): React.Component<IPromiseRendererProps<Params, Result>>
 }
 

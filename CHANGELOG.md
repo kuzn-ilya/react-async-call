@@ -2,6 +2,8 @@
 
 ## 0.1.14
 
+* Get rid of <Resolved> children as function
+* Add <Result> sub-component
 * Update typings: add displayName arg to createPromiseRenderer function.
 
 ## 0.1.13
