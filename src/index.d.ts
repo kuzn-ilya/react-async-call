@@ -46,6 +46,7 @@ interface IQueryTypes<Params, Result> {
 
 declare function createPromiseRenderer<Params, Result>(
   queryFunc: (params: Params) => PromiseLike<Result>,
+  displayName?: string,
 ): IQueryTypes<Params, Result>
 
 export default createPromiseRenderer

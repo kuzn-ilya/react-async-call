@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.1.14
+
+* Update typings: add displayName arg to createPromiseRenderer function.
+
 ## 0.1.13
 
 * Added `hasResult` property into children function argument of the root component.
