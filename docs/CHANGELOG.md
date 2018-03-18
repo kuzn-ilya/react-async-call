@@ -3,6 +3,9 @@
 ## 0.1.15
 
 * Fix UMD build. Now it's available on https://unpkg.com/react-promise-renderer.
+* Update README.md
+* Move CHANGELOG.md into docs folder
+* Add API.md into docs folder
 
 ## 0.1.14
 

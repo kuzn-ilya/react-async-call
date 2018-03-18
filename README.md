@@ -6,7 +6,7 @@
 
 ## Overview
 
-Declarative promise handling in React
+Declarative promise handling in React.
 
 ## Install
 
@@ -36,44 +36,44 @@ The package is avalable on `window.ReactPromiseRenderer`
 
 ## Usage
 
-### Basic Usage - Classic Way
+### Declarative
 
-[![Basic Usage - Classic Way](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/n28n77vqj)
-
-```jsx
-import createPromiseRenderer from 'react-promise-renderer'
-
-const PromiseRenderer = createPromiseRenderer(value => Promise.resolve(42))
-
-const FirstExample = () => (
-  <PromiseRenderer>
-    {({ running, result, rejected, rejectReason }) => (
-      <div>
-        {running && <div>Loading...</div>}
-        {!running && !rejected && <div>The result of function call is {result}</div>}
-        {rejected && <div>Error: {rejectReason}</div>}
-      </div>
-    )}
-  </PromiseRenderer>
-)
-```
-
-### Basic Usage - Declarative Way
-
-[![Basic Usage - Declarative Way](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/n3jm0opz3p)
+[![Declarative](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/n3jm0opz3p)
 
 ```jsx
 import createPromiseRenderer from 'react-promise-renderer'
 
 const PromiseRenderer = createPromiseRenderer(value => Promise.resolve(42))
 
-const SecondExample = () => (
+const Example = () => (
   <PromiseRenderer>
     <PromiseRenderer.Running>
       <div>Loading...</div>
     </PromiseRenderer.Running>
-    <PromiseRenderer.Resolved>{result => <div>The result of function call is {result}</div>}</PromiseRenderer.Resolved>
+    <PromiseRenderer.Result>{result => <div>The result of function call is {result}</div>}</PromiseRenderer.Result>
     <PromiseRenderer.Rejected>{reason => <div>Error: {reason}</div>}</PromiseRenderer.Rejected>
+  </PromiseRenderer>
+)
+```
+
+### Render Props
+
+[![Render Props](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/n28n77vqj)
+
+```jsx
+import createPromiseRenderer from 'react-promise-renderer'
+
+const PromiseRenderer = createPromiseRenderer(value => Promise.resolve(42))
+
+const Example = () => (
+  <PromiseRenderer>
+    {({ running, result, rejected, hasResult, rejectReason }) => (
+      <div>
+        {running && <div>Loading...</div>}
+        {hasResult && <div>The result of function call is {result}</div>}
+        {rejected && <div>Error: {rejectReason}</div>}
+      </div>
+    )}
   </PromiseRenderer>
 )
 ```
@@ -86,10 +86,14 @@ const SecondExample = () => (
 
 [![Incremental Data Fetching](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/mzzvlmj65y)
 
-## Links
+## API
 
-* [Change Log](https://github.com/kuzn-ilya/react-promise-renderer/blob/master/CHANGELOG.md)
+[See API reference here](https://github.com/kuzn-ilya/react-promise-renderer/blob/master/docs/API.md)
+
+## Change Log
+
+[You can find change log here](https://github.com/kuzn-ilya/react-promise-renderer/blob/master/docs/CHANGELOG.md)
 
 ## Credits
 
-* Great thanks to [@kitos](https://github.com/kitos) and [@ventrz](https://github.com/ventrz) for their invaluable help, support and bright ideas!
+Great thanks to [@kitos](https://github.com/kitos) and [@ventrz](https://github.com/ventrz) for their invaluable help, support and bright ideas!
