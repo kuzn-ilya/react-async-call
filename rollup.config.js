@@ -35,7 +35,7 @@ export default {
       sourcemap: true,
       file: pkg['umd:main'],
       format: 'umd',
-      name: pkg.name,
+      name: 'ReactPromiseRenderer',
     },
   ],
 }

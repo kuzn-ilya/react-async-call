@@ -10,7 +10,29 @@ Declarative promise handling in React
 
 ## Install
 
+### Using npm
+
 `npm i react-promise-renderer --save`
+
+Then, use it as usual:
+
+```JS
+// using ES6 modules
+import createPromiseRenderer from 'react-promise-renderer'
+
+// using CommonJS modules
+var createPromiseRenderer = require('react-promise-renderer').createPromiseRenderer
+```
+
+### UMD build
+
+The UMD build is also available on [unpkg](https:/unpkg.com):
+
+```HTML
+<script src="https://unpkg.com/react-promise-renderer"></script>
+```
+
+The package is avalable on `window.ReactPromiseRenderer`
 
 ## Usage
 

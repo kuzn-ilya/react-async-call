@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.1.15
+
+* Fix UMD build. Now it's available on https://unpkg.com/react-promise-renderer.
+
 ## 0.1.14
 
 * Get rid of <Resolved> children as function
