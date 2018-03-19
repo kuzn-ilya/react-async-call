@@ -8,6 +8,7 @@ import { createResolved } from './Resolved'
 import { createRejected } from './Rejected'
 import { createExecutor } from './Executor'
 import { createResult } from './Result'
+import { createState } from './State'
 
 let counter = 1
 
@@ -18,6 +19,7 @@ export const createAsynCallComponent = (fn, displayName) => {
   return class extends React.Component {
     static childContextTypes = {
       [contextPropName]: PropTypes.shape({
+        hasResult: PropTypes.bool,
         running: PropTypes.bool,
         rejected: PropTypes.bool,
         resolved: PropTypes.bool,
@@ -43,6 +45,7 @@ export const createAsynCallComponent = (fn, displayName) => {
     static Rejected = createRejected(contextPropName, rootDisplayName)
     static Executor = createExecutor(contextPropName, rootDisplayName)
     static Result = createResult(contextPropName, rootDisplayName)
+    static State = createState(contextPropName, rootDisplayName)
 
     state = {
       running: true,

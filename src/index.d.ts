@@ -3,10 +3,12 @@ import * as React from 'react'
 export type RenderResult = JSX.Element | Array<JSX.Element> | string | number | null | false
 
 interface IAsyncCallChildrenFunctionParams<Result> {
+  hasResult: boolean
   running: boolean
+  rejected: boolean
+  resolved: boolean
   result?: Result
   hasResult: boolean
-  rejected: boolean
   rejectReason: any
   execute: () => void
 }
@@ -36,12 +38,30 @@ interface IResultProps<Result> {
   children: ResultChildrenFunction<Result>
 }
 
+interface IStateChildrenFunctionParams<Result> {
+  hasResult: boolean
+  running: boolean
+  rejected: boolean
+  resolved: boolean
+  result?: Result
+  hasResult: boolean
+  rejectReason: any
+  execute: () => void
+}
+
+type StateChildrenFunction<Result> = (params: IStateChildrenFunctionParams<Result>) => RenderResult
+
+interface IStateProps<Result> {
+  children?: StateChildrenFunction<Result>
+}
+
 interface IQueryTypes<Params, Result> {
   Running: React.ComponentType<{}>
   Resolved: React.ComponentType<{}>
   Rejected: React.ComponentType<IRejectedProps>
   Executor: React.ComponentType<IExecutorProps>
   Result: React.ComponentType<IResultProps<Result>>
+  State: React.ComponentType<IStateProps<Result>>
   new (): React.Component<IAsyncCallProps<Params, Result>>
 }
 

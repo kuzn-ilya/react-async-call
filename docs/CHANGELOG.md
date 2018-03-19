@@ -2,8 +2,9 @@
 
 ## 0.1.18
 
-* Rework project structure: split index files into separate modules
-* Rename PromiseRenderer -> AsyncCall, createPromiseRenderer -> createAsyncCallComponent
+* New subcomponent `State` has been added
+* Project structure has been reworked : split index files into separate modules
+* Renamed PromiseRenderer -> AsyncCall, createPromiseRenderer -> createAsyncCallComponent
 
 ## 0.1.16
 
