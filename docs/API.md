@@ -1,9 +1,9 @@
-# createPromiseRenderer
+# createAsyncCallComponent
 
 A factory function that creates React component class and binds async operation to it:
 
 ```jsx
-const Fetcher = createPromiseRenderer(() => fetch('https://api.github.com/repositories').then(data => data.json()))
+const Fetcher = createAsyncCallComponent(() => fetch('https://api.github.com/repositories').then(data => data.json()))
 ```
 
 After calling this function you can use returned component and its [static sub-components](#static-props) to hook async operation lifecycle:
@@ -23,7 +23,7 @@ After calling this function you can use returned component and its [static sub-c
 </Fetcher>
 ```
 
-`createPromiseRenderer` is the only member exported by react-promise-renderer package.
+`createAsyncCallComponent` is the only member exported by react-promise-renderer package.
 
 ## params
 
@@ -36,7 +36,7 @@ After calling this function you can use returned component and its [static sub-c
 Function which returns promise by provided params. Calling this function starts async operations.
 
 ```jsx
-const Fetcher = createPromiseRenderer(since =>
+const Fetcher = createAsyncCallComponent(since =>
   fetch(`https://api.github.com/repositories?since=${since}`).then(data => data.json()),
 )
 ```

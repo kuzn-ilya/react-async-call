@@ -2,7 +2,7 @@ import * as React from 'react'
 
 export type RenderResult = JSX.Element | Array<JSX.Element> | string | number | null | false
 
-interface IPromiseRendererChildrenFunctionParams<Result> {
+interface IAsyncCallChildrenFunctionParams<Result> {
   running: boolean
   result?: Result
   hasResult: boolean
@@ -11,12 +11,12 @@ interface IPromiseRendererChildrenFunctionParams<Result> {
   execute: () => void
 }
 
-type PromiseRendererChildrenFunction<Result> = (params: IPromiseRendererChildrenFunctionParams<Result>) => RenderResult
+type AsyncCallChildrenFunction<Result> = (params: IAsyncCallChildrenFunctionParams<Result>) => RenderResult
 
-interface IPromiseRendererProps<Params, Result> {
+interface IAsyncCallProps<Params, Result> {
   params: Params
   mergeResult?: (prevResult: Result, currentResult: Result) => Result
-  children?: PromiseRendererChildrenFunction<Result> | RenderResult
+  children?: AsyncCallChildrenFunction<Result> | RenderResult
 }
 
 type RejectedChildrenFunction = (reason: any) => RenderResult
@@ -42,12 +42,12 @@ interface IQueryTypes<Params, Result> {
   Rejected: React.ComponentType<IRejectedProps>
   Executor: React.ComponentType<IExecutorProps>
   Result: React.ComponentType<IResultProps<Result>>
-  new (): React.Component<IPromiseRendererProps<Params, Result>>
+  new (): React.Component<IAsyncCallProps<Params, Result>>
 }
 
-declare function createPromiseRenderer<Params, Result>(
+declare function createAsyncCallComponent<Params, Result>(
   queryFunc: (params: Params) => PromiseLike<Result>,
   displayName?: string,
 ): IQueryTypes<Params, Result>
 
-export default createPromiseRenderer
+export default createAsyncCallComponent

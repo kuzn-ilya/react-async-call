@@ -18,10 +18,10 @@ Then, use it as usual:
 
 ```JS
 // using ES6 modules
-import createPromiseRenderer from 'react-promise-renderer'
+import createAsyncCallComponent from 'react-promise-renderer'
 
 // using CommonJS modules
-var createPromiseRenderer = require('react-promise-renderer').createPromiseRenderer
+var createAsyncCallComponent = require('react-promise-renderer').createAsyncCallComponent
 ```
 
 ### UMD build
@@ -41,9 +41,9 @@ The package is avalable on `window.ReactPromiseRenderer`
 [![Declarative](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/n3jm0opz3p)
 
 ```jsx
-import createPromiseRenderer from 'react-promise-renderer'
+import createAsyncCallComponent from 'react-promise-renderer'
 
-const PromiseRenderer = createPromiseRenderer(value => Promise.resolve(42))
+const PromiseRenderer = createAsyncCallComponent(value => Promise.resolve(42))
 
 const Example = () => (
   <PromiseRenderer>
@@ -61,9 +61,9 @@ const Example = () => (
 [![Render Props](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/n28n77vqj)
 
 ```jsx
-import createPromiseRenderer from 'react-promise-renderer'
+import createAsyncCallComponent from 'react-promise-renderer'
 
-const PromiseRenderer = createPromiseRenderer(value => Promise.resolve(42))
+const PromiseRenderer = createAsyncCallComponent(value => Promise.resolve(42))
 
 const Example = () => (
   <PromiseRenderer>

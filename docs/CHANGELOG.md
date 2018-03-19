@@ -1,5 +1,10 @@
 # Change Log
 
+## 0.1.18
+
+* Rework project structure: split index files into separate modules
+* Rename PromiseRenderer -> AsyncCall, createPromiseRenderer -> createAsyncCallComponent
+
 ## 0.1.16
 
 * Fix: do not render Resolved sub-component's children while promise is on running phase ([issue #14](https://github.com/kuzn-ilya/react-promise-renderer/issues/14))
