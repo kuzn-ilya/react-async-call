@@ -173,6 +173,7 @@ describe('react-promise-renderer', () => {
       const container = shallow(<PromiseRenderer params={{}}>{children}</PromiseRenderer>)
       expect(children).toHaveBeenLastCalledWith({
         running: true,
+        resolved: false,
         rejected: false,
         hasResult: false,
         execute: container.instance().execute,
@@ -190,6 +191,7 @@ describe('react-promise-renderer', () => {
 
       expect(children).toHaveBeenLastCalledWith({
         running: true,
+        resolved: false,
         rejected: false,
         hasResult: false,
         execute: container.instance().execute,
@@ -198,6 +200,7 @@ describe('react-promise-renderer', () => {
       await flushPromises()
       expect(children).toHaveBeenLastCalledWith({
         running: false,
+        resolved: true,
         result: 42,
         rejected: false,
         hasResult: true,
@@ -218,6 +221,7 @@ describe('react-promise-renderer', () => {
       expect(children).toHaveBeenLastCalledWith({
         running: true,
         rejected: false,
+        resolved: false,
         hasResult: false,
         execute: container.instance().execute,
       })
@@ -225,6 +229,7 @@ describe('react-promise-renderer', () => {
       expect(children).toHaveBeenLastCalledWith({
         running: false,
         rejected: true,
+        resolved: false,
         rejectReason: 'rejected',
         hasResult: false,
         execute: container.instance().execute,
@@ -262,6 +267,7 @@ describe('react-promise-renderer', () => {
       expect(children).toHaveBeenLastCalledWith({
         running: true,
         rejected: false,
+        resolved: false,
         result: 'first',
         hasResult: true,
         execute: container.instance().execute,
@@ -284,6 +290,7 @@ describe('react-promise-renderer', () => {
       expect(children).toHaveBeenLastCalledWith({
         running: true,
         rejected: false,
+        resolved: false,
         rejectReason: undefined,
         hasResult: false,
         execute: container.instance().execute,

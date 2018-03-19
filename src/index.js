@@ -56,17 +56,13 @@ export const createPromiseRenderer = (fn, displayName) => {
   class Resolved extends React.Component {
     static contextTypes = {
       [contextPropName]: PropTypes.shape({
-        running: PropTypes.bool,
-        rejected: PropTypes.bool,
+        resolved: PropTypes.bool,
       }),
     }
     static displayName = `${rootDisplayName}.Resolved`
 
     state = {
-      resolved:
-        this.context[contextPropName] &&
-        !this.context[contextPropName].running &&
-        !this.context[contextPropName].rejected,
+      resolved: this.context[contextPropName] && this.context[contextPropName].resolved,
     }
 
     updateState(context) {
@@ -75,9 +71,9 @@ export const createPromiseRenderer = (fn, displayName) => {
         `<${Resolved.displayName}> must be a child (direct or indirect) of <${rootDisplayName}>.`,
       )
 
-      if (this.state.resolved !== (!context[contextPropName].running && !context[contextPropName].rejected)) {
+      if (this.state.resolved !== context[contextPropName].resolved) {
         this.setState({
-          resolved: !context[contextPropName].running && !context[contextPropName].rejected,
+          resolved: context[contextPropName].resolved,
         })
       }
     }
@@ -91,7 +87,7 @@ export const createPromiseRenderer = (fn, displayName) => {
     }
 
     shouldComponentUpdate(_, nextState, nextContext) {
-      return !nextContext[contextPropName].running && !nextContext[contextPropName].rejected !== this.state.resolved
+      return nextContext[contextPropName].resolved !== this.state.resolved
     }
 
     render() {
@@ -254,6 +250,7 @@ export const createPromiseRenderer = (fn, displayName) => {
       [contextPropName]: PropTypes.shape({
         running: PropTypes.bool,
         rejected: PropTypes.bool,
+        resolved: PropTypes.bool,
         rejectReason: PropTypes.any,
         result: PropTypes.any,
         execute: PropTypes.func,
@@ -280,6 +277,7 @@ export const createPromiseRenderer = (fn, displayName) => {
     state = {
       running: true,
       rejected: false,
+      resolved: false,
       hasResult: false,
     }
 
@@ -308,7 +306,7 @@ export const createPromiseRenderer = (fn, displayName) => {
     }
 
     callQueryFunc = params => {
-      this.setState({ running: true, rejected: false, rejectReason: undefined })
+      this.setState({ running: true, rejected: false, resolved: false, rejectReason: undefined })
       const promise = fn(params)
       invariant(
         promise && promise.then && isFunction(promise.then),
@@ -319,6 +317,7 @@ export const createPromiseRenderer = (fn, displayName) => {
           this.setState({
             running: false,
             rejected: false,
+            resolved: true,
             hasResult: true,
             result: this.state.hasResult ? this.props.mergeResult(this.state.result, value) : value,
           }),
