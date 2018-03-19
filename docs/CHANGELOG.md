@@ -1,12 +1,15 @@
 # Change Log
 
-## 0.1.15
+## 0.1.16
 
 * Fix: do not render Resolved sub-component's children while promise is on running phase ([issue #14](https://github.com/kuzn-ilya/react-promise-renderer/issues/14))
+
+## 0.1.15
+
 * Fix UMD build. Now it's available on https://unpkg.com/react-promise-renderer.
-* Update README.md
-* Move CHANGELOG.md into docs folder
-* Add API.md into docs folder
+* Update [README.md](https://github.com/kuzn-ilya/react-promise-renderer/blob/master/README.md)
+* Move [CHANGELOG.md](https://github.com/kuzn-ilya/react-promise-renderer/blob/master/docs/CHANGELOG.md) into docs folder
+* Add [API.md](https://github.com/kuzn-ilya/react-promise-renderer/blob/master/docs/API.md) into docs folder
 
 ## 0.1.14
 
