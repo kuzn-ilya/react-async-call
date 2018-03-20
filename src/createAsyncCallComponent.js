@@ -32,6 +32,7 @@ export const createAsynCallComponent = (fn, displayName) => {
     static propTypes = {
       params: PropTypes.any.isRequired,
       mergeResult: PropTypes.func,
+      children: PropTypes.oneOfType([PropTypes.node, PropTypes.func]),
     }
 
     static defaultProps = {

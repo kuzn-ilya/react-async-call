@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.1.20
+
+* Eslint has been added
+
 ## 0.1.19
 
 * The package has been renamed to react-async-call

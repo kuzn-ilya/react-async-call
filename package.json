@@ -20,13 +20,14 @@
   "scripts": {
     "clean": "rimraf lib",
     "build": "npm run clean && npm run rollup && npm run minify",
+    "eslint": "eslint ./",
     "minify": "npm run minify:cjs && npm run minify:umd",
     "minify:cjs":
       "uglifyjs lib/index.js -cm toplevel -o lib/index.js -p relative --in-source-map lib/index.js.map --source-map lib/index.js.map",
     "minify:umd":
       "uglifyjs lib/index.umd.js -cm -o lib/index.umd.js -p relative --in-source-map lib/index.umd.js.map --source-map lib/index.umd.js.map",
-    "test": "jest src --coverage",
-    "test:watch": "jest src --watch",
+    "test": "npm run eslint && jest src --coverage",
+    "test:watch": "npm run eslint && jest src --watch",
     "format": "prettier --write **/*.{js,jsx,json,d.ts} !lib/** !.vscode/**",
     "rollup": "rollup -c",
     "release": "npm run test && npm run build && npm version patch && npm publish && git push --tags"
@@ -39,6 +40,7 @@
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.0",
+    "babel-eslint": "^8.2.2",
     "babel-jest": "^22.4.1",
     "babel-plugin-external-helpers": "^6.22.0",
     "babel-plugin-transform-class-properties": "^6.24.1",
@@ -47,6 +49,10 @@
     "babel-preset-react": "^6.24.1",
     "enzyme": "^3.3.0",
     "enzyme-adapter-react-16": "^1.1.1",
+    "eslint": "^4.19.0",
+    "eslint-config-react-app": "^2.1.0",
+    "eslint-plugin-import": "^2.9.0",
+    "eslint-plugin-react": "^7.7.0",
     "fbjs": "^0.8.16",
     "jest": "^22.4.2",
     "prettier": "^1.11.1",
@@ -62,5 +68,15 @@
     "collectCoverage": true,
     "setupTestFrameworkScriptFile": "../setup.jest.js",
     "rootDir": "./src"
-  }
+  },
+  "eslintConfig": {
+    "parser": "babel-eslint",
+    "env": {
+      "browser": true,
+      "node": true
+    },
+    "plugins": ["import", "react"],
+    "extends": ["eslint:recommended", "plugin:import/errors", "plugin:react/recommended"]
+  },
+  "eslintIgnore": ["lib/**", "src/__tests__/**", "coverage/**", "setup.jest.js"]
 }

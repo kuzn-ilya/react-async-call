@@ -1,4 +1,3 @@
-import * as React from 'react'
 import * as PropTypes from 'prop-types'
 import invariant from 'fbjs/lib/invariant'
 import { isFunction } from './common'
