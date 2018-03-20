@@ -1,6 +1,6 @@
 {
   "name": "react-promise-renderer",
-  "version": "0.1.16",
+  "version": "0.1.17",
   "description": "Declarative promise handling in React",
   "main": "lib/index.js",
   "module": "lib/index.es.js",
