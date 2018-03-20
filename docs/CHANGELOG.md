@@ -3,6 +3,7 @@
 ## 0.1.18
 
 * New subcomponent `State` has been added
+* Inner components have been reimplemented as functional components
 * Project structure has been reworked : split index files into separate modules
 * Renamed PromiseRenderer -> AsyncCall, createPromiseRenderer -> createAsyncCallComponent
 

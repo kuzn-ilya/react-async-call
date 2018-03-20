@@ -17,7 +17,9 @@ describe('Running', () => {
     const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
     const container = mount(
       <AsyncCall params={{}}>
-        <AsyncCall.Running>abcdef</AsyncCall.Running>
+        <AsyncCall.Running>
+          <div>abcdef</div>
+        </AsyncCall.Running>
       </AsyncCall>,
     )
 
@@ -25,7 +27,8 @@ describe('Running', () => {
     const runningContainer = container.childAt(0)
     expect(runningContainer).toBeDefined()
     expect(runningContainer).not.toHaveEmptyRender()
-    expect(runningContainer.text()).toBe('abcdef')
+    expect(runningContainer.children().length).toBe(1)
+    expect(runningContainer.childAt(0).text()).toBe('abcdef')
   })
 
   it("should render Running's children array if promise has not been resolved yet", () => {
@@ -108,7 +111,9 @@ describe('Running', () => {
     const AsyncCall = createAsyncCallComponent(x => Promise.resolve('abcdef'))
     const container = mount(
       <AsyncCall params={1}>
-        <AsyncCall.Running>abcdef</AsyncCall.Running>
+        <AsyncCall.Running>
+          <div>abcdef</div>
+        </AsyncCall.Running>
       </AsyncCall>,
     )
 
@@ -128,7 +133,9 @@ describe('Running', () => {
       const runningContainer = container.childAt(0)
       expect(runningContainer).toBeDefined()
       expect(runningContainer).not.toHaveEmptyRender()
-      expect(runningContainer.text()).toBe('abcdef')
+      expect(runningContainer).toBeDefined()
+      expect(runningContainer.children().length).toBe(1)
+      expect(runningContainer.childAt(0).text()).toBe('abcdef')
     }
 
     {

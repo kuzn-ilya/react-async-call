@@ -67,7 +67,7 @@ describe('Result', () => {
 
   it('should call children function and render its result if promise has been resolved', async done => {
     const AsyncCall = createAsyncCallComponent(() => Promise.resolve(42))
-    const children = jest.fn(value => 'result')
+    const children = jest.fn(value => <div>result</div>)
     const container = mount(
       <AsyncCall params={{}}>
         <AsyncCall.Result>{children}</AsyncCall.Result>
@@ -77,12 +77,14 @@ describe('Result', () => {
     await flushPromises()
     container.update()
 
+    expect(children).toHaveBeenCalledWith(42)
+
     expect(container.children().exists()).toBe(true)
     const resultContainer = container.childAt(0)
     expect(resultContainer).toBeDefined()
     expect(resultContainer).not.toHaveEmptyRender()
-    expect(resultContainer.text()).toBe('result')
-    expect(children).toHaveBeenCalledWith(42)
+    expect(resultContainer.children().exists()).toBe(true)
+    expect(resultContainer.childAt(0).text()).toBe('result')
 
     done()
   })

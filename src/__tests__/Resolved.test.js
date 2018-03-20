@@ -48,7 +48,9 @@ describe('Resolved', () => {
     const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
     const container = mount(
       <AsyncCall params={{}}>
-        <AsyncCall.Resolved>abcdef</AsyncCall.Resolved>
+        <AsyncCall.Resolved>
+          <div>abcdef</div>
+        </AsyncCall.Resolved>
       </AsyncCall>,
     )
 
@@ -110,30 +112,30 @@ describe('Resolved', () => {
   })
 
   it('should not clash two promise renderers', async done => {
-    const FirstPromiseRenderer = createAsyncCallComponent(() => Promise.resolve('first'))
-    const SecondPromiseRenderer = createAsyncCallComponent(() => Promise.resolve('second'))
-    const secondContainer = mount(
-      <SecondPromiseRenderer params={{}}>
-        <FirstPromiseRenderer params={{}}>
-          <FirstPromiseRenderer.Resolved>first</FirstPromiseRenderer.Resolved>
-          <SecondPromiseRenderer.Resolved>second</SecondPromiseRenderer.Resolved>
-        </FirstPromiseRenderer>
-      </SecondPromiseRenderer>,
+    const FirstAsyncCall = createAsyncCallComponent(() => Promise.resolve('first'))
+    const SecondAsyncCall = createAsyncCallComponent(() => Promise.resolve('second'))
+    const secondAsyncCall = mount(
+      <SecondAsyncCall params={{}}>
+        <FirstAsyncCall params={{}}>
+          <FirstAsyncCall.Resolved>
+            <div>first</div>
+          </FirstAsyncCall.Resolved>
+          <SecondAsyncCall.Resolved>
+            <div>second</div>
+          </SecondAsyncCall.Resolved>
+        </FirstAsyncCall>
+      </SecondAsyncCall>,
     )
 
-    expect(secondContainer).toBeDefined()
+    expect(secondAsyncCall).toBeDefined()
     await flushPromises()
+    secondAsyncCall.update()
 
-    const firstContainer = secondContainer.childAt(0)
-    expect(firstContainer).toBeDefined()
-
-    const firstChild = firstContainer.childAt(0)
-    expect(firstChild).toBeDefined()
-    expect(firstChild.text()).toBe('first')
-
-    const secondChild = firstContainer.childAt(1)
-    expect(secondChild).toBeDefined()
-    expect(secondChild.text()).toBe('second')
+    const firstAsyncCall = secondAsyncCall.childAt(0)
+    expect(firstAsyncCall).toBeDefined()
+    expect(firstAsyncCall.children().length).toBe(2)
+    expect(firstAsyncCall.childAt(0).text()).toBe('first')
+    expect(firstAsyncCall.childAt(1).text()).toBe('second')
 
     done()
   })

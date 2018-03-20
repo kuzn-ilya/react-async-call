@@ -49,7 +49,9 @@ describe('Rejected', () => {
     const AsyncCall = createAsyncCallComponent(() => Promise.reject('error'))
     const container = mount(
       <AsyncCall params={{}}>
-        <AsyncCall.Rejected>abcdef</AsyncCall.Rejected>
+        <AsyncCall.Rejected>
+          <div>abcdef</div>
+        </AsyncCall.Rejected>
       </AsyncCall>,
     )
 
@@ -91,7 +93,12 @@ describe('Rejected', () => {
 
   it("should call Rejected's children fn if promise has been rejected", async done => {
     const AsyncCall = createAsyncCallComponent(() => Promise.reject('error:'))
-    const children = jest.fn(reason => reason + 'abcdef')
+    const children = jest.fn(reason => (
+      <div>
+        {reason}
+        {'abcdef'}
+      </div>
+    ))
     const container = mount(
       <AsyncCall params={{}}>
         <AsyncCall.Rejected>{children}</AsyncCall.Rejected>
@@ -104,10 +111,7 @@ describe('Rejected', () => {
     expect(children).toHaveBeenCalledTimes(1)
     expect(children).toHaveBeenCalledWith('error:')
 
-    expect(container.children().exists()).toBe(true)
-    const rejectedContainer = container.childAt(0)
-    expect(rejectedContainer).toBeDefined()
-    expect(rejectedContainer.text()).toBe('error:abcdef')
+    expect(container.text()).toBe('error:abcdef')
 
     done()
   })
