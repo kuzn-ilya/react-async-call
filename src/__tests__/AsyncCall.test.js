@@ -23,7 +23,7 @@ describe('AsyncCall', () => {
     expect(AsyncCall.Resolved).toBeDefined()
     expect(AsyncCall.Rejected).toBeDefined()
     expect(AsyncCall.Executor).toBeDefined()
-    expect(AsyncCall.Result).toBeDefined()
+    expect(AsyncCall.HasResult).toBeDefined()
     expect(AsyncCall.State).toBeDefined()
   })
 
@@ -35,7 +35,7 @@ describe('AsyncCall', () => {
     expect(AsyncCall.Resolved.displayName).toBe('AsyncCall.Resolved')
     expect(AsyncCall.Rejected.displayName).toBe('AsyncCall.Rejected')
     expect(AsyncCall.Executor.displayName).toBe('AsyncCall.Executor')
-    expect(AsyncCall.Result.displayName).toBe('AsyncCall.Result')
+    expect(AsyncCall.HasResult.displayName).toBe('AsyncCall.HasResult')
     expect(AsyncCall.State.displayName).toBe('AsyncCall.State')
   })
 

@@ -8,8 +8,8 @@ const flushPromises = () => new Promise(resolve => setImmediate(resolve))
 describe('Result', () => {
   it('should throw an error if Result component rendered alone', () => {
     const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
-    expect(() => shallow(<AsyncCall.Result>{() => {}}</AsyncCall.Result>)).toThrow(
-      '<AsyncCall.Result> must be a child (direct or indirect) of <AsyncCall>.',
+    expect(() => shallow(<AsyncCall.HasResult>{() => {}}</AsyncCall.HasResult>)).toThrow(
+      '<AsyncCall.HasResult> must be a child (direct or indirect) of <AsyncCall>.',
     )
   })
 
@@ -22,7 +22,7 @@ describe('Result', () => {
     expect(() =>
       mount(
         <AsyncCall params="first">
-          <AsyncCall.Result />
+          <AsyncCall.HasResult />
         </AsyncCall>,
       ),
     ).toThrow()
@@ -33,7 +33,7 @@ describe('Result', () => {
     const children = jest.fn(() => null)
     const container = mount(
       <AsyncCall params={{}}>
-        <AsyncCall.Result>{children}</AsyncCall.Result>
+        <AsyncCall.HasResult>{children}</AsyncCall.HasResult>
       </AsyncCall>,
     )
 
@@ -50,7 +50,7 @@ describe('Result', () => {
     const children = jest.fn(() => null)
     const container = mount(
       <AsyncCall params={{}}>
-        <AsyncCall.Result>{children}</AsyncCall.Result>
+        <AsyncCall.HasResult>{children}</AsyncCall.HasResult>
       </AsyncCall>,
     )
 
@@ -70,7 +70,7 @@ describe('Result', () => {
     const children = jest.fn(value => <div>result</div>)
     const container = mount(
       <AsyncCall params={{}}>
-        <AsyncCall.Result>{children}</AsyncCall.Result>
+        <AsyncCall.HasResult>{children}</AsyncCall.HasResult>
       </AsyncCall>,
     )
 

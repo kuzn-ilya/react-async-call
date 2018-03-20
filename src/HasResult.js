@@ -2,28 +2,28 @@ import * as React from 'react'
 import * as PropTypes from 'prop-types'
 import invariant from 'fbjs/lib/invariant'
 
-export const createResult = (contextPropName, rootDisplayName) => {
-  const Result = (props, context) => {
+export const createHasResult = (contextPropName, rootDisplayName) => {
+  const HasResult = (props, context) => {
     invariant(
       context[contextPropName],
-      `<${Result.displayName}> must be a child (direct or indirect) of <${rootDisplayName}>.`,
+      `<${HasResult.displayName}> must be a child (direct or indirect) of <${rootDisplayName}>.`,
     )
 
     return context[contextPropName].hasResult ? props.children(context[contextPropName].result) : null
   }
 
-  Result.contextTypes = {
+  HasResult.contextTypes = {
     [contextPropName]: PropTypes.shape({
       hasResult: PropTypes.bool,
       result: PropTypes.any,
     }),
   }
 
-  Result.propTypes = {
+  HasResult.propTypes = {
     children: PropTypes.func.isRequired,
   }
 
-  Result.displayName = `${rootDisplayName}.Result`
+  HasResult.displayName = `${rootDisplayName}.HasResult`
 
-  return Result
+  return HasResult
 }

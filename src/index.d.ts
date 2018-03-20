@@ -32,10 +32,10 @@ interface IExecutorProps {
   children: ExecutorChildrenFunction
 }
 
-type ResultChildrenFunction<Result> = (result: Result) => RenderResult
+type HasResultChildrenFunction<Result> = (result: Result) => RenderResult
 
-interface IResultProps<Result> {
-  children: ResultChildrenFunction<Result>
+interface IHasResultProps<Result> {
+  children: HasResultChildrenFunction<Result>
 }
 
 interface IStateChildrenFunctionParams<Result> {
@@ -60,7 +60,7 @@ interface IQueryTypes<Params, Result> {
   Resolved: React.ComponentType<{}>
   Rejected: React.ComponentType<IRejectedProps>
   Executor: React.ComponentType<IExecutorProps>
-  Result: React.ComponentType<IResultProps<Result>>
+  HasResult: React.ComponentType<IHasResultProps<Result>>
   State: React.ComponentType<IStateProps<Result>>
   new (): React.Component<IAsyncCallProps<Params, Result>>
 }

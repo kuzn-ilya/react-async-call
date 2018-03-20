@@ -43,16 +43,16 @@ The package is avalable on `window.ReactAsyncCall`
 ```jsx
 import createAsyncCallComponent from 'react-async-call'
 
-const PromiseRenderer = createAsyncCallComponent(value => Promise.resolve(42))
+const AsyncCall = createAsyncCallComponent(value => Promise.resolve(42))
 
 const Example = () => (
-  <PromiseRenderer>
-    <PromiseRenderer.Running>
+  <AsyncCall>
+    <AsyncCall.Running>
       <div>Loading...</div>
-    </PromiseRenderer.Running>
-    <PromiseRenderer.Result>{result => <div>The result of function call is {result}</div>}</PromiseRenderer.Result>
-    <PromiseRenderer.Rejected>{reason => <div>Error: {reason}</div>}</PromiseRenderer.Rejected>
-  </PromiseRenderer>
+    </AsyncCall.Running>
+    <AsyncCall.Result>{result => <div>The result of function call is {result}</div>}</AsyncCall.Result>
+    <AsyncCall.Rejected>{reason => <div>Error: {reason}</div>}</AsyncCall.Rejected>
+  </AsyncCall>
 )
 ```
 

@@ -7,7 +7,7 @@ import { createRunning } from './Running'
 import { createResolved } from './Resolved'
 import { createRejected } from './Rejected'
 import { createExecutor } from './Executor'
-import { createResult } from './Result'
+import { createHasResult } from './HasResult'
 import { createState } from './State'
 
 let counter = 1
@@ -44,7 +44,7 @@ export const createAsynCallComponent = (fn, displayName) => {
     static Resolved = createResolved(contextPropName, rootDisplayName)
     static Rejected = createRejected(contextPropName, rootDisplayName)
     static Executor = createExecutor(contextPropName, rootDisplayName)
-    static Result = createResult(contextPropName, rootDisplayName)
+    static HasResult = createHasResult(contextPropName, rootDisplayName)
     static State = createState(contextPropName, rootDisplayName)
 
     state = {
@@ -85,8 +85,8 @@ export const createAsynCallComponent = (fn, displayName) => {
         promise && promise.then && isFunction(promise.then),
         'Function supplied to "createAsyncCallComponent" function should return a promise.',
       )
-      promise
-        .then(value =>
+      promise.then(
+        value =>
           this.setState({
             running: false,
             rejected: false,
@@ -94,8 +94,8 @@ export const createAsynCallComponent = (fn, displayName) => {
             hasResult: true,
             result: this.state.hasResult ? this.props.mergeResult(this.state.result, value) : value,
           }),
-        )
-        .catch(reason => this.setState({ running: false, rejected: true, rejectReason: reason }))
+        reason => this.setState({ running: false, rejected: true, rejectReason: reason }),
+      )
     }
 
     execute = () => {

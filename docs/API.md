@@ -15,8 +15,8 @@ After calling this function you can use returned component and its [static sub-c
 
   <Fetcher.Result>
     {/* Renders if async operation has been executed successfully at least once: */}
-    {result => {
-      JSON.stringify(result)
+    {result =>
+      <pre>{JSON.stringify(result)></pre>
     }}
   </Fetcher.Result>
   <Fetcher.Rejected>Renders only if async operation failed</Fetcher.Rejected>
@@ -47,15 +47,15 @@ const Fetcher = createAsyncCallComponent(since =>
 
 **Optional:** Yes
 
-**Default Value:** `'PromiseRenderer'`
+**Default Value:** `'AsyncCall'`
 
 Component name (visible, for example, in React extension of Chrome Dev Tools).
 
 ## returns
 
-Returns React component class `PromiseRenderer` for the further usage. This class contains extra component classes [`Running`](#running), [`Rejected`](#rejected), [`Resolved`](#resolved), [`Result`](#result) and [`Executor`](#executor) which can be used as children (direct or indirect) of `PromiseRenderer`.
+Returns React component class `AsyncCall` for the further usage. This class contains extra component classes [`Running`](#running), [`Rejected`](#rejected), [`Resolved`](#resolved), [`HasResult`](#hasresult) and [`Executor`](#executor) which can be used as children (direct or indirect) of `AsyncCall`.
 
-# PromiseRenderer component
+# AsyncCall component
 
 ## Static Props
 
@@ -64,7 +64,7 @@ Returns React component class `PromiseRenderer` for the further usage. This clas
 React Component. Renders its children whenever async operation was started but is still executing. Otherwise renders nothing.
 
 ```jsx
-<PromiseRenderer.Running>Executing...</PromiseRenderer.Running>
+<AsyncCall.Running>Executing...</AsyncCall.Running>
 ```
 
 ### Resolved
@@ -72,7 +72,7 @@ React Component. Renders its children whenever async operation was started but i
 React Component. Renders its children whenever async operation has been completed successfully (promise was resolved), but is not started again. Otherwise renders nothing:
 
 ```jsx
-<PromiseRenderer.Resolved>Last async operation was successful!</PromiseRenderer.Resolved>
+<AsyncCall.Resolved>Last async operation was successful!</AsyncCall.Resolved>
 ```
 
 ### Rejected
@@ -82,23 +82,23 @@ React Component. Renders its children whenever async operation has been complete
 Property `children` can be either React node(s) or children function with the only argument receiving promise reject reason:
 
 ```jsx
-<PromiseRenderer.Rejected>Error!</PromiseRenderer.Rejected>
+<AsyncCall.Rejected>Error!</AsyncCall.Rejected>
 ```
 
 or
 
 ```jsx
-<PromiseRenderer.Rejected>{reason => Error: {reason}}</PromiseRenderer.Rejected>
+<AsyncCall.Rejected>{reason => Error: {reason}}</AsyncCall.Rejected>
 ```
 
-### Result
+### HasResult
 
 React Component. Renders its children whenever at least one of the previous async operations has been completed successfully.
 
 Property `children` must be a function with the only argument receiving result of async operation:
 
 ```jsx
-<PromiseRenderer.Result>{result => Error:{reason}}</PromiseRenderer.Result>
+<AsyncCall.HasResult>{result => Error:{reason}}</AsyncCall.HasResult>
 ```
 
 ### Executor
@@ -106,7 +106,7 @@ Property `children` must be a function with the only argument receiving result o
 React Component. Renders its children always. Property `children` must be a function with the only argument receiving a function for manual execution of async operation:
 
 ```jsx
-<PromiseRenderer.Executor>{execute => <button onClick={execute}>Click me!</button>}</PromiseRenderer.Executor>
+<AsyncCall.Executor>{execute => <button onClick={execute}>Click me!</button>}</AsyncCall.Executor>
 ```
 
 ## Props
@@ -115,7 +115,7 @@ React Component. Renders its children always. Property `children` must be a func
 
 **Type:** `React.ReactNode | (object) => React.Node`
 
-Property `children` can be either a ReactNode or a function that receives an object as its only argument and return ReactNode. `PromiseRenderer` component **always** renders its children. We recommend to use [the first form of using `children` property](https://github.com/kuzn-ilya/react-promise-renderer/blob/master/README.md#declarative) and respond to async operation execution results using [static sub-components](#static-props) ([`Running`](#running), [`Result`](#result), [`Rejected`](#rejected) etc.):
+Property `children` can be either a ReactNode or a function that receives an object as its only argument and return ReactNode. `AsyncCall` component **always** renders its children. We recommend to use [the first form of using `children` property](https://github.com/kuzn-ilya/react-promise-renderer/blob/master/README.md#declarative) and respond to async operation execution results using [static sub-components](#static-props) ([`Running`](#running), [`HasResult`](#hasresult), [`Rejected`](#rejected) etc.):
 
 ### params
 
