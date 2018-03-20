@@ -23,7 +23,7 @@ After calling this function you can use returned component and its [static sub-c
 </Fetcher>
 ```
 
-`createAsyncCallComponent` is the only member exported by react-promise-renderer package.
+`createAsyncCallComponent` is the only member exported by react-async-call package.
 
 ## params
 

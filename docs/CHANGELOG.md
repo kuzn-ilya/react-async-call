@@ -13,7 +13,7 @@
 
 ## 0.1.15
 
-* Fix UMD build. Now it's available on https://unpkg.com/react-promise-renderer.
+* Fix UMD build. Now it's available on https://unpkg.com/react-async-call.
 * Update [README.md](https://github.com/kuzn-ilya/react-promise-renderer/blob/master/README.md)
 * Move [CHANGELOG.md](https://github.com/kuzn-ilya/react-promise-renderer/blob/master/docs/CHANGELOG.md) into docs folder
 * Add [API.md](https://github.com/kuzn-ilya/react-promise-renderer/blob/master/docs/API.md) into docs folder

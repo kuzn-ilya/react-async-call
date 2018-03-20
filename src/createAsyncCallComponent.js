@@ -13,7 +13,7 @@ import { createState } from './State'
 let counter = 1
 
 export const createAsynCallComponent = (fn, displayName) => {
-  const contextPropName = `__react-promise-renderer__${counter++}`
+  const contextPropName = `__react-async-call__${counter++}`
   const rootDisplayName = `${displayName || 'AsyncCall'}`
 
   return class extends React.Component {
