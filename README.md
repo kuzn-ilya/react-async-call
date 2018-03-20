@@ -50,7 +50,7 @@ const Example = () => (
     <AsyncCall.Running>
       <div>Loading...</div>
     </AsyncCall.Running>
-    <AsyncCall.Result>{result => <div>The result of function call is {result}</div>}</AsyncCall.Result>
+    <AsyncCall.HasResult>{result => <div>The result of function call is {result}</div>}</AsyncCall.HasResult>
     <AsyncCall.Rejected>{reason => <div>Error: {reason}</div>}</AsyncCall.Rejected>
   </AsyncCall>
 )
@@ -62,7 +62,7 @@ const Example = () => (
 
 ### Incremental Data Fetching
 
-[![Incremental Data Fetching](https://codesandbox.io/s/718o3lpnmx)](https://codesandbox.io/s/mzzvlmj65y)
+[![Incremental Data Fetching](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/mzzvlmj65y)
 
 ## API
 
