@@ -1,5 +1,10 @@
 # Change Log
 
+## 0.1.19
+
+* The package has been renamed to react-async-call
+* `Result` inner component has been renamed to `HasResult`
+
 ## 0.1.18
 
 * New subcomponent `State` has been added
