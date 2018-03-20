@@ -115,7 +115,7 @@ React Component. Renders its children always. Property `children` must be a func
 
 **Type:** `React.ReactNode | (object) => React.Node`
 
-Property `children` can be either a ReactNode or a function that receives an object as its only argument and return ReactNode. `AsyncCall` component **always** renders its children. We recommend to use [the first form of using `children` property](https://github.com/kuzn-ilya/react-promise-renderer/blob/master/README.md#declarative) and respond to async operation execution results using [static sub-components](#static-props) ([`Running`](#running), [`HasResult`](#hasresult), [`Rejected`](#rejected) etc.):
+Property `children` can be either a ReactNode or a function that receives an object as its only argument and return ReactNode. `AsyncCall` component **always** renders its children. We recommend to use [the first form of using `children` property](https://github.com/kuzn-ilya/react-async-call/blob/master/README.md#declarative) and respond to async operation execution results using [static sub-components](#static-props) ([`Running`](#running), [`HasResult`](#hasresult), [`Rejected`](#rejected) etc.):
 
 ### params
 

@@ -1,8 +1,8 @@
 # react-async-call
 
 [![npm version](https://badge.fury.io/js/react-async-call.svg)](https://badge.fury.io/js/react-async-call)
-[![Build Status](https://travis-ci.org/kuzn-ilya/react-promise-renderer.svg?branch=master)](https://travis-ci.org/kuzn-ilya/react-promise-renderer.svg)
-[![codecov](https://codecov.io/gh/kuzn-ilya/react-promise-renderer/branch/master/graph/badge.svg)](https://codecov.io/gh/kuzn-ilya/react-promise-renderer)
+[![Build Status](https://travis-ci.org/kuzn-ilya/react-async-call.svg?branch=master)](https://travis-ci.org/kuzn-ilya/react-async-call.svg)
+[![codecov](https://codecov.io/gh/kuzn-ilya/react-async-call/branch/master/graph/badge.svg)](https://codecov.io/gh/kuzn-ilya/react-async-call)
 
 ## Overview
 
@@ -66,11 +66,11 @@ const Example = () => (
 
 ## API
 
-[See API reference here](https://github.com/kuzn-ilya/react-promise-renderer/blob/master/docs/API.md)
+[See API reference here](https://github.com/kuzn-ilya/react-async-call/blob/master/docs/API.md)
 
 ## Change Log
 
-[You can find change log here](https://github.com/kuzn-ilya/react-promise-renderer/blob/master/docs/CHANGELOG.md)
+[You can find change log here](https://github.com/kuzn-ilya/react-async-call/blob/master/docs/CHANGELOG.md)
 
 ## Credits
 
