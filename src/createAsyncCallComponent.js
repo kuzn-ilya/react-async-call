@@ -47,6 +47,7 @@ export const createAsynCallComponent = (fn, displayName) => {
     static Executor = createExecutor(contextPropName, rootDisplayName)
     static HasResult = createHasResult(contextPropName, rootDisplayName)
     static State = createState(contextPropName, rootDisplayName)
+    static contextPropName = contextPropName
 
     state = {
       running: true,
@@ -57,10 +58,7 @@ export const createAsynCallComponent = (fn, displayName) => {
 
     getChildContext() {
       return {
-        [contextPropName]: {
-          ...this.state,
-          execute: this.execute,
-        },
+        [contextPropName]: this._getState(),
       }
     }
 
@@ -70,17 +68,17 @@ export const createAsynCallComponent = (fn, displayName) => {
         'Function should be passed to createAsyncCallComponent as a first argument but got %s.',
         fn,
       )
-      this.callQueryFunc(this.props.params)
+      this._callQueryFunc(this.props.params)
     }
 
     componentWillReceiveProps(nextProps) {
       if (!shallowEqual(nextProps.params, this.props.params)) {
-        this.callQueryFunc(nextProps.params)
+        this._callQueryFunc(nextProps.params)
       }
     }
 
-    callQueryFunc = params => {
-      this.setState({ running: true, rejected: false, resolved: false, rejectReason: undefined })
+    _callQueryFunc = params => {
+      this.setState({ running: true, rejected: false, resolved: false })
       const promise = fn(params)
       invariant(
         promise && promise.then && isFunction(promise.then),
@@ -99,19 +97,29 @@ export const createAsynCallComponent = (fn, displayName) => {
       )
     }
 
+    _getState = () => {
+      const result = this.state.hasResult ? { result: this.state.result } : {}
+      const rejectReason = this.state.rejected ? { rejectReason: this.state.rejectReason } : {}
+
+      return {
+        running: this.state.running,
+        rejected: this.state.rejected,
+        resolved: this.state.resolved,
+        hasResult: this.state.hasResult,
+        execute: this.execute,
+        ...result,
+        ...rejectReason,
+      }
+    }
+
     execute = () => {
-      this.callQueryFunc()
+      this._callQueryFunc()
     }
 
     render() {
       return (
         this.props.children !== undefined &&
-        (isFunction(this.props.children)
-          ? this.props.children({
-              ...this.state,
-              execute: this.execute,
-            })
-          : this.props.children)
+        (isFunction(this.props.children) ? this.props.children(this._getState()) : this.props.children)
       )
     }
   }

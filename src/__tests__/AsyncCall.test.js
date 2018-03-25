@@ -1,4 +1,5 @@
 import * as React from 'react'
+import * as PropTypes from 'prop-types'
 import { shallow, mount } from 'enzyme'
 
 import createAsyncCallComponent from '../'
@@ -264,6 +265,155 @@ describe('AsyncCall', () => {
 
       await flushPromises()
       expect(children).toHaveBeenLastCalledWith(42)
+
+      done()
+    })
+  })
+
+  describe('context', () => {
+    let rootContext
+    let contextPropName
+    const ContextChecker = (props, context) => {
+      rootContext = context[contextPropName]
+      return null
+    }
+
+    const prepareContextChecker = parent => {
+      contextPropName = parent.contextPropName
+      ContextChecker.contextTypes = {
+        [contextPropName]: PropTypes.shape({}),
+      }
+    }
+
+    afterEach(() => {
+      rootContext = undefined
+      contextPropName = undefined
+    })
+
+    it("should pass it's state to child context", () => {
+      const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
+      prepareContextChecker(AsyncCall)
+
+      const container = mount(
+        <AsyncCall params={0}>
+          <ContextChecker />
+        </AsyncCall>,
+      )
+      expect(rootContext).toBeDefined()
+      expect(rootContext).toHaveProperty('hasResult')
+      expect(rootContext).toHaveProperty('running')
+      expect(rootContext).toHaveProperty('rejected')
+      expect(rootContext).toHaveProperty('resolved')
+      expect(rootContext).toHaveProperty('execute')
+      expect(rootContext).not.toHaveProperty('rejectReason')
+      expect(rootContext).not.toHaveProperty('result')
+    })
+
+    it('should pass appropriate properties to child context on the first run', () => {
+      const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
+      prepareContextChecker(AsyncCall)
+
+      const container = mount(
+        <AsyncCall params={0}>
+          <ContextChecker />
+        </AsyncCall>,
+      )
+      expect(rootContext.hasResult).toBe(false)
+      expect(rootContext.running).toBe(true)
+      expect(rootContext.rejected).toBe(false)
+      expect(rootContext.resolved).toBe(false)
+      expect(rootContext.execute).toBe(container.instance().execute)
+      expect(rootContext).not.toHaveProperty('rejectReason')
+      expect(rootContext).not.toHaveProperty('result')
+    })
+
+    it('should pass appropriate properties to child context on promise resolve', async done => {
+      const AsyncCall = createAsyncCallComponent(() => Promise.resolve(42))
+      prepareContextChecker(AsyncCall)
+
+      const container = mount(
+        <AsyncCall params={{}}>
+          <ContextChecker />
+        </AsyncCall>,
+      )
+
+      await flushPromises()
+
+      expect(rootContext.hasResult).toBe(true)
+      expect(rootContext.running).toBe(false)
+      expect(rootContext.rejected).toBe(false)
+      expect(rootContext.resolved).toBe(true)
+      expect(rootContext.execute).toBe(container.instance().execute)
+      expect(rootContext).not.toHaveProperty('rejectReason')
+      expect(rootContext.result).toBe(42)
+
+      done()
+    })
+
+    it('should pass appropriate properties to child context on promise rejection', async done => {
+      const AsyncCall = createAsyncCallComponent(() => Promise.reject('rejected'))
+      prepareContextChecker(AsyncCall)
+      const container = mount(
+        <AsyncCall params={{}}>
+          <ContextChecker />
+        </AsyncCall>,
+      )
+
+      await flushPromises()
+
+      expect(rootContext.hasResult).toBe(false)
+      expect(rootContext.running).toBe(false)
+      expect(rootContext.rejected).toBe(true)
+      expect(rootContext.resolved).toBe(false)
+      expect(rootContext.execute).toBe(container.instance().execute)
+      expect(rootContext.rejectReason).toBe('rejected')
+      expect(rootContext).not.toHaveProperty('result')
+
+      done()
+    })
+
+    it('should pass appropriate properties to child context on second run', async done => {
+      const AsyncCall = createAsyncCallComponent(value => Promise.resolve(value))
+      prepareContextChecker(AsyncCall)
+      const container = mount(
+        <AsyncCall params="first">
+          <ContextChecker />
+        </AsyncCall>,
+      )
+
+      await flushPromises()
+      container.setProps({ params: 'second' })
+
+      expect(rootContext.hasResult).toBe(true)
+      expect(rootContext.running).toBe(true)
+      expect(rootContext.rejected).toBe(false)
+      expect(rootContext.resolved).toBe(false)
+      expect(rootContext.execute).toBe(container.instance().execute)
+      expect(rootContext.result).toBe('first')
+      expect(rootContext).not.toHaveProperty('rejectReason')
+
+      done()
+    })
+
+    it('should pass appropriate properties to child context on second run after rejection', async done => {
+      const AsyncCall = createAsyncCallComponent(() => Promise.reject('rejected'))
+      prepareContextChecker(AsyncCall)
+      const container = mount(
+        <AsyncCall params={{ a: 1 }}>
+          <ContextChecker />
+        </AsyncCall>,
+      )
+
+      await flushPromises()
+      container.setProps({ params: { a: 2 } })
+
+      expect(rootContext.hasResult).toBe(false)
+      expect(rootContext.running).toBe(true)
+      expect(rootContext.rejected).toBe(false)
+      expect(rootContext.resolved).toBe(false)
+      expect(rootContext.execute).toBe(container.instance().execute)
+      expect(rootContext).not.toHaveProperty('result')
+      expect(rootContext).not.toHaveProperty('rejectReason')
 
       done()
     })

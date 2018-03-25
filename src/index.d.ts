@@ -1,6 +1,12 @@
 import * as React from 'react'
 
-export type RenderResult = JSX.Element | Array<JSX.Element> | string | number | null | false
+export type RenderResult =
+  | JSX.Element
+  | Array<JSX.Element | string | number | null | false>
+  | string
+  | number
+  | null
+  | false
 
 interface IAsyncCallChildrenFunctionParams<Result> {
   hasResult: boolean
@@ -55,6 +61,10 @@ interface IStateProps<Result> {
   children?: StateChildrenFunction<Result>
 }
 
+class AsyncCall<Params, Result> extends React.Component<IAsyncCallProps<Params, Result>> {
+  execute()
+}
+
 interface IQueryTypes<Params, Result> {
   Running: React.ComponentType<{}>
   Resolved: React.ComponentType<{}>
@@ -62,7 +72,8 @@ interface IQueryTypes<Params, Result> {
   Executor: React.ComponentType<IExecutorProps>
   HasResult: React.ComponentType<IHasResultProps<Result>>
   State: React.ComponentType<IStateProps<Result>>
-  new (): React.Component<IAsyncCallProps<Params, Result>>
+  contextPropName: string
+  new (): AsyncCall<Params, Result>
 }
 
 declare function createAsyncCallComponent<Params, Result>(

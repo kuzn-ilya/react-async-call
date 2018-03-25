@@ -3,6 +3,9 @@
 ## 0.1.20
 
 * Eslint has been added
+* Extra unit tests have been added
+* `AsyncCall.contextPropName` static property has been added
+* Documentation changes
 
 ## 0.1.19
 
