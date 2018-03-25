@@ -4,6 +4,16 @@ import { shallow, mount } from 'enzyme'
 import createAsyncCallComponent from '../index'
 
 describe('Executor', () => {
+  it('should be exposed as static prop from AsyncCall', () => {
+    const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
+    expect(AsyncCall.Executor).toBeDefined()
+  })
+
+  it('should expose default display names', () => {
+    const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
+    expect(AsyncCall.Executor.displayName).toBe('AsyncCall.Executor')
+  })
+
   it('should throw an error if Executor component rendered alone', () => {
     const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
     expect(() => shallow(<AsyncCall.Executor>{() => void 0}</AsyncCall.Executor>)).toThrow(

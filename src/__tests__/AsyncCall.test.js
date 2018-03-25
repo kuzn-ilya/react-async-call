@@ -16,27 +16,12 @@ describe('AsyncCall', () => {
 
   it('should return a component class with static component classes', () => {
     const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
-
     expect(AsyncCall).toBeDefined()
-    expect(AsyncCall).toBeReactComponent()
-    expect(AsyncCall.Running).toBeDefined()
-    expect(AsyncCall.Resolved).toBeDefined()
-    expect(AsyncCall.Rejected).toBeDefined()
-    expect(AsyncCall.Executor).toBeDefined()
-    expect(AsyncCall.HasResult).toBeDefined()
-    expect(AsyncCall.State).toBeDefined()
   })
 
   it('should expose default display names', () => {
     const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
-
     expect(AsyncCall.displayName).toBe('AsyncCall')
-    expect(AsyncCall.Running.displayName).toBe('AsyncCall.Running')
-    expect(AsyncCall.Resolved.displayName).toBe('AsyncCall.Resolved')
-    expect(AsyncCall.Rejected.displayName).toBe('AsyncCall.Rejected')
-    expect(AsyncCall.Executor.displayName).toBe('AsyncCall.Executor')
-    expect(AsyncCall.HasResult.displayName).toBe('AsyncCall.HasResult')
-    expect(AsyncCall.State.displayName).toBe('AsyncCall.State')
   })
 
   it('should call function passed to createAsyncCallComponent on mount', () => {

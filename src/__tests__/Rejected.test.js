@@ -6,6 +6,16 @@ import createAsyncCallComponent from '../index'
 const flushPromises = () => new Promise(resolve => setImmediate(resolve))
 
 describe('Rejected', () => {
+  it('should be exposed as static prop from AsyncCall', () => {
+    const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
+    expect(AsyncCall.Rejected).toBeDefined()
+  })
+
+  it('should expose default display names', () => {
+    const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
+    expect(AsyncCall.Rejected.displayName).toBe('AsyncCall.Rejected')
+  })
+
   it('should throw an error if Rejected component rendered alone', () => {
     const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
     expect(() => shallow(<AsyncCall.Rejected />)).toThrow(

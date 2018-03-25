@@ -6,6 +6,16 @@ import createAsyncCallComponent from '../'
 const flushPromises = () => new Promise(resolve => setImmediate(resolve))
 
 describe('Running', () => {
+  it('should be exposed as static prop from AsyncCall', () => {
+    const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
+    expect(AsyncCall.Running).toBeDefined()
+  })
+
+  it('should expose default display names', () => {
+    const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
+    expect(AsyncCall.Running.displayName).toBe('AsyncCall.Running')
+  })
+
   it('should throw an error if Running component rendered alone', () => {
     const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
     expect(() => shallow(<AsyncCall.Running />)).toThrow(

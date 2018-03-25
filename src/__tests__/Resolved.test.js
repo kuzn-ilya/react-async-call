@@ -6,6 +6,16 @@ import createAsyncCallComponent from '../index'
 const flushPromises = () => new Promise(resolve => setImmediate(resolve))
 
 describe('Resolved', () => {
+  it('should be exposed as static prop from AsyncCall', () => {
+    const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
+    expect(AsyncCall.Resolved).toBeDefined()
+  })
+
+  it('should expose default display names', () => {
+    const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
+    expect(AsyncCall.Resolved.displayName).toBe('AsyncCall.Resolved')
+  })
+
   it('should throw an error if Resolved component rendered alone', () => {
     const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
     expect(() => shallow(<AsyncCall.Resolved />)).toThrow(
