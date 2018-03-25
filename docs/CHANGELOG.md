@@ -6,6 +6,7 @@
 * Extra unit tests have been added
 * `AsyncCall.contextPropName` static property has been added
 * Documentation changes
+* TypeScript examples have been added
 
 ## 0.1.19
 

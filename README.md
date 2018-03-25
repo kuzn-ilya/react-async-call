@@ -38,7 +38,8 @@ The package is avalable on `window.ReactAsyncCall`
 
 ### Basic Usage
 
-[![Basic Usage](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/y7349vl4oj)
+* [JavaScript Example](https://codesandbox.io/s/y7349vl4oj)
+* [TypeScript Example](https://codesandbox.io/s/w76rq8jjx8)
 
 ```jsx
 import createAsyncCallComponent from 'react-async-call'
@@ -58,11 +59,13 @@ const Example = () => (
 
 ### Data Fetching
 
-[![Data Fetching](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/vn8qmr43yy)
+* [JavaScript Example](https://codesandbox.io/s/vn8qmr43yy)
+* [TypeScript Example](https://codesandbox.io/s/ryxwnkl34)
 
 ### Incremental Data Fetching
 
-[![Incremental Data Fetching](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/mzzvlmj65y)
+* [JavaScript Example](https://codesandbox.io/s/mzzvlmj65y)
+* [TypeScript Example](https://codesandbox.io/s/5y3m6mrx9p)
 
 ## API
 
