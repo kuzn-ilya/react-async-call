@@ -23,6 +23,18 @@ describe('Resolved', () => {
     )
   })
 
+  it("should not call Resolved's children function if promise has not been resolved yet", () => {
+    const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
+    const children = jest.fn(() => void 0)
+    const container = mount(
+      <AsyncCall params={{}}>
+        <AsyncCall.Resolved>{children}</AsyncCall.Resolved>
+      </AsyncCall>,
+    )
+
+    expect(children).not.toHaveBeenCalled()
+  })
+
   it("should not render Resolved's children if promise has not been resolved yet", () => {
     const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
     const container = mount(
@@ -35,6 +47,20 @@ describe('Resolved', () => {
     const resolvedContainer = container.childAt(0)
     expect(resolvedContainer).toBeDefined()
     expect(resolvedContainer).toHaveEmptyRender()
+  })
+
+  it("should not call Resolved's children function if promise has been rejected", async done => {
+    const AsyncCall = createAsyncCallComponent(() => Promise.reject('error'))
+    const children = jest.fn(() => void 0)
+    mount(
+      <AsyncCall params={{}}>
+        <AsyncCall.Resolved>{children}</AsyncCall.Resolved>
+      </AsyncCall>,
+    )
+
+    await flushPromises()
+    expect(children).not.toHaveBeenCalled()
+    done()
   })
 
   it("should not render Resolved's children if promise has been rejected", async done => {
@@ -50,6 +76,28 @@ describe('Resolved', () => {
     const resolvedContainer = container.childAt(0)
     expect(resolvedContainer).toBeDefined()
     expect(resolvedContainer).toHaveEmptyRender()
+
+    done()
+  })
+
+  it("should call Resolved's children function if promise has been resolved", async done => {
+    const AsyncCall = createAsyncCallComponent(() => Promise.resolve(42))
+    const children = jest.fn(() => <div>ABCDEF</div>)
+    const container = mount(
+      <AsyncCall params={{}}>
+        <AsyncCall.Resolved>{children}</AsyncCall.Resolved>
+      </AsyncCall>,
+    )
+
+    await flushPromises()
+    container.update()
+
+    expect(children).toHaveBeenCalledWith(42)
+    expect(container.children().exists()).toBe(true)
+    const resolvedContainer = container.childAt(0)
+    expect(resolvedContainer).toBeDefined()
+    expect(resolvedContainer).not.toHaveEmptyRender()
+    expect(resolvedContainer.text()).toBe('ABCDEF')
 
     done()
   })
@@ -100,6 +148,23 @@ describe('Resolved', () => {
     done()
   })
 
+  it("should not call Resolved's children function if promise has not been resolved the second time", async done => {
+    const fn = jest.fn(value => Promise.resolve(value))
+    const children = jest.fn(result => null)
+    const AsyncCall = createAsyncCallComponent(fn)
+    const container = mount(
+      <AsyncCall params="first">
+        <AsyncCall.Resolved>{children}</AsyncCall.Resolved>
+      </AsyncCall>,
+    )
+
+    await flushPromises()
+    container.instance().execute()
+    expect(children).toHaveBeenCalledTimes(1)
+
+    done()
+  })
+
   it("should not render Resolved's children if promise has not been resolved the second time", async done => {
     const fn = jest.fn(value => Promise.resolve(value))
     const AsyncCall = createAsyncCallComponent(fn)
@@ -110,7 +175,6 @@ describe('Resolved', () => {
     )
 
     await flushPromises()
-
     container.instance().execute()
 
     expect(fn).toHaveBeenCalledTimes(2)

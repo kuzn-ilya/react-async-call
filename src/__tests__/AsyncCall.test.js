@@ -106,7 +106,6 @@ describe('AsyncCall', () => {
       running: true,
       resolved: false,
       rejected: false,
-      hasResult: false,
       execute: container.instance().execute,
     })
   })
@@ -120,7 +119,6 @@ describe('AsyncCall', () => {
       running: true,
       resolved: false,
       rejected: false,
-      hasResult: false,
       execute: container.instance().execute,
     })
 
@@ -131,7 +129,6 @@ describe('AsyncCall', () => {
       resolved: true,
       result: 42,
       rejected: false,
-      hasResult: true,
       execute: container.instance().execute,
     })
 
@@ -147,7 +144,6 @@ describe('AsyncCall', () => {
       running: true,
       rejected: false,
       resolved: false,
-      hasResult: false,
       execute: container.instance().execute,
     })
 
@@ -158,7 +154,6 @@ describe('AsyncCall', () => {
       rejected: true,
       resolved: false,
       rejectReason: 'rejected',
-      hasResult: false,
       execute: container.instance().execute,
     })
 
@@ -184,26 +179,6 @@ describe('AsyncCall', () => {
     expect(container.childAt(1).text()).toBe('12345')
   })
 
-  it('should call children fn and pass { running: true, rejected: false, result: <previous result> } as an arguments to it if promise has been called the second time after resolving', async done => {
-    const AsyncCall = createAsyncCallComponent(value => Promise.resolve(value))
-    const children = jest.fn(() => null)
-    const container = shallow(<AsyncCall params="first">{children}</AsyncCall>)
-
-    await flushPromises()
-    container.setProps({ params: 'second' })
-
-    expect(children).toHaveBeenLastCalledWith({
-      running: true,
-      rejected: false,
-      resolved: false,
-      result: 'first',
-      hasResult: true,
-      execute: container.instance().execute,
-    })
-
-    done()
-  })
-
   it('should call children fn and pass { running: true, rejected: false, rejectedResult: undefined } as an arguments to it if promise has been called the second time after rejection', async done => {
     const AsyncCall = createAsyncCallComponent(() => Promise.reject('rejected'))
     const children = jest.fn(() => null)
@@ -217,57 +192,10 @@ describe('AsyncCall', () => {
       rejected: false,
       resolved: false,
       rejectReason: undefined,
-      hasResult: false,
       execute: container.instance().execute,
     })
 
     done()
-  })
-
-  describe('mergeResult', () => {
-    it('should not call mergeResult callback if promise has been called the first time', async done => {
-      const AsyncCall = createAsyncCallComponent(value => Promise.resolve())
-      const mergeResult = jest.fn(() => void 0)
-      const container = shallow(<AsyncCall params={0} mergeResult={mergeResult} />)
-      await flushPromises()
-
-      expect(mergeResult).not.toHaveBeenCalled()
-
-      done()
-    })
-
-    it('should call mergeResult callback if promise has been called the second time', async done => {
-      const AsyncCall = createAsyncCallComponent(value => Promise.resolve(value))
-      const mergeResult = jest.fn((prevResult, currentResult) => void 0)
-      const container = shallow(<AsyncCall params={0} mergeResult={mergeResult} />)
-
-      container.setProps({ params: 1 })
-
-      await flushPromises()
-
-      expect(mergeResult).toHaveBeenCalledTimes(1)
-      expect(mergeResult).toHaveBeenCalledWith(0, 1)
-
-      done()
-    })
-
-    it('should pass returning value of mergeResult callback to a children function', async done => {
-      const AsyncCall = createAsyncCallComponent(value => Promise.resolve(value))
-      const mergeResult = (prevResult, currentResult) => prevResult + currentResult
-      const children = jest.fn(result => null)
-      const container = shallow(
-        <AsyncCall params={10} mergeResult={mergeResult}>
-          {({ result }) => children(result)}
-        </AsyncCall>,
-      )
-
-      container.setProps({ params: 32 })
-
-      await flushPromises()
-      expect(children).toHaveBeenLastCalledWith(42)
-
-      done()
-    })
   })
 
   describe('context', () => {
@@ -300,7 +228,6 @@ describe('AsyncCall', () => {
         </AsyncCall>,
       )
       expect(rootContext).toBeDefined()
-      expect(rootContext).toHaveProperty('hasResult')
       expect(rootContext).toHaveProperty('running')
       expect(rootContext).toHaveProperty('rejected')
       expect(rootContext).toHaveProperty('resolved')
@@ -318,7 +245,6 @@ describe('AsyncCall', () => {
           <ContextChecker />
         </AsyncCall>,
       )
-      expect(rootContext.hasResult).toBe(false)
       expect(rootContext.running).toBe(true)
       expect(rootContext.rejected).toBe(false)
       expect(rootContext.resolved).toBe(false)
@@ -339,7 +265,6 @@ describe('AsyncCall', () => {
 
       await flushPromises()
 
-      expect(rootContext.hasResult).toBe(true)
       expect(rootContext.running).toBe(false)
       expect(rootContext.rejected).toBe(false)
       expect(rootContext.resolved).toBe(true)
@@ -361,7 +286,6 @@ describe('AsyncCall', () => {
 
       await flushPromises()
 
-      expect(rootContext.hasResult).toBe(false)
       expect(rootContext.running).toBe(false)
       expect(rootContext.rejected).toBe(true)
       expect(rootContext.resolved).toBe(false)
@@ -384,12 +308,11 @@ describe('AsyncCall', () => {
       await flushPromises()
       container.setProps({ params: 'second' })
 
-      expect(rootContext.hasResult).toBe(true)
       expect(rootContext.running).toBe(true)
       expect(rootContext.rejected).toBe(false)
       expect(rootContext.resolved).toBe(false)
       expect(rootContext.execute).toBe(container.instance().execute)
-      expect(rootContext.result).toBe('first')
+      expect(rootContext).not.toHaveProperty('result')
       expect(rootContext).not.toHaveProperty('rejectReason')
 
       done()
@@ -407,7 +330,6 @@ describe('AsyncCall', () => {
       await flushPromises()
       container.setProps({ params: { a: 2 } })
 
-      expect(rootContext.hasResult).toBe(false)
       expect(rootContext.running).toBe(true)
       expect(rootContext.rejected).toBe(false)
       expect(rootContext.resolved).toBe(false)

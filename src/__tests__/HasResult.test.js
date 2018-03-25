@@ -5,21 +5,21 @@ import createAsyncCallComponent from '../index'
 
 const flushPromises = () => new Promise(resolve => setImmediate(resolve))
 
-describe('Result', () => {
+describe('HasResult', () => {
   it('should be exposed as static prop from AsyncCall', () => {
     const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
-    expect(AsyncCall.HasResult).toBeDefined()
+    expect(AsyncCall.ResultStore.HasResult).toBeDefined()
   })
 
   it('should expose default display names', () => {
     const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
-    expect(AsyncCall.HasResult.displayName).toBe('AsyncCall.HasResult')
+    expect(AsyncCall.ResultStore.HasResult.displayName).toBe('AsyncCall.ResultStore.HasResult')
   })
 
   it('should throw an error if Result component rendered alone', () => {
     const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
-    expect(() => shallow(<AsyncCall.HasResult>{() => {}}</AsyncCall.HasResult>)).toThrow(
-      '<AsyncCall.HasResult> must be a child (direct or indirect) of <AsyncCall>.',
+    expect(() => shallow(<AsyncCall.ResultStore.HasResult>{() => null}</AsyncCall.ResultStore.HasResult>)).toThrow(
+      '<AsyncCall.ResultStore.HasResult> must be a child (direct or indirect) of <AsyncCall.ResultStore>.',
     )
   })
 
@@ -32,7 +32,9 @@ describe('Result', () => {
     expect(() =>
       mount(
         <AsyncCall params="first">
-          <AsyncCall.HasResult />
+          <AsyncCall.ResultStore>
+            <AsyncCall.ResultStore.HasResult>{() => null}</AsyncCall.ResultStore.HasResult>
+          </AsyncCall.ResultStore>
         </AsyncCall>,
       ),
     ).toThrow()
@@ -43,12 +45,18 @@ describe('Result', () => {
     const children = jest.fn(() => null)
     const container = mount(
       <AsyncCall params={{}}>
-        <AsyncCall.HasResult>{children}</AsyncCall.HasResult>
+        <AsyncCall.ResultStore>
+          <AsyncCall.ResultStore.HasResult>{children}</AsyncCall.ResultStore.HasResult>
+        </AsyncCall.ResultStore>
       </AsyncCall>,
     )
 
     expect(container.children().exists()).toBe(true)
-    const resultContainer = container.childAt(0)
+    const resultStoreContainer = container.childAt(0)
+    expect(resultStoreContainer).toBeDefined()
+
+    expect(resultStoreContainer.children().exists()).toBe(true)
+    const resultContainer = resultStoreContainer.childAt(0)
     expect(resultContainer).toBeDefined()
     expect(resultContainer).toHaveEmptyRender()
 
@@ -60,16 +68,23 @@ describe('Result', () => {
     const children = jest.fn(() => null)
     const container = mount(
       <AsyncCall params={{}}>
-        <AsyncCall.HasResult>{children}</AsyncCall.HasResult>
+        <AsyncCall.ResultStore>
+          <AsyncCall.ResultStore.HasResult>{children}</AsyncCall.ResultStore.HasResult>
+        </AsyncCall.ResultStore>
       </AsyncCall>,
     )
 
     await flushPromises()
 
     expect(container.children().exists()).toBe(true)
-    const resultContainer = container.childAt(0)
+    const resultStoreContainer = container.childAt(0)
+    expect(resultStoreContainer).toBeDefined()
+
+    expect(resultStoreContainer.children().exists()).toBe(true)
+    const resultContainer = resultStoreContainer.childAt(0)
     expect(resultContainer).toBeDefined()
     expect(resultContainer).toHaveEmptyRender()
+
     expect(children).not.toHaveBeenCalled()
 
     done()
@@ -80,7 +95,9 @@ describe('Result', () => {
     const children = jest.fn(value => <div>result</div>)
     const container = mount(
       <AsyncCall params={{}}>
-        <AsyncCall.HasResult>{children}</AsyncCall.HasResult>
+        <AsyncCall.ResultStore>
+          <AsyncCall.ResultStore.HasResult>{children}</AsyncCall.ResultStore.HasResult>
+        </AsyncCall.ResultStore>
       </AsyncCall>,
     )
 

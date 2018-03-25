@@ -51,7 +51,6 @@ describe('State', () => {
       running: true,
       resolved: false,
       rejected: false,
-      hasResult: false,
       execute: container.instance().execute,
     })
   })
@@ -69,7 +68,6 @@ describe('State', () => {
       running: true,
       resolved: false,
       rejected: false,
-      hasResult: false,
       execute: container.instance().execute,
     })
 
@@ -80,7 +78,6 @@ describe('State', () => {
       resolved: true,
       result: 42,
       rejected: false,
-      hasResult: true,
       execute: container.instance().execute,
     })
 
@@ -100,7 +97,6 @@ describe('State', () => {
       running: true,
       rejected: false,
       resolved: false,
-      hasResult: false,
       execute: container.instance().execute,
     })
 
@@ -111,14 +107,13 @@ describe('State', () => {
       rejected: true,
       resolved: false,
       rejectReason: 'rejected',
-      hasResult: false,
       execute: container.instance().execute,
     })
 
     done()
   })
 
-  it('should call children fn and pass { running: true, rejected: false, result: <previous result> } as an arguments to it if promise has been called the second time after resolving', async done => {
+  it('should call children fn and pass { running: true, rejected: false } as an arguments to it if promise has been called the second time after resolving', async done => {
     const AsyncCall = createAsyncCallComponent(value => Promise.resolve(value))
     const children = jest.fn(() => null)
     const container = mount(
@@ -134,8 +129,6 @@ describe('State', () => {
       running: true,
       rejected: false,
       resolved: false,
-      result: 'first',
-      hasResult: true,
       execute: container.instance().execute,
     })
 
@@ -159,7 +152,6 @@ describe('State', () => {
       rejected: false,
       resolved: false,
       rejectReason: undefined,
-      hasResult: false,
       execute: container.instance().execute,
     })
 

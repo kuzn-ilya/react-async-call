@@ -9,12 +9,10 @@ export type RenderResult =
   | false
 
 interface IAsyncCallChildrenFunctionParams<Result> {
-  hasResult: boolean
   running: boolean
   rejected: boolean
   resolved: boolean
   result?: Result
-  hasResult: boolean
   rejectReason: any
   execute: () => void
 }
@@ -23,7 +21,6 @@ type AsyncCallChildrenFunction<Result> = (params: IAsyncCallChildrenFunctionPara
 
 interface IAsyncCallProps<Params, Result> {
   params: Params
-  mergeResult?: (prevResult: Result, currentResult: Result) => Result
   children?: AsyncCallChildrenFunction<Result> | RenderResult
 }
 
@@ -45,13 +42,11 @@ interface IHasResultProps<Result> {
 }
 
 interface IStateChildrenFunctionParams<Result> {
-  hasResult: boolean
   running: boolean
   rejected: boolean
   resolved: boolean
   result?: Result
-  hasResult: boolean
-  rejectReason: any
+  rejectReason?: any
   execute: () => void
 }
 
@@ -61,8 +56,21 @@ interface IStateProps<Result> {
   children?: StateChildrenFunction<Result>
 }
 
+type ResultStoreChildrenFunction<Result> = (result: Result) => RenderResult
+
+interface IResultStoreProps<Result> {
+  reduce?: (accumulator: Result, currentResult: Result) => Result
+  children?: ResultStoreChildrenFunction<Result> | RenderResult
+}
+
 class AsyncCall<Params, Result> extends React.Component<IAsyncCallProps<Params, Result>> {
   execute()
+}
+
+interface IResultStore<Result> {
+  HasResult: React.ComponentType<IHasResultProps<Result>>
+  reduce?: (accumulator: Result, currentResult: Result) => Result
+  new (): React.Component<IResultStoreProps<Result>>
 }
 
 interface IQueryTypes<Params, Result> {
@@ -70,8 +78,8 @@ interface IQueryTypes<Params, Result> {
   Resolved: React.ComponentType<{}>
   Rejected: React.ComponentType<IRejectedProps>
   Executor: React.ComponentType<IExecutorProps>
-  HasResult: React.ComponentType<IHasResultProps<Result>>
   State: React.ComponentType<IStateProps<Result>>
+  ResultStore: IResultStore<Result>
   contextPropName: string
   new (): AsyncCall<Params, Result>
 }
