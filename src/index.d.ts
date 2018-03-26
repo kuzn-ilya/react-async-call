@@ -61,6 +61,7 @@ type ResultStoreChildrenFunction<Result> = (result: Result) => RenderResult
 interface IResultStoreProps<Result> {
   reduce?: (accumulator: Result, currentResult: Result) => Result
   initialValue?: Result
+  reset?: boolean
   children?: ResultStoreChildrenFunction<Result> | RenderResult
 }
 

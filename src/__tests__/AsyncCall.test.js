@@ -3,8 +3,7 @@ import * as PropTypes from 'prop-types'
 import { shallow, mount } from 'enzyme'
 
 import createAsyncCallComponent from '../'
-
-const flushPromises = () => new Promise(resolve => setImmediate(resolve))
+import { flushPromises } from './common'
 
 describe('AsyncCall', () => {
   it('should throw an error if a function is not passed to createAsyncCallComponent', () => {
@@ -115,13 +114,6 @@ describe('AsyncCall', () => {
     const children = jest.fn(() => null)
     const container = shallow(<AsyncCall params={{}}>{children}</AsyncCall>)
 
-    expect(children).toHaveBeenLastCalledWith({
-      running: true,
-      resolved: false,
-      rejected: false,
-      execute: container.instance().execute,
-    })
-
     await flushPromises()
 
     expect(children).toHaveBeenLastCalledWith({
@@ -139,13 +131,6 @@ describe('AsyncCall', () => {
     const AsyncCall = createAsyncCallComponent(() => Promise.reject('rejected'))
     const children = jest.fn(() => null)
     const container = shallow(<AsyncCall params={{}}>{children}</AsyncCall>)
-
-    expect(children).toHaveBeenLastCalledWith({
-      running: true,
-      rejected: false,
-      resolved: false,
-      execute: container.instance().execute,
-    })
 
     await flushPromises()
 
