@@ -23,6 +23,8 @@ export const createResultStore = (contextPropName, rootDisplayName) => {
     static propTypes = {
       children: PropTypes.oneOfType([PropTypes.func, PropTypes.node]),
       reduce: PropTypes.func,
+      reset: PropTypes.bool,
+      initialValue: PropTypes.any,
     }
 
     static defaultProps = {
@@ -43,15 +45,32 @@ export const createResultStore = (contextPropName, rootDisplayName) => {
       }
     }
 
-    componentWillReceiveProps(_, nextContext) {
+    componentDidMount() {
+      if (this.context[contextPropName].resolved || this.props.hasOwnProperty('initialValue')) {
+        this.setState({
+          hasResult: true,
+          result: this.context[contextPropName].resolved
+            ? this.context[contextPropName].result
+            : this.props.initialValue,
+        })
+      }
+    }
+
+    componentWillReceiveProps(nextProps, nextContext) {
+      if (nextProps.reset) {
+        this.setState({
+          hasResult: false,
+        })
+      }
       if (nextContext[contextPropName].resolved && !this.context[contextPropName].resolved) {
-        if (this.state.hasResult) {
-          this.setState(prevState => ({
-            result: this.props.reduce(prevState.result, nextContext[contextPropName].result),
-          }))
-        } else {
-          this.setState({ hasResult: true, result: nextContext[contextPropName].result })
-        }
+        this.setState(
+          prevState =>
+            prevState.hasResult
+              ? {
+                  result: this.props.reduce(prevState.result, nextContext[contextPropName].result),
+                }
+              : { hasResult: true, result: nextContext[contextPropName].result },
+        )
       }
     }
 

@@ -60,6 +60,7 @@ type ResultStoreChildrenFunction<Result> = (result: Result) => RenderResult
 
 interface IResultStoreProps<Result> {
   reduce?: (accumulator: Result, currentResult: Result) => Result
+  initialValue?: Result
   children?: ResultStoreChildrenFunction<Result> | RenderResult
 }
 
@@ -69,7 +70,6 @@ class AsyncCall<Params, Result> extends React.Component<IAsyncCallProps<Params, 
 
 interface IResultStore<Result> {
   HasResult: React.ComponentType<IHasResultProps<Result>>
-  reduce?: (accumulator: Result, currentResult: Result) => Result
   new (): React.Component<IResultStoreProps<Result>>
 }
 
