@@ -9,6 +9,7 @@ import { createRejected } from './Rejected'
 import { createExecutor } from './Executor'
 import { createState } from './State'
 import { createResultStore } from './ResultStore'
+import { createCompleted } from './Completed'
 
 let counter = 1
 
@@ -41,6 +42,7 @@ export const createAsynCallComponent = (fn, displayName) => {
     static Executor = createExecutor(contextPropName, rootDisplayName)
     static State = createState(contextPropName, rootDisplayName)
     static ResultStore = createResultStore(contextPropName, rootDisplayName)
+    static Completed = createCompleted(contextPropName, rootDisplayName)
     static contextPropName = contextPropName
 
     state = {

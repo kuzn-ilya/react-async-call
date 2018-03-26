@@ -30,6 +30,12 @@ interface IRejectedProps {
   children?: RejectedChildrenFunction | RenderResult
 }
 
+type ResolvedChildrenFunction<Result> = (result: Result) => RenderResult
+
+interface IResolvedProps<Result> {
+  children?: ResolvedChildrenFunction<Result> | RenderResult
+}
+
 type ExecutorChildrenFunction = () => RenderResult
 interface IExecutorProps {
   children: ExecutorChildrenFunction
@@ -76,7 +82,8 @@ interface IResultStore<Result> {
 
 interface IQueryTypes<Params, Result> {
   Running: React.ComponentType<{}>
-  Resolved: React.ComponentType<{}>
+  Completed: React.ComponentType<{}>
+  Resolved: React.ComponentType<IResolvedProps<Result>>
   Rejected: React.ComponentType<IRejectedProps>
   Executor: React.ComponentType<IExecutorProps>
   State: React.ComponentType<IStateProps<Result>>

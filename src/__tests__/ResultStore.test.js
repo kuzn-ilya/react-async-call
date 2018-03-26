@@ -3,8 +3,7 @@ import * as PropTypes from 'prop-types'
 import { shallow, mount } from 'enzyme'
 
 import createAsyncCallComponent from '../index'
-
-const flushPromises = () => new Promise(resolve => setImmediate(resolve))
+import { flushPromises } from './common'
 
 describe('ResultStore', () => {
   describe('general', () => {

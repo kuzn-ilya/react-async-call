@@ -2,8 +2,7 @@ import * as React from 'react'
 import { shallow, mount } from 'enzyme'
 
 import createAsyncCallComponent from '../index'
-
-const flushPromises = () => new Promise(resolve => setImmediate(resolve))
+import { flushPromises } from './common'
 
 describe('State', () => {
   it('should be exposed as static prop from AsyncCall', () => {
