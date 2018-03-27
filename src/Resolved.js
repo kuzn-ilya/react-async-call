@@ -11,8 +11,7 @@ export const createResolved = (contextPropName, rootDisplayName) => {
 
     return (
       context[contextPropName].resolved &&
-      props.children !== undefined &&
-      (isFunction(props.children) ? props.children(context[contextPropName].result) || null : props.children)
+      ((isFunction(props.children) ? props.children(context[contextPropName].result) : props.children) || null)
     )
   }
 

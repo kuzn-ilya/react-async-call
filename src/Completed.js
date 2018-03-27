@@ -7,7 +7,7 @@ export const createCompleted = (contextPropName, rootDisplayName) => {
       context[contextPropName],
       `<${Completed.displayName}> must be a child (direct or indirect) of <${rootDisplayName}>.`,
     )
-    return context[contextPropName].resolved || context[contextPropName].rejected ? props.children : null
+    return ((context[contextPropName].resolved || context[contextPropName].rejected) && props.children) || null
   }
 
   Completed.contextTypes = {

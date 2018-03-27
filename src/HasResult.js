@@ -9,9 +9,11 @@ export const createHasResult = (contextPropName, rootDisplayName) => {
       `<${HasResult.displayName}> must be a child (direct or indirect) of <${rootDisplayName}>.`,
     )
 
-    return context[contextPropName][resultStoreContextPropName].hasResult
-      ? props.children(context[contextPropName][resultStoreContextPropName].result)
-      : null
+    return (
+      (context[contextPropName][resultStoreContextPropName].hasResult &&
+        props.children(context[contextPropName][resultStoreContextPropName].result)) ||
+      null
+    )
   }
 
   HasResult.contextTypes = {

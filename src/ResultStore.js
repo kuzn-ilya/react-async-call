@@ -79,7 +79,7 @@ export const createResultStore = (contextPropName, rootDisplayName) => {
         `<${ResultStore.displayName}> must be a child (direct or indirect) of <${rootDisplayName}>.`,
       )
 
-      return isFunction(this.props.children) ? this.props.children(this._getState()) : this.props.children || null
+      return (isFunction(this.props.children) ? this.props.children(this._getState()) : this.props.children) || null
     }
 
     _getState() {

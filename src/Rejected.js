@@ -9,9 +9,10 @@ export const createRejected = (contextPropName, rootDisplayName) => {
       `<${Rejected.displayName}> must be a child (direct or indirect) of <${rootDisplayName}>.`,
     )
 
-    return context[contextPropName].rejected
-      ? isFunction(props.children) ? props.children(context[contextPropName].rejectReason) : props.children
-      : null
+    return (
+      context[contextPropName].rejected &&
+      ((isFunction(props.children) ? props.children(context[contextPropName].rejectReason) : props.children) || null)
+    )
   }
 
   Rejected.contextTypes = {
