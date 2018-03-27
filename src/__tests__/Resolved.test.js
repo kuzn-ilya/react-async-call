@@ -101,6 +101,49 @@ describe('Resolved', () => {
     done()
   })
 
+  it("should render Resolved's empty children if promise has been resolved", async done => {
+    const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
+    const container = mount(
+      <AsyncCall params={{}}>
+        <AsyncCall.Resolved />
+      </AsyncCall>,
+    )
+
+    await flushPromises()
+    container.update()
+
+    expect(container.children().exists()).toBe(true)
+    const resolvedContainer = container.childAt(0)
+
+    expect(resolvedContainer).toBeDefined()
+    expect(resolvedContainer).toHaveEmptyRender()
+
+    done()
+  })
+
+  const values = [false, null, undefined]
+  values.forEach(value =>
+    it(`should render Resolved's children function that returns ${value} if promise has been resolved`, async done => {
+      const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
+      const container = mount(
+        <AsyncCall params={{}}>
+          <AsyncCall.Resolved>{() => value}</AsyncCall.Resolved>
+        </AsyncCall>,
+      )
+
+      await flushPromises()
+      container.update()
+
+      expect(container.children().exists()).toBe(true)
+      const resolvedContainer = container.childAt(0)
+
+      expect(resolvedContainer).toBeDefined()
+      expect(resolvedContainer).toHaveEmptyRender()
+
+      done()
+    }),
+  )
+
   it("should render Resolved's children if promise has been resolved", async done => {
     const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
     const container = mount(

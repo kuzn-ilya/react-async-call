@@ -3,6 +3,7 @@ import * as PropTypes from 'prop-types'
 import { shallow, mount } from 'enzyme'
 
 import createAsyncCallComponent from '../index'
+import { resultStoreContextPropName, resultStoreContextPropType } from '../common'
 import { flushPromises } from './common'
 
 describe('ResultStore', () => {
@@ -292,15 +293,13 @@ describe('ResultStore', () => {
     let rootContext
     let contextPropName
     const ContextChecker = (props, context) => {
-      rootContext = context[contextPropName]
+      rootContext = context[contextPropName][resultStoreContextPropName]
       return null
     }
 
     const prepareContextChecker = parent => {
       contextPropName = parent.contextPropName
-      ContextChecker.contextTypes = {
-        [contextPropName]: PropTypes.shape({}),
-      }
+      ContextChecker.contextTypes = resultStoreContextPropType
     }
 
     afterEach(() => {

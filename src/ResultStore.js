@@ -1,16 +1,13 @@
 import * as React from 'react'
 import * as PropTypes from 'prop-types'
 import invariant from 'fbjs/lib/invariant'
-import { isFunction } from './common'
+import { isFunction, resultStoreContextPropType, resultStoreContextPropName } from './common'
 import { createHasResult } from './HasResult'
 
 export const createResultStore = (contextPropName, rootDisplayName) => {
   class ResultStore extends React.Component {
     static childContextTypes = {
-      [contextPropName]: PropTypes.shape({
-        hasResult: PropTypes.bool,
-        result: PropTypes.any,
-      }),
+      [contextPropName]: resultStoreContextPropType,
     }
 
     static contextTypes = {
@@ -41,7 +38,9 @@ export const createResultStore = (contextPropName, rootDisplayName) => {
 
     getChildContext() {
       return {
-        [contextPropName]: this._getState(),
+        [contextPropName]: {
+          [resultStoreContextPropName]: this._getState(),
+        },
       }
     }
 
