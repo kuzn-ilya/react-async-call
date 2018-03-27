@@ -10,8 +10,9 @@ export const createResolved = (contextPropName, rootDisplayName) => {
     )
 
     return (
-      context[contextPropName].resolved &&
-      ((isFunction(props.children) ? props.children(context[contextPropName].result) : props.children) || null)
+      (context[contextPropName].resolved &&
+        (isFunction(props.children) ? props.children(context[contextPropName].result) : props.children)) ||
+      null
     )
   }
 
