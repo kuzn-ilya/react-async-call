@@ -1,5 +1,8 @@
 # Change Log
 
+## 0.2.1
+* Fix typings
+
 ## 0.2.0
 * `ResultStore` sub-component has been added instead of `mergeResult` prop
 * `Completed` component has been added. It renders its children when the promise either rejected or resolved.
