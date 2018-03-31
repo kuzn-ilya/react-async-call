@@ -7,8 +7,9 @@ import { createRunning } from './Running'
 import { createResolved } from './Resolved'
 import { createRejected } from './Rejected'
 import { createExecutor } from './Executor'
-import { createHasResult } from './HasResult'
 import { createState } from './State'
+import { createResultStore } from './ResultStore'
+import { createCompleted } from './Completed'
 
 let counter = 1
 
@@ -19,24 +20,18 @@ export const createAsynCallComponent = (fn, displayName) => {
   return class extends React.Component {
     static childContextTypes = {
       [contextPropName]: PropTypes.shape({
-        hasResult: PropTypes.bool,
+        result: PropTypes.any,
         running: PropTypes.bool,
         rejected: PropTypes.bool,
         resolved: PropTypes.bool,
         rejectReason: PropTypes.any,
-        result: PropTypes.any,
         execute: PropTypes.func,
       }),
     }
 
     static propTypes = {
       params: PropTypes.any.isRequired,
-      mergeResult: PropTypes.func,
       children: PropTypes.oneOfType([PropTypes.node, PropTypes.func]),
-    }
-
-    static defaultProps = {
-      mergeResult: (_, currentResult) => currentResult,
     }
 
     static displayName = rootDisplayName
@@ -45,15 +40,15 @@ export const createAsynCallComponent = (fn, displayName) => {
     static Resolved = createResolved(contextPropName, rootDisplayName)
     static Rejected = createRejected(contextPropName, rootDisplayName)
     static Executor = createExecutor(contextPropName, rootDisplayName)
-    static HasResult = createHasResult(contextPropName, rootDisplayName)
     static State = createState(contextPropName, rootDisplayName)
+    static ResultStore = createResultStore(contextPropName, rootDisplayName)
+    static Completed = createCompleted(contextPropName, rootDisplayName)
     static contextPropName = contextPropName
 
     state = {
       running: true,
       rejected: false,
       resolved: false,
-      hasResult: false,
     }
 
     getChildContext() {
@@ -90,22 +85,20 @@ export const createAsynCallComponent = (fn, displayName) => {
             running: false,
             rejected: false,
             resolved: true,
-            hasResult: true,
-            result: this.state.hasResult ? this.props.mergeResult(this.state.result, value) : value,
+            result: value,
           }),
         reason => this.setState({ running: false, rejected: true, rejectReason: reason }),
       )
     }
 
     _getState = () => {
-      const result = this.state.hasResult ? { result: this.state.result } : {}
+      const result = this.state.resolved ? { result: this.state.result } : {}
       const rejectReason = this.state.rejected ? { rejectReason: this.state.rejectReason } : {}
 
       return {
         running: this.state.running,
         rejected: this.state.rejected,
         resolved: this.state.resolved,
-        hasResult: this.state.hasResult,
         execute: this.execute,
         ...result,
         ...rejectReason,
@@ -119,7 +112,7 @@ export const createAsynCallComponent = (fn, displayName) => {
     render() {
       return (
         this.props.children !== undefined &&
-        (isFunction(this.props.children) ? this.props.children(this._getState()) : this.props.children)
+        (isFunction(this.props.children) ? this.props.children(this._getState()) || null : this.props.children)
       )
     }
   }

@@ -1,5 +1,11 @@
 # Change Log
 
+## 0.2.0
+* `ResultStore` sub-component has been added instead of `mergeResult` prop
+* `Completed` component has been added. It renders its children when the promise either rejected or resolved.
+* `HasResult` must be a child of a new `ResultStore` component
+* `Rejected`, `Resolved` and `Executor` pass objects into theirs children functions.
+
 ## 0.1.20
 
 * Eslint has been added

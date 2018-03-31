@@ -1,6 +1,6 @@
 {
   "name": "react-async-call",
-  "version": "0.1.20",
+  "version": "0.2.0",
   "description": "Declarative promise handling in React",
   "main": "lib/index.js",
   "module": "lib/index.es.js",
@@ -72,10 +72,17 @@
     "uglifyjs": "^2.4.11"
   },
   "jest": {
-    "coverageDirectory": "../coverage/",
+    "coverageDirectory": "/coverage/",
     "collectCoverage": true,
-    "setupTestFrameworkScriptFile": "../setup.jest.js",
-    "rootDir": "./src"
+    "coveragePathIgnorePatterns": [
+      "/node_modules/",
+      "./src/__tests__/setup.js",
+      "./src/__tests__/common.js"
+    ],
+    "setupTestFrameworkScriptFile": "./src/__tests__/setup.js",
+    "testMatch": [
+      "**/__tests__/**/*.test.js?(x)"
+    ]
   },
   "eslintConfig": {
     "parser": "babel-eslint",
@@ -96,7 +103,6 @@
   "eslintIgnore": [
     "lib/**",
     "src/__tests__/**",
-    "coverage/**",
-    "setup.jest.js"
+    "coverage/**"
   ]
 }

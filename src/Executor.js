@@ -8,7 +8,7 @@ export const createExecutor = (contextPropName, rootDisplayName) => {
       `<${Executor.displayName}> must be a child (direct or indirect) of <${rootDisplayName}>.`,
     )
 
-    return props.children(context[contextPropName].execute)
+    return props.children({ execute: context[contextPropName].execute }) || null
   }
 
   Executor.contextTypes = {

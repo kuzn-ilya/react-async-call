@@ -7,7 +7,7 @@ export const createRunning = (contextPropName, rootDisplayName) => {
       context[contextPropName],
       `<${Running.displayName}> must be a child (direct or indirect) of <${rootDisplayName}>.`,
     )
-    return context[contextPropName].running ? props.children : null
+    return (context[contextPropName].running && props.children) || null
   }
 
   Running.contextTypes = {
