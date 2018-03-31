@@ -11,7 +11,7 @@ export const createHasResult = (contextPropName, rootDisplayName) => {
 
     return (
       (context[contextPropName][resultStoreContextPropName].hasResult &&
-        props.children(context[contextPropName][resultStoreContextPropName].result)) ||
+        props.children({ result: context[contextPropName][resultStoreContextPropName].result })) ||
       null
     )
   }

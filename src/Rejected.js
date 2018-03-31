@@ -11,7 +11,7 @@ export const createRejected = (contextPropName, rootDisplayName) => {
 
     return (
       (context[contextPropName].rejected &&
-        (isFunction(props.children) ? props.children(context[contextPropName].rejectReason) : props.children)) ||
+        (isFunction(props.children) ? props.children({ rejectReason: context[contextPropName].rejectReason }) : props.children)) ||
       null
     )
   }

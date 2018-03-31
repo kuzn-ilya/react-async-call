@@ -1,6 +1,6 @@
 {
   "name": "react-async-call",
-  "version": "0.2.0-alpha.6",
+  "version": "0.2.0",
   "description": "Declarative promise handling in React",
   "main": "lib/index.js",
   "module": "lib/index.es.js",
@@ -11,8 +11,18 @@
   "repository": "https://github.com/kuzn-ilya/react-async-call",
   "license": "MIT",
   "typings": "src/index.d.ts",
-  "files": ["lib", "src/index.d.ts"],
-  "keywords": ["react", "reactjs", "render", "props", "promise", "fetch"],
+  "files": [
+    "lib",
+    "src/index.d.ts"
+  ],
+  "keywords": [
+    "react",
+    "reactjs",
+    "render",
+    "props",
+    "promise",
+    "fetch"
+  ],
   "bugs": {
     "url": "https://github.com/kuzn-ilya/react-async-call/issues"
   },
@@ -22,10 +32,8 @@
     "build": "npm run clean && npm run rollup && npm run minify",
     "eslint": "eslint ./",
     "minify": "npm run minify:cjs && npm run minify:umd",
-    "minify:cjs":
-      "uglifyjs lib/index.js -cm toplevel -o lib/index.js -p relative --in-source-map lib/index.js.map --source-map lib/index.js.map",
-    "minify:umd":
-      "uglifyjs lib/index.umd.js -cm -o lib/index.umd.js -p relative --in-source-map lib/index.umd.js.map --source-map lib/index.umd.js.map",
+    "minify:cjs": "uglifyjs lib/index.js -cm toplevel -o lib/index.js -p relative --in-source-map lib/index.js.map --source-map lib/index.js.map",
+    "minify:umd": "uglifyjs lib/index.umd.js -cm -o lib/index.umd.js -p relative --in-source-map lib/index.umd.js.map --source-map lib/index.umd.js.map",
     "test": "npm run eslint && jest src --coverage",
     "test:watch": "npm run eslint && jest src --watch",
     "format": "prettier --write **/*.{js,jsx,json,d.ts} !lib/** !.vscode/**",
@@ -66,9 +74,15 @@
   "jest": {
     "coverageDirectory": "/coverage/",
     "collectCoverage": true,
-    "coveragePathIgnorePatterns": ["/node_modules/", "./src/__tests__/setup.js", "./src/__tests__/common.js"],
+    "coveragePathIgnorePatterns": [
+      "/node_modules/",
+      "./src/__tests__/setup.js",
+      "./src/__tests__/common.js"
+    ],
     "setupTestFrameworkScriptFile": "./src/__tests__/setup.js",
-    "testMatch": ["**/__tests__/**/*.test.js?(x)"]
+    "testMatch": [
+      "**/__tests__/**/*.test.js?(x)"
+    ]
   },
   "eslintConfig": {
     "parser": "babel-eslint",
@@ -76,8 +90,19 @@
       "browser": true,
       "node": true
     },
-    "plugins": ["import", "react"],
-    "extends": ["eslint:recommended", "plugin:import/errors", "plugin:react/recommended"]
+    "plugins": [
+      "import",
+      "react"
+    ],
+    "extends": [
+      "eslint:recommended",
+      "plugin:import/errors",
+      "plugin:react/recommended"
+    ]
   },
-  "eslintIgnore": ["lib/**", "src/__tests__/**", "coverage/**"]
+  "eslintIgnore": [
+    "lib/**",
+    "src/__tests__/**",
+    "coverage/**"
+  ]
 }

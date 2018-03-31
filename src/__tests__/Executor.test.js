@@ -45,6 +45,6 @@ describe('Executor', () => {
       </AsyncCall>,
     )
     expect(container).toBeDefined()
-    expect(children).toHaveBeenCalledWith(container.instance().execute)
+    expect(children).toHaveBeenCalledWith({ execute: container.instance().execute })
   })
 })

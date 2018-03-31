@@ -114,7 +114,7 @@ describe('HasResult', () => {
     await flushPromises()
     container.update()
 
-    expect(children).toHaveBeenCalledWith(42)
+    expect(children).toHaveBeenCalledWith({ result: 42 })
 
     expect(container.children().exists()).toBe(true)
     const resultContainer = container.childAt(0)

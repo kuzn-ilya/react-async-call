@@ -278,7 +278,7 @@ describe('ResultStore', () => {
   })
 
   describe('initialValue', () => {
-    fit("should pass 'initialValue' to result", () => {
+    it("should pass 'initialValue' to result", () => {
       const AsyncCall = createAsyncCallComponent(value => Promise.resolve(value))
       const children = jest.fn(() => null)
       mount(<AsyncCall.ResultStore initialValue={100500}>{children}</AsyncCall.ResultStore>, {
@@ -299,7 +299,9 @@ describe('ResultStore', () => {
 
     const prepareContextChecker = parent => {
       contextPropName = parent.contextPropName
-      ContextChecker.contextTypes = resultStoreContextPropType
+      ContextChecker.contextTypes = {
+        [parent.contextPropName]: resultStoreContextPropType
+      }
     }
 
     afterEach(() => {
