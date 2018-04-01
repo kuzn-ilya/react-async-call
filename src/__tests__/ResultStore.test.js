@@ -7,7 +7,7 @@ import { resultStoreContextPropName, resultStoreContextPropType } from '../commo
 import { flushPromises } from './common'
 
 describe('ResultStore', () => {
-  describe('general', () => {
+  describe('invariants', () => {
     it('should be exposed as static prop from AsyncCall', () => {
       const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
       expect(AsyncCall.ResultStore).toBeDefined()
@@ -42,9 +42,8 @@ describe('ResultStore', () => {
   })
 
   describe('children', () => {
-    it('should render children as is if they are not a function', () => {
+    it('should render child "as is" if it is not a function', () => {
       const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
-      const children = jest.fn(() => null)
       const container = mount(
         <AsyncCall params={{}}>
           <AsyncCall.ResultStore>
@@ -60,8 +59,10 @@ describe('ResultStore', () => {
       expect(resultStoreContainer.children().length).toBe(1)
       expect(resultStoreContainer.childAt(0).text()).toBe('ABC')
     })
+  })
 
-    it('should call children function passing { hasResult: false } to it if promise has not been resolved yet', () => {
+  describe('render props', () => {
+    it('should call children fn passing { hasResult: false } to it if promise has not been resolved yet', () => {
       const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
       const children = jest.fn(() => null)
       const container = mount(
@@ -78,7 +79,7 @@ describe('ResultStore', () => {
       expect(children).toHaveBeenCalledWith({ hasResult: false })
     })
 
-    it('should call children function passing { hasResult: false } to it if promise has been rejected', async done => {
+    it('should call children fn passing { hasResult: false } to it if promise has been rejected', async done => {
       const AsyncCall = createAsyncCallComponent(() => Promise.reject('error'))
       const children = jest.fn(() => null)
       const container = mount(
@@ -99,7 +100,7 @@ describe('ResultStore', () => {
       done()
     })
 
-    it('should call children function and render its result if promise has been resolved', async done => {
+    it('should call children fn and render its result if promise has been resolved', async done => {
       const AsyncCall = createAsyncCallComponent(() => Promise.resolve(42))
       const children = jest.fn(({ result }) => <div>{result}</div>)
       const container = mount(
@@ -127,11 +128,10 @@ describe('ResultStore', () => {
   describe('reduce', () => {
     it("should not call 'reduce' if promise has been called the first time", async done => {
       const AsyncCall = createAsyncCallComponent(() => Promise.resolve(42))
-      const children = jest.fn(value => <div>result</div>)
       const reduce = jest.fn(() => void 0)
-      const container = mount(
+      mount(
         <AsyncCall params={{}}>
-          <AsyncCall.ResultStore reduce={reduce}>{children}</AsyncCall.ResultStore>
+          <AsyncCall.ResultStore reduce={reduce}>{({ result }) => <div>{result}</div>}</AsyncCall.ResultStore>
         </AsyncCall>,
       )
 
@@ -143,11 +143,10 @@ describe('ResultStore', () => {
 
     it("should call 'reduce' if promise has been called the second time", async done => {
       const AsyncCall = createAsyncCallComponent(value => Promise.resolve(value))
-      const children = jest.fn(value => <div>result</div>)
       const reduce = jest.fn(() => void 0)
       const container = mount(
         <AsyncCall params={1}>
-          <AsyncCall.ResultStore reduce={reduce}>{children}</AsyncCall.ResultStore>
+          <AsyncCall.ResultStore reduce={reduce}>{({ result }) => <div>{result}</div>}</AsyncCall.ResultStore>
         </AsyncCall>,
       )
 
@@ -165,10 +164,9 @@ describe('ResultStore', () => {
     it("should call 'reduce' and pass returning value of 'reduce' to a children function", async done => {
       const AsyncCall = createAsyncCallComponent(value => Promise.resolve(value))
       const children = jest.fn(({ result }) => <div>{result}</div>)
-      const reduce = (prevResult, currentResult) => prevResult + currentResult
       const container = mount(
         <AsyncCall params={10}>
-          <AsyncCall.ResultStore reduce={reduce}>{children}</AsyncCall.ResultStore>
+          <AsyncCall.ResultStore reduce={(prevResult, currentResult) => prevResult + currentResult}>{children}</AsyncCall.ResultStore>
         </AsyncCall>,
       )
 
@@ -313,7 +311,7 @@ describe('ResultStore', () => {
       const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
       prepareContextChecker(AsyncCall)
 
-      const container = mount(
+      mount(
         <AsyncCall params={0}>
           <AsyncCall.ResultStore>
             <ContextChecker />
@@ -329,7 +327,7 @@ describe('ResultStore', () => {
       const AsyncCall = createAsyncCallComponent(() => Promise.resolve(42))
       prepareContextChecker(AsyncCall)
 
-      const container = mount(
+      mount(
         <AsyncCall params={0}>
           <AsyncCall.ResultStore reduce={() => void 0}>
             <ContextChecker />
