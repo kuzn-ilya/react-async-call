@@ -96,6 +96,14 @@ describe('AsyncCall', () => {
     expect(fn).toHaveBeenCalledTimes(2)
   })
 
+  it('should pass params to a promise-returning fn when "execute" function is called explicitly', () => {
+    const fn = jest.fn(value => Promise.resolve(value))
+    const AsyncCall = createAsyncCallComponent(fn)
+    const container = shallow(<AsyncCall params={42} />)
+    container.instance().execute()
+    expect(fn).toHaveBeenLastCalledWith(42)
+  })
+
   it('should call children fn and pass { running: true, rejected: false, execute: <fn> } as an argument to it if promise has not been resolved yet', () => {
     const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
     const children = jest.fn(() => null)

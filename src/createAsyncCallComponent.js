@@ -80,14 +80,14 @@ export const createAsynCallComponent = (fn, displayName) => {
         'Function supplied to "createAsyncCallComponent" function should return a promise.',
       )
       promise.then(
-        value =>
+        result =>
           this.setState({
             running: false,
             rejected: false,
             resolved: true,
-            result: value,
+            result,
           }),
-        reason => this.setState({ running: false, rejected: true, rejectReason: reason }),
+        rejectReason => this.setState({ running: false, rejected: true, rejectReason }),
       )
     }
 
@@ -106,7 +106,7 @@ export const createAsynCallComponent = (fn, displayName) => {
     }
 
     execute = () => {
-      this._callQueryFunc()
+      this._callQueryFunc(this.props.params)
     }
 
     render() {

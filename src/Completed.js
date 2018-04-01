@@ -3,11 +3,12 @@ import invariant from 'fbjs/lib/invariant'
 
 export const createCompleted = (contextPropName, rootDisplayName) => {
   const Completed = (props, context) => {
+    const contextProps = context[contextPropName]
     invariant(
-      context[contextPropName],
+      contextProps,
       `<${Completed.displayName}> must be a child (direct or indirect) of <${rootDisplayName}>.`,
     )
-    return ((context[contextPropName].resolved || context[contextPropName].rejected) && props.children) || null
+    return ((contextProps.resolved || contextProps.rejected) && props.children) || null
   }
 
   Completed.contextTypes = {
@@ -16,6 +17,7 @@ export const createCompleted = (contextPropName, rootDisplayName) => {
       rejected: PropTypes.bool,
     }),
   }
+  
   Completed.displayName = `${rootDisplayName}.Completed`
 
   return Completed
