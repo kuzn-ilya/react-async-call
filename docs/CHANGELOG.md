@@ -1,5 +1,8 @@
 # Change Log
 
+## 0.2.3
+* Bug fixing: unmount component during async call correctly
+
 ## 0.2.2
 * `lazy` prop has been added to `AsynCall` component
 

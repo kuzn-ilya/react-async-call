@@ -64,9 +64,14 @@ export const createAsynCallComponent = (fn, displayName) => {
         'Function should be passed to createAsyncCallComponent as a first argument but got %s.',
         fn,
       )
+      this._mounted = true
       if (!this.props.lazy) {
         this._callQueryFunc(this.props.params)
       }
+    }
+
+    componentWillUnmount() {
+      this._mounted = false
     }
 
     componentWillReceiveProps(nextProps) {
@@ -83,14 +88,21 @@ export const createAsynCallComponent = (fn, displayName) => {
         'Function supplied to "createAsyncCallComponent" function should return a promise.',
       )
       promise.then(
-        result =>
-          this.setState({
-            running: false,
-            rejected: false,
-            resolved: true,
-            result,
-          }),
-        rejectReason => this.setState({ running: false, rejected: true, rejectReason }),
+        result => {
+          if (this._mounted) {
+            this.setState({
+              running: false,
+              rejected: false,
+              resolved: true,
+              result,
+            })
+          }
+        },
+        rejectReason => {
+          if (this._mounted) {
+            this.setState({ running: false, rejected: true, rejectReason })
+          }
+        },
       )
     }
 

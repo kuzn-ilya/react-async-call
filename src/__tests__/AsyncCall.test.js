@@ -192,6 +192,32 @@ describe('AsyncCall', () => {
     done()
   })
 
+  describe('unmount', () => {
+    it('should not throw an error when component unmounts during resolving', async done => {
+      const fn = jest.fn(() => Promise.resolve())
+      const AsyncCall = createAsyncCallComponent(fn)
+
+      const container = shallow(<AsyncCall params={{}} />)
+      container.unmount()
+
+      await flushPromises()
+
+      done()
+    })
+
+    it('should not throw an error when component unmounts during rejection', async done => {
+      const fn = jest.fn(() => Promise.reject())
+      const AsyncCall = createAsyncCallComponent(fn)
+
+      const container = shallow(<AsyncCall params={{}} />)
+      container.unmount()
+
+      await flushPromises()
+
+      done()
+    })
+  })
+
   describe('lazy', () => {
     it('should not call function passed to createAsyncCallComponent on mount', () => {
       const fn = jest.fn(() => Promise.resolve())
