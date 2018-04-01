@@ -4,11 +4,12 @@ import invariant from 'fbjs/lib/invariant'
 export const createState = (contextPropName, rootDisplayName) => {
   const State = (props, context) => {
     const contextProps = context[contextPropName]
+
     invariant(contextProps, `<${State.displayName}> must be a child (direct or indirect) of <${rootDisplayName}>.`)
 
     return props.children({
       ...contextProps,
-    })
+    }) || null
   }
 
   State.contextTypes = {

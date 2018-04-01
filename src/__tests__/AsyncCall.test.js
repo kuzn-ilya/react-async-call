@@ -6,22 +6,24 @@ import createAsyncCallComponent from '../'
 import { flushPromises } from './common'
 
 describe('AsyncCall', () => {
-  it('should throw an error if a function is not passed to createAsyncCallComponent', () => {
-    const AsyncCall = createAsyncCallComponent(undefined)
+  describe('invariants', () => {
+    it('should throw an error if a function is not passed to createAsyncCallComponent', () => {
+      const AsyncCall = createAsyncCallComponent(undefined)
 
-    expect(() => shallow(<AsyncCall params={{}} />)).toThrow(
-      'Function should be passed to createAsyncCallComponent as a first argument but got undefined.',
-    )
-  })
+      expect(() => shallow(<AsyncCall params={{}} />)).toThrow(
+        'Function should be passed to createAsyncCallComponent as a first argument but got undefined.',
+      )
+    })
 
-  it('should return a component class with static component classes', () => {
-    const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
-    expect(AsyncCall).toBeDefined()
-  })
+    it('should return a component class', () => {
+      const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
+      expect(AsyncCall).toBeDefined()
+    })
 
-  it('should expose default display names', () => {
-    const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
-    expect(AsyncCall.displayName).toBe('AsyncCall')
+    it('should expose default display names', () => {
+      const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
+      expect(AsyncCall.displayName).toBe('AsyncCall')
+    })
   })
 
   it('should call function passed to createAsyncCallComponent on mount', () => {
@@ -104,7 +106,7 @@ describe('AsyncCall', () => {
     expect(fn).toHaveBeenLastCalledWith(42)
   })
 
-  it('should call children fn and pass { running: true, rejected: false, execute: <fn> } as an argument to it if promise has not been resolved yet', () => {
+  it('should call children fn and pass { running: true, resolved: false, rejected: false, execute: <fn> } as an argument to it if promise has not been resolved yet', () => {
     const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
     const children = jest.fn(() => null)
     const container = shallow(<AsyncCall params={{}}>{children}</AsyncCall>)
@@ -117,7 +119,7 @@ describe('AsyncCall', () => {
     })
   })
 
-  it('should call children fn and pass { running: false, result: 42, rejected: false } as an argument to it if promise has been resolved', async done => {
+  it('should call children fn and pass { running: false, resolved: true, result: 42, rejected: false } as an argument to it if promise has been resolved', async done => {
     const AsyncCall = createAsyncCallComponent(() => Promise.resolve(42))
     const children = jest.fn(() => null)
     const container = shallow(<AsyncCall params={{}}>{children}</AsyncCall>)
@@ -135,7 +137,7 @@ describe('AsyncCall', () => {
     done()
   })
 
-  it("should call children fn and pass { running: false, rejected: true, rejectReason: 'rejected' } as an arguments to it if promise has been rejected", async done => {
+  it("should call children fn and pass { running: false, resolved: false, rejected: true, rejectReason: 'rejected' } as an arguments to it if promise has been rejected", async done => {
     const AsyncCall = createAsyncCallComponent(() => Promise.reject('rejected'))
     const children = jest.fn(() => null)
     const container = shallow(<AsyncCall params={{}}>{children}</AsyncCall>)
@@ -172,7 +174,7 @@ describe('AsyncCall', () => {
     expect(container.childAt(1).text()).toBe('12345')
   })
 
-  it('should call children fn and pass { running: true, rejected: false, rejectedResult: undefined } as an arguments to it if promise has been called the second time after rejection', async done => {
+  it('should call children fn and pass { running: true, resolved: false, rejected: false } as an arguments to it if promise has been called the second time after rejection', async done => {
     const AsyncCall = createAsyncCallComponent(() => Promise.reject('rejected'))
     const children = jest.fn(() => null)
     const container = shallow(<AsyncCall params={{ a: 1 }}>{children}</AsyncCall>)
@@ -184,7 +186,6 @@ describe('AsyncCall', () => {
       running: true,
       rejected: false,
       resolved: false,
-      rejectReason: undefined,
       execute: container.instance().execute,
     })
 
@@ -211,7 +212,7 @@ describe('AsyncCall', () => {
       contextPropName = undefined
     })
 
-    it("should pass it's state to child context", () => {
+    it("should pass its state to child context", () => {
       const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
       prepareContextChecker(AsyncCall)
 

@@ -4,14 +4,16 @@ import { resultStoreContextPropType, resultStoreContextPropName } from './common
 
 export const createHasResult = (contextPropName, rootDisplayName) => {
   const HasResult = (props, context) => {
+    const contextProps = context[contextPropName] && context[contextPropName][resultStoreContextPropName]
+    
     invariant(
-      context[contextPropName] && context[contextPropName][resultStoreContextPropName],
+      contextProps,
       `<${HasResult.displayName}> must be a child (direct or indirect) of <${rootDisplayName}>.`,
     )
 
     return (
-      (context[contextPropName][resultStoreContextPropName].hasResult &&
-        props.children({ result: context[contextPropName][resultStoreContextPropName].result })) ||
+      (contextProps.hasResult &&
+        props.children({ result: contextProps.result })) ||
       null
     )
   }

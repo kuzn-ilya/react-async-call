@@ -45,11 +45,13 @@ export const createResultStore = (contextPropName, rootDisplayName) => {
     }
 
     componentDidMount() {
-      if (this.context[contextPropName].resolved || this.props.hasOwnProperty('initialValue')) {
+      const contextProps = this.context[contextPropName]
+
+      if (contextProps.resolved || this.props.hasOwnProperty('initialValue')) {
         this.setState({
           hasResult: true,
-          result: this.context[contextPropName].resolved
-            ? this.context[contextPropName].result
+          result: contextProps.resolved
+            ? contextProps.result
             : this.props.initialValue,
         })
       }
@@ -61,6 +63,7 @@ export const createResultStore = (contextPropName, rootDisplayName) => {
           hasResult: false,
         })
       }
+
       if (nextContext[contextPropName].resolved && !this.context[contextPropName].resolved) {
         this.setState(
           prevState =>

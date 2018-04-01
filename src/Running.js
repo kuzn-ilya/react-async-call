@@ -3,11 +3,14 @@ import invariant from 'fbjs/lib/invariant'
 
 export const createRunning = (contextPropName, rootDisplayName) => {
   const Running = (props, context) => {
+    const contextProps = context[contextPropName]
+
     invariant(
-      context[contextPropName],
+      contextProps,
       `<${Running.displayName}> must be a child (direct or indirect) of <${rootDisplayName}>.`,
     )
-    return (context[contextPropName].running && props.children) || null
+
+    return (contextProps.running && props.children) || null
   }
 
   Running.contextTypes = {
@@ -15,6 +18,7 @@ export const createRunning = (contextPropName, rootDisplayName) => {
       running: PropTypes.bool,
     }),
   }
+  
   Running.displayName = `${rootDisplayName}.Running`
 
   return Running

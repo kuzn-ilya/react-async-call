@@ -4,14 +4,16 @@ import { isFunction } from './common'
 
 export const createResolved = (contextPropName, rootDisplayName) => {
   const Resolved = (props, context) => {
+    const contextProps = context[contextPropName]
+    
     invariant(
-      context[contextPropName],
+      contextProps,
       `<${Resolved.displayName}> must be a child (direct or indirect) of <${rootDisplayName}>.`,
     )
 
     return (
-      (context[contextPropName].resolved &&
-        (isFunction(props.children) ? props.children({ result: context[contextPropName].result }) : props.children)) ||
+      (contextProps.resolved &&
+        (isFunction(props.children) ? props.children({ result: contextProps.result }) : props.children)) ||
       null
     )
   }

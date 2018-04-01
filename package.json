@@ -40,6 +40,9 @@
     "rollup": "rollup -c",
     "release": "npm run test && npm run build && npm version patch && npm publish && git push --tags"
   },
+  "pre-commit": [
+    "test"
+  ],
   "peerDependencies": {
     "fbjs": "^0.8.0",
     "prop-types": "^15.0.0",
@@ -63,6 +66,7 @@
     "eslint-plugin-react": "^7.7.0",
     "fbjs": "^0.8.16",
     "jest": "^22.4.2",
+    "pre-commit": "^1.2.2",
     "prettier": "^1.11.1",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",

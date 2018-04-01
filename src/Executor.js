@@ -3,12 +3,14 @@ import invariant from 'fbjs/lib/invariant'
 
 export const createExecutor = (contextPropName, rootDisplayName) => {
   const Executor = (props, context) => {
+    const contextProps = context[contextPropName]
+
     invariant(
-      context[contextPropName],
+      contextProps,
       `<${Executor.displayName}> must be a child (direct or indirect) of <${rootDisplayName}>.`,
     )
 
-    return props.children({ execute: context[contextPropName].execute }) || null
+    return props.children({ execute: contextProps.execute }) || null
   }
 
   Executor.contextTypes = {
