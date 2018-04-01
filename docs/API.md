@@ -125,7 +125,7 @@ React Component. Implements store of results of sequential async calls. Useful w
 | Property | Type | Description |
 | :------- | :--- | :---------- |
 | `children` | `({ hasResult: boolean, result: Result }) => React.ReactNode` or `React.ReactNode` | React children or function that returns rendered result depending on `hasResult` flag and `result`. |
-| `reduce` | `(accumulator: Result, current: Result) => Result` | Reducer function. |
+| `reduce` | `(accumulator: Result, current: Result) => Result` | Function from previousResult and currentResult to a new result. Useful, for example, when you need to accumulate sequential async calls (e.g. for fetching data for infinte page scroll). |
 | `initialValue` | `Result` | Optional initial value for the result store. If value is provided, result store will have result always. |
 | `reset` | `boolean` | If `true`, clears the store. |
 
@@ -206,15 +206,15 @@ Property `children` can be either a ReactNode or a function that receives an obj
 
 A single argument which will be passed into async function.
 
-### mergeResult
+### lazy
 
-|                   |                                                             |
-| :---------------- | :---------------------------------------------------------- |
-| **Type**          | `(previousResult: Result, currentResult: Result) => Result` |
-| **Optional**      | Yes                                                         |
-| **Default Value** | `(_, result) => result`                                     |
+|              |           |
+| :----------- | :-------- |
+| **Type**     | `boolean` |
+| **Optional** | Yes       |
+| **Default**  | `false`   |
 
-Function from previousResult and currentResult to a new result. Useful, for example, when you need to accumulate sequential async calls (e.g. for fetching data for infinte page scroll).
+If `true`, component will not start execution of asynchronous operation on component mount and on `params` change. You should start async operation manualy by calling [`execute` method](#execute) or via [`Executor` component](#executor).
 
 ## Methods
 

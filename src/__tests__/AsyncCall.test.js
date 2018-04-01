@@ -192,6 +192,47 @@ describe('AsyncCall', () => {
     done()
   })
 
+  describe('lazy', () => {
+    it('should not call function passed to createAsyncCallComponent on mount', () => {
+      const fn = jest.fn(() => Promise.resolve())
+      const AsyncCall = createAsyncCallComponent(fn)
+
+      shallow(<AsyncCall lazy params={{}} />)
+
+      expect(fn).not.toHaveBeenCalled()
+    })
+
+    it('should not be called if params property was not changed', () => {
+      const fn = jest.fn(() => Promise.resolve())
+      const AsyncCall = createAsyncCallComponent(fn)
+
+      const container = shallow(<AsyncCall lazy params={{}} />)
+      container.setProps({ params: {} })
+
+      expect(fn).not.toHaveBeenCalled()
+    })
+
+    it('should not be called if params property was changed', () => {
+      const fn = jest.fn(value => Promise.resolve())
+      const AsyncCall = createAsyncCallComponent(fn)
+
+      const container = shallow(<AsyncCall lazy params={'abc'} />)
+
+      container.setProps({ params: 'bcd' })
+      expect(fn).not.toHaveBeenCalled()
+    })
+
+    it('should not be called if params property references were changed but they are shallow equal', () => {
+      const fn = jest.fn(value => Promise.resolve())
+      const AsyncCall = createAsyncCallComponent(fn)
+      const container = shallow(<AsyncCall lazy params={{ a: 1 }} />)
+      container.setProps({ params: { a: 1 } })
+
+      expect(fn).not.toHaveBeenCalled()
+    })
+
+  })
+
   describe('context', () => {
     let rootContext
     let contextPropName

@@ -31,6 +31,7 @@ export const createAsynCallComponent = (fn, displayName) => {
 
     static propTypes = {
       params: PropTypes.any.isRequired,
+      lazy: PropTypes.bool,
       children: PropTypes.oneOfType([PropTypes.node, PropTypes.func]),
     }
 
@@ -63,11 +64,13 @@ export const createAsynCallComponent = (fn, displayName) => {
         'Function should be passed to createAsyncCallComponent as a first argument but got %s.',
         fn,
       )
-      this._callQueryFunc(this.props.params)
+      if (!this.props.lazy) {
+        this._callQueryFunc(this.props.params)
+      }
     }
 
     componentWillReceiveProps(nextProps) {
-      if (!shallowEqual(nextProps.params, this.props.params)) {
+      if (!nextProps.lazy && !shallowEqual(nextProps.params, this.props.params)) {
         this._callQueryFunc(nextProps.params)
       }
     }

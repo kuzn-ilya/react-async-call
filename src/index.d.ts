@@ -21,6 +21,7 @@ type AsyncCallChildrenFunction<Result> = (params: IAsyncCallChildrenFunctionPara
 
 interface IAsyncCallProps<Params, Result> {
   params: Params
+  lazy?: boolean
   children?: AsyncCallChildrenFunction<Result> | RenderResult
 }
 
@@ -99,7 +100,7 @@ declare class AsyncCall<Params, Result> extends React.Component<IAsyncCallProps<
 
 interface IResultStore<Result> {
   HasResult: React.ComponentType<IHasResultProps<Result>>
-  new (): React.Component<IResultStoreProps<Result>>
+  new(): React.Component<IResultStoreProps<Result>>
 }
 
 interface IAsyncCall<Params, Result> {
@@ -111,7 +112,7 @@ interface IAsyncCall<Params, Result> {
   State: React.ComponentType<IStateProps<Result>>
   ResultStore: IResultStore<Result>
   contextPropName: string
-  new (): AsyncCall<Params, Result>
+  new(): AsyncCall<Params, Result>
 }
 
 declare function createAsyncCallComponent<Params, Result>(

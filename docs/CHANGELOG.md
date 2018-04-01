@@ -1,5 +1,8 @@
 # Change Log
 
+## 0.2.2
+* `lazy` prop has been added to `AsynCall` component
+
 ## 0.2.1
 * Fix typings
 
