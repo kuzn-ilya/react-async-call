@@ -18,7 +18,7 @@ export const createResultStore = (contextPropName, rootDisplayName) => {
     }
 
     static propTypes = {
-      children: PropTypes.oneOfType([PropTypes.func, PropTypes.node]),
+      children: PropTypes.oneOfType([PropTypes.func, PropTypes.node]).isRequired,
       reduce: PropTypes.func,
       reset: PropTypes.bool,
       initialValue: PropTypes.any,
@@ -50,9 +50,7 @@ export const createResultStore = (contextPropName, rootDisplayName) => {
       if (contextProps.resolved || this.props.hasOwnProperty('initialValue')) {
         this.setState({
           hasResult: true,
-          result: contextProps.resolved
-            ? contextProps.result
-            : this.props.initialValue,
+          result: contextProps.resolved ? contextProps.result : this.props.initialValue,
         })
       }
     }

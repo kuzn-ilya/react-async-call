@@ -1,16 +1,24 @@
 # Change Log
 
+## 0.2.4
+
+* Chore: Rework and enable all xit'ed tests
+
 ## 0.2.3
+
 * Bug fixing: unmount component during async call correctly
 * Chore: Tests have been splitted by testing area
 
 ## 0.2.2
+
 * `lazy` prop has been added to `AsynCall` component
 
 ## 0.2.1
+
 * Fix typings
 
 ## 0.2.0
+
 * `ResultStore` sub-component has been added instead of `mergeResult` prop
 * `Completed` component has been added. It renders its children when the promise either rejected or resolved.
 * `HasResult` must be a child of a new `ResultStore` component

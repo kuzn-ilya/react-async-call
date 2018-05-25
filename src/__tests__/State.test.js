@@ -18,7 +18,7 @@ describe('State', () => {
 
     it('should throw an error if State component rendered alone', () => {
       const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
-      expect(() => shallow(<AsyncCall.State>{() => { }}</AsyncCall.State>)).toThrow(
+      expect(() => shallow(<AsyncCall.State>{() => {}}</AsyncCall.State>)).toThrow(
         '<AsyncCall.State> must be a child (direct or indirect) of <AsyncCall>.',
       )
     })
@@ -27,15 +27,15 @@ describe('State', () => {
     // See the following issues for further details:
     // https://github.com/facebook/react/issues/11098
     // https://github.com/airbnb/enzyme/issues/1280
-    xit('should throw an error if children is not passed', () => {
+    it('should throw an error if children is not passed', () => {
+      const spy = jest.spyOn(console, 'error').mockImplementation(() => {})
       const AsyncCall = createAsyncCallComponent(value => Promise.resolve(value))
-      expect(() =>
-        mount(
-          <AsyncCall params="first">
-            <AsyncCall.State />
-          </AsyncCall>,
-        ),
-      ).toThrow()
+      mount(
+        <AsyncCall params="first">
+          <AsyncCall.State />
+        </AsyncCall>,
+      )
+      expect(spy).toHaveBeenCalled()
     })
   })
 

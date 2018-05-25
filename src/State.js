@@ -1,5 +1,6 @@
 import * as PropTypes from 'prop-types'
 import invariant from 'fbjs/lib/invariant'
+import { isFunction } from './common'
 
 export const createState = (contextPropName, rootDisplayName) => {
   const State = (props, context) => {
@@ -7,9 +8,13 @@ export const createState = (contextPropName, rootDisplayName) => {
 
     invariant(contextProps, `<${State.displayName}> must be a child (direct or indirect) of <${rootDisplayName}>.`)
 
-    return props.children({
-      ...contextProps,
-    }) || null
+    return (
+      (isFunction(props.children) &&
+        props.children({
+          ...contextProps,
+        })) ||
+      null
+    )
   }
 
   State.contextTypes = {

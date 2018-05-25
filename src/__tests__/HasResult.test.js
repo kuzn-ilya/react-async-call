@@ -23,32 +23,32 @@ describe('HasResult', () => {
       )
     })
 
-    // The tests below is disabled for now because jest do not catch React errors properly
-    // See the following issues for further details:
-    // https://github.com/facebook/react/issues/11098
-    // https://github.com/airbnb/enzyme/issues/1280
-    xit('should throw an error if Result component rendered as a direct child of <AsyncCall>', () => {
+    it('should throw an error if Result component rendered as a direct child of <AsyncCall>', () => {
       const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
-      expect(() =>
-        mount(
-          <AsyncCall params={1}>
-            <AsyncCall.ResultStore.HasResult>{() => null}</AsyncCall.ResultStore.HasResult>
-          </AsyncCall>,
-        ),
-      ).toThrow('<AsyncCall.ResultStore.HasResult> must be a child (direct or indirect) of <AsyncCall.ResultStore>.')
+      const container = shallow(
+        <AsyncCall params={1}>
+          <AsyncCall.ResultStore.HasResult>{() => null}</AsyncCall.ResultStore.HasResult>
+        </AsyncCall>,
+      )
+
+      expect(() => container.dive()).toThrow(
+        '<AsyncCall.ResultStore.HasResult> must be a child (direct or indirect) of <AsyncCall.ResultStore>.',
+      )
     })
 
-    xit('should throw an error if children is not passed', () => {
+    it('should throw an error if children is not passed', () => {
+      const spy = jest.spyOn(console, 'error').mockImplementation(() => {})
       const AsyncCall = createAsyncCallComponent(value => Promise.resolve(value))
-      expect(() =>
-        mount(
-          <AsyncCall params="first">
-            <AsyncCall.ResultStore>
-              <AsyncCall.ResultStore.HasResult>{() => null}</AsyncCall.ResultStore.HasResult>
-            </AsyncCall.ResultStore>
-          </AsyncCall>,
-        ),
-      ).toThrow()
+
+      mount(
+        <AsyncCall params="first">
+          <AsyncCall.ResultStore>
+            <AsyncCall.ResultStore.HasResult />
+          </AsyncCall.ResultStore>
+        </AsyncCall>,
+      )
+
+      expect(spy).toHaveBeenCalled()
     })
   })
 

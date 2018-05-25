@@ -22,19 +22,16 @@ describe('Executor', () => {
       )
     })
 
-    // The test below is disabled for now because jest do not catch React errors properly
-    // See the following issues for further details:
-    // https://github.com/facebook/react/issues/11098
-    // https://github.com/airbnb/enzyme/issues/1280
-    xit('should throw an error if children is not passed', () => {
+    it('should throw an error if children is not passed', () => {
+      const spy = jest.spyOn(console, 'error').mockImplementation(() => {})
       const AsyncCall = createAsyncCallComponent(value => Promise.resolve(value))
-      expect(() =>
-        mount(
-          <AsyncCall params="first">
-            <AsyncCall.Executor />
-          </AsyncCall>,
-        ),
-      ).toThrow()
+      mount(
+        <AsyncCall params="first">
+          <AsyncCall.Executor />
+        </AsyncCall>,
+      )
+
+      expect(spy).toHaveBeenCalled()
     })
   })
 
