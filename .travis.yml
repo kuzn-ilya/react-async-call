@@ -8,6 +8,8 @@ cache:
     - node_modules
 
 before_install:
+  - sudo chown -R $USER ~/
+  - mkdir ~/coverage
   - npm install codecov
   - npm install react
   - npm install prop-types
