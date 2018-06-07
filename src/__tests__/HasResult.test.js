@@ -11,19 +11,19 @@ describe('HasResult', () => {
       expect(AsyncCall.ResultStore.HasResult).toBeDefined()
     })
 
-    it('should expose default display names', () => {
+    it('should expose default display name', () => {
       const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
       expect(AsyncCall.ResultStore.HasResult.displayName).toBe('AsyncCall.ResultStore.HasResult')
     })
 
-    it('should throw an error if Result component rendered alone', () => {
+    it('should throw an error if HasResult component rendered alone', () => {
       const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
       expect(() => shallow(<AsyncCall.ResultStore.HasResult>{() => null}</AsyncCall.ResultStore.HasResult>)).toThrow(
         '<AsyncCall.ResultStore.HasResult> must be a child (direct or indirect) of <AsyncCall.ResultStore>.',
       )
     })
 
-    it('should throw an error if Result component rendered as a direct child of <AsyncCall>', () => {
+    it('should throw an error if HasResult component rendered as a direct child of <AsyncCall>', () => {
       const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
       const container = shallow(
         <AsyncCall params={1}>
@@ -64,13 +64,11 @@ describe('HasResult', () => {
         </AsyncCall>,
       )
 
-      expect(container.children().exists()).toBe(true)
-      const resultStoreContainer = container.childAt(0)
-      expect(resultStoreContainer).toBeDefined()
+      const resultStoreContainer = container.find(AsyncCall.ResultStore)
+      expect(resultStoreContainer).toExist()
 
-      expect(resultStoreContainer.children().exists()).toBe(true)
-      const resultContainer = resultStoreContainer.childAt(0)
-      expect(resultContainer).toBeDefined()
+      const resultContainer = resultStoreContainer.find(AsyncCall.ResultStore.HasResult)
+      expect(resultContainer).toExist()
       expect(resultContainer).toBeEmptyRender()
 
       expect(children).not.toHaveBeenCalled()
@@ -89,13 +87,11 @@ describe('HasResult', () => {
 
       await flushPromises()
 
-      expect(container.children().exists()).toBe(true)
-      const resultStoreContainer = container.childAt(0)
-      expect(resultStoreContainer).toBeDefined()
+      const resultStoreContainer = container.find(AsyncCall.ResultStore)
+      expect(resultStoreContainer).toExist()
 
-      expect(resultStoreContainer.children().exists()).toBe(true)
-      const resultContainer = resultStoreContainer.childAt(0)
-      expect(resultContainer).toBeDefined()
+      const resultContainer = resultStoreContainer.find(AsyncCall.ResultStore.HasResult)
+      expect(resultContainer).toExist()
       expect(resultContainer).toBeEmptyRender()
 
       expect(children).not.toHaveBeenCalled()
@@ -119,12 +115,10 @@ describe('HasResult', () => {
 
       expect(children).toHaveBeenCalledWith({ result: 42 })
 
-      expect(container.children().exists()).toBe(true)
-      const resultContainer = container.childAt(0)
-      expect(resultContainer).toBeDefined()
+      const resultContainer = container.find(AsyncCall.ResultStore.HasResult)
+      expect(resultContainer).toExist()
       expect(resultContainer).not.toBeEmptyRender()
-      expect(resultContainer.children().exists()).toBe(true)
-      expect(resultContainer.childAt(0).text()).toBe('result')
+      expect(resultContainer).toHaveText('result')
 
       done()
     })

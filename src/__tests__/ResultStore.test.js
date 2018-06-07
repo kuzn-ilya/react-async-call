@@ -13,7 +13,7 @@ describe('ResultStore', () => {
       expect(AsyncCall.ResultStore).toBeDefined()
     })
 
-    it('should expose default display names', () => {
+    it('should expose default display name', () => {
       const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
       expect(AsyncCall.ResultStore.displayName).toBe('AsyncCall.ResultStore')
     })
@@ -49,12 +49,10 @@ describe('ResultStore', () => {
         </AsyncCall>,
       )
 
-      expect(container.children().exists()).toBe(true)
-      const resultStoreContainer = container.childAt(0)
-      expect(resultStoreContainer).toBeDefined()
+      const resultStoreContainer = container.find(AsyncCall.ResultStore)
+      expect(resultStoreContainer).toExist()
       expect(resultStoreContainer).not.toBeEmptyRender()
-      expect(resultStoreContainer.children().length).toBe(1)
-      expect(resultStoreContainer.childAt(0).text()).toBe('ABC')
+      expect(resultStoreContainer).toHaveText('ABC')
     })
   })
 
@@ -68,9 +66,8 @@ describe('ResultStore', () => {
         </AsyncCall>,
       )
 
-      expect(container.children().exists()).toBe(true)
-      const resultStoreContainer = container.childAt(0)
-      expect(resultStoreContainer).toBeDefined()
+      const resultStoreContainer = container.find(AsyncCall.ResultStore)
+      expect(resultStoreContainer).toExist()
       expect(resultStoreContainer).toBeEmptyRender()
 
       expect(children).toHaveBeenCalledWith({ hasResult: false })
@@ -87,9 +84,8 @@ describe('ResultStore', () => {
 
       await flushPromises()
 
-      expect(container.children().exists()).toBe(true)
-      const resultStoreContainer = container.childAt(0)
-      expect(resultStoreContainer).toBeDefined()
+      const resultStoreContainer = container.find(AsyncCall.ResultStore)
+      expect(resultStoreContainer).toExist()
       expect(resultStoreContainer).toBeEmptyRender()
 
       expect(children).toHaveBeenCalledWith({ hasResult: false })
@@ -111,12 +107,10 @@ describe('ResultStore', () => {
 
       expect(children).toHaveBeenLastCalledWith({ hasResult: true, result: 42 })
 
-      expect(container.children().exists()).toBe(true)
-      const resultStoreContainer = container.childAt(0)
-      expect(resultStoreContainer).toBeDefined()
+      const resultStoreContainer = container.find(AsyncCall.ResultStore)
+      expect(resultStoreContainer).toExist()
       expect(resultStoreContainer).not.toBeEmptyRender()
-      expect(resultStoreContainer.children().exists()).toBe(true)
-      expect(resultStoreContainer.childAt(0).text()).toBe('42')
+      expect(resultStoreContainer).toHaveText('42')
 
       done()
     })

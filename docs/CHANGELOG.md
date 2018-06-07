@@ -4,6 +4,7 @@
 
 * Chore: Rework and enable all xit'ed tests
 * Chore: Add jest-enzyme package and remove custom assertions
+* Chore: Simplify tests by using jest-enzyme assertions
 
 ## 0.2.3
 

@@ -11,7 +11,7 @@ describe('Rejected', () => {
       expect(AsyncCall.Rejected).toBeDefined()
     })
 
-    it('should expose default display names', () => {
+    it('should expose default display name', () => {
       const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
       expect(AsyncCall.Rejected.displayName).toBe('AsyncCall.Rejected')
     })
@@ -33,9 +33,8 @@ describe('Rejected', () => {
         </AsyncCall>,
       )
 
-      expect(container.children().exists()).toBe(true)
-      const rejectedContainer = container.childAt(0)
-      expect(rejectedContainer).toBeDefined()
+      const rejectedContainer = container.find(AsyncCall.Rejected)
+      expect(rejectedContainer).toExist()
       expect(rejectedContainer).toBeEmptyRender()
     })
 
@@ -49,9 +48,8 @@ describe('Rejected', () => {
 
       await flushPromises()
 
-      expect(container.children().exists()).toBe(true)
-      const rejectedContainer = container.childAt(0)
-      expect(rejectedContainer).toBeDefined()
+      const rejectedContainer = container.find(AsyncCall.Rejected)
+      expect(rejectedContainer).toExist()
       expect(rejectedContainer).toBeEmptyRender()
 
       done()
@@ -70,11 +68,10 @@ describe('Rejected', () => {
       await flushPromises()
       container.update()
 
-      expect(container.children().exists()).toBe(true)
-      const rejectedContainer = container.childAt(0)
-      expect(rejectedContainer).toBeDefined()
+      const rejectedContainer = container.find(AsyncCall.Rejected)
+      expect(rejectedContainer).toExist()
       expect(rejectedContainer).not.toBeEmptyRender()
-      expect(rejectedContainer.text()).toBe('abcdef')
+      expect(rejectedContainer).toHaveText('abcdef')
 
       done()
     })
@@ -93,12 +90,11 @@ describe('Rejected', () => {
       await flushPromises()
       container.update()
 
-      expect(container.children().exists()).toBe(true)
-      const rejectedContainer = container.childAt(0)
-      expect(rejectedContainer).toBeDefined()
+      const rejectedContainer = container.find(AsyncCall.Rejected)
+
       expect(rejectedContainer.children().length).toBe(2)
-      expect(rejectedContainer.childAt(0).text()).toBe('abcdef')
-      expect(rejectedContainer.childAt(1).text()).toBe('cdefgh')
+      expect(rejectedContainer.childAt(0)).toHaveText('abcdef')
+      expect(rejectedContainer.childAt(1)).toHaveText('cdefgh')
 
       done()
     })
@@ -114,8 +110,8 @@ describe('Rejected', () => {
       await flushPromises()
       container.setProps({ params: 'second' })
 
-      const rejectedContainer = container.childAt(0)
-      expect(rejectedContainer).toBeDefined()
+      const rejectedContainer = container.find(AsyncCall.Rejected)
+      expect(rejectedContainer).toExist()
       expect(rejectedContainer).toBeEmptyRender()
 
       done()
@@ -143,7 +139,7 @@ describe('Rejected', () => {
       expect(children).toHaveBeenCalledTimes(1)
       expect(children).toHaveBeenCalledWith({ rejectReason: 'error:' })
 
-      expect(container.text()).toBe('error:abcdef')
+      expect(container).toHaveText('error:abcdef')
 
       done()
     })

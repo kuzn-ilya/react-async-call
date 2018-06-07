@@ -11,7 +11,7 @@ describe('State', () => {
       expect(AsyncCall.State).toBeDefined()
     })
 
-    it('should expose default display names', () => {
+    it('should expose default display name', () => {
       const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
       expect(AsyncCall.State.displayName).toBe('AsyncCall.State')
     })
@@ -23,10 +23,6 @@ describe('State', () => {
       )
     })
 
-    // The test below is disabled for now because jest do not catch React errors properly
-    // See the following issues for further details:
-    // https://github.com/facebook/react/issues/11098
-    // https://github.com/airbnb/enzyme/issues/1280
     it('should throw an error if children is not passed', () => {
       const spy = jest.spyOn(console, 'error').mockImplementation(() => {})
       const AsyncCall = createAsyncCallComponent(value => Promise.resolve(value))

@@ -11,7 +11,7 @@ describe('Resolved', () => {
       expect(AsyncCall.Resolved).toBeDefined()
     })
 
-    it('should expose default display names', () => {
+    it('should expose default display name', () => {
       const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
       expect(AsyncCall.Resolved.displayName).toBe('AsyncCall.Resolved')
     })
@@ -64,11 +64,10 @@ describe('Resolved', () => {
       container.update()
 
       expect(children).toHaveBeenCalledWith({ result: 42 })
-      expect(container.children().exists()).toBe(true)
-      const resolvedContainer = container.childAt(0)
-      expect(resolvedContainer).toBeDefined()
+      const resolvedContainer = container.find(AsyncCall.Resolved)
+      expect(resolvedContainer).toExist()
       expect(resolvedContainer).not.toBeEmptyRender()
-      expect(resolvedContainer.text()).toBe('ABCDEF')
+      expect(resolvedContainer).toHaveText('ABCDEF')
 
       done()
     })
@@ -99,9 +98,8 @@ describe('Resolved', () => {
         </AsyncCall>,
       )
 
-      expect(container.children().exists()).toBe(true)
-      const resolvedContainer = container.childAt(0)
-      expect(resolvedContainer).toBeDefined()
+      const resolvedContainer = container.find(AsyncCall.Resolved)
+      expect(resolvedContainer).toExist()
       expect(resolvedContainer).toBeEmptyRender()
     })
 
@@ -114,9 +112,9 @@ describe('Resolved', () => {
       )
 
       await flushPromises()
-      expect(container.children().exists()).toBe(true)
-      const resolvedContainer = container.childAt(0)
-      expect(resolvedContainer).toBeDefined()
+
+      const resolvedContainer = container.find(AsyncCall.Resolved)
+      expect(resolvedContainer).toExist()
       expect(resolvedContainer).toBeEmptyRender()
 
       done()
@@ -133,10 +131,8 @@ describe('Resolved', () => {
       await flushPromises()
       container.update()
 
-      expect(container.children().exists()).toBe(true)
-      const resolvedContainer = container.childAt(0)
-
-      expect(resolvedContainer).toBeDefined()
+      const resolvedContainer = container.find(AsyncCall.Resolved)
+      expect(resolvedContainer).toExist()
       expect(resolvedContainer).toBeEmptyRender()
 
       done()
@@ -155,11 +151,10 @@ describe('Resolved', () => {
       await flushPromises()
       container.update()
 
-      expect(container.children().exists()).toBe(true)
-      const resolvedContainer = container.childAt(0)
-      expect(resolvedContainer).toBeDefined()
+      const resolvedContainer = container.find(AsyncCall.Resolved)
+      expect(resolvedContainer).toExist()
       expect(resolvedContainer).not.toBeEmptyRender()
-      expect(resolvedContainer.text()).toBe('abcdef')
+      expect(resolvedContainer).toHaveText('abcdef')
 
       done()
     })
@@ -178,12 +173,10 @@ describe('Resolved', () => {
       await flushPromises()
       container.update()
 
-      expect(container.children().exists()).toBe(true)
-      const resolvedContainer = container.childAt(0)
-      expect(resolvedContainer).toBeDefined()
+      const resolvedContainer = container.find(AsyncCall.Resolved)
       expect(resolvedContainer.children().length).toBe(2)
-      expect(resolvedContainer.childAt(0).text()).toBe('abcdef')
-      expect(resolvedContainer.childAt(1).text()).toBe('qwerty')
+      expect(resolvedContainer.childAt(0)).toHaveText('abcdef')
+      expect(resolvedContainer.childAt(1)).toHaveText('qwerty')
 
       done()
     })
@@ -201,8 +194,8 @@ describe('Resolved', () => {
       container.instance().execute()
 
       expect(fn).toHaveBeenCalledTimes(2)
-      const resolvedContainer = container.childAt(0)
-      expect(resolvedContainer).toBeDefined()
+      const resolvedContainer = container.find(AsyncCall.Resolved)
+      expect(resolvedContainer).toExist()
       expect(resolvedContainer).toBeEmptyRender()
 
       done()
@@ -221,10 +214,8 @@ describe('Resolved', () => {
         await flushPromises()
         container.update()
 
-        expect(container.children().exists()).toBe(true)
-        const resolvedContainer = container.childAt(0)
-
-        expect(resolvedContainer).toBeDefined()
+        const resolvedContainer = container.find(AsyncCall.Resolved)
+        expect(resolvedContainer).toExist()
         expect(resolvedContainer).toBeEmptyRender()
 
         done()
@@ -251,11 +242,10 @@ describe('Resolved', () => {
       await flushPromises()
       secondAsyncCall.update()
 
-      const firstAsyncCall = secondAsyncCall.childAt(0)
-      expect(firstAsyncCall).toBeDefined()
+      const firstAsyncCall = secondAsyncCall.find(FirstAsyncCall)
       expect(firstAsyncCall.children().length).toBe(2)
-      expect(firstAsyncCall.childAt(0).text()).toBe('first')
-      expect(firstAsyncCall.childAt(1).text()).toBe('second')
+      expect(firstAsyncCall.childAt(0)).toHaveText('first')
+      expect(firstAsyncCall.childAt(1)).toHaveText('second')
 
       done()
     })

@@ -10,7 +10,7 @@ describe('Executor', () => {
       expect(AsyncCall.Executor).toBeDefined()
     })
 
-    it('should expose default display names', () => {
+    it('should expose default display name', () => {
       const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
       expect(AsyncCall.Executor.displayName).toBe('AsyncCall.Executor')
     })
@@ -44,7 +44,7 @@ describe('Executor', () => {
           <AsyncCall.Executor>{children}</AsyncCall.Executor>
         </AsyncCall>,
       )
-      expect(container).toBeDefined()
+      expect(container).toExist()
       expect(children).toHaveBeenCalledWith({ execute: container.instance().execute })
     })
   })

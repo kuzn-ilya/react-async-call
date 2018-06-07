@@ -11,7 +11,7 @@ describe('Completed', () => {
       expect(AsyncCall.Completed).toBeDefined()
     })
 
-    it('should expose default display names', () => {
+    it('should expose default display name', () => {
       const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
       expect(AsyncCall.Completed.displayName).toBe('AsyncCall.Completed')
     })
@@ -35,11 +35,8 @@ describe('Completed', () => {
         </AsyncCall>,
       )
 
-      expect(container.children().exists()).toBe(true)
-      const completedContainer = container.childAt(0)
-      expect(completedContainer).toBeDefined()
+      const completedContainer = container.find(AsyncCall.Completed)
       expect(completedContainer).toBeEmptyRender()
-      expect(completedContainer.children().length).toBe(0)
     })
 
     it("should render Completed's children if promise has been resolved", async done => {
@@ -55,17 +52,14 @@ describe('Completed', () => {
       await flushPromises()
       container.update()
 
-      expect(container.children().exists()).toBe(true)
-      const completedContainer = container.childAt(0)
-      expect(completedContainer).toBeDefined()
+      const completedContainer = container.find(AsyncCall.Completed)
       expect(completedContainer).not.toBeEmptyRender()
-      expect(completedContainer.children().length).toBe(1)
-      expect(completedContainer.childAt(0).text()).toBe('abcdef')
+      expect(completedContainer).toHaveText('abcdef')
 
       done()
     })
 
-    it("should render Running's children if promise has been rejected", async done => {
+    it("should render Completed's children if promise has been rejected", async done => {
       const AsyncCall = createAsyncCallComponent(() => Promise.reject('error'))
       const container = mount(
         <AsyncCall params={{}}>
@@ -78,12 +72,9 @@ describe('Completed', () => {
       await flushPromises()
       container.update()
 
-      expect(container.children().exists()).toBe(true)
-      const completedContainer = container.childAt(0)
-      expect(completedContainer).toBeDefined()
+      const completedContainer = container.find(AsyncCall.Completed)
       expect(completedContainer).not.toBeEmptyRender()
-      expect(completedContainer.children().length).toBe(1)
-      expect(completedContainer.childAt(0).text()).toBe('abcdef')
+      expect(completedContainer).toHaveText('abcdef')
 
       done()
     })

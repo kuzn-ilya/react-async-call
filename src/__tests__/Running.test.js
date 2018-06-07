@@ -11,7 +11,7 @@ describe('Running', () => {
       expect(AsyncCall.Running).toBeDefined()
     })
 
-    it('should expose default display names', () => {
+    it('should expose default display name', () => {
       const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
       expect(AsyncCall.Running.displayName).toBe('AsyncCall.Running')
     })
@@ -35,12 +35,10 @@ describe('Running', () => {
         </AsyncCall>,
       )
 
-      expect(container.children().exists()).toBe(true)
-      const runningContainer = container.childAt(0)
-      expect(runningContainer).toBeDefined()
+      const runningContainer = container.find(AsyncCall.Running)
+      expect(runningContainer).toExist()
       expect(runningContainer).not.toBeEmptyRender()
-      expect(runningContainer.children().length).toBe(1)
-      expect(runningContainer.childAt(0).text()).toBe('abcdef')
+      expect(runningContainer).toHaveText('abcdef')
     })
 
     it("should render Running's children array if promise has not been resolved yet", () => {
@@ -54,12 +52,10 @@ describe('Running', () => {
         </AsyncCall>,
       )
 
-      expect(container.children().exists()).toBe(true)
-      const runningContainer = container.childAt(0)
-      expect(runningContainer).toBeDefined()
+      const runningContainer = container.find(AsyncCall.Running)
       expect(runningContainer.children().length).toBe(2)
-      expect(runningContainer.childAt(0).text()).toBe('abcdef')
-      expect(runningContainer.childAt(1).text()).toBe('bcdefg')
+      expect(runningContainer.childAt(0)).toHaveText('abcdef')
+      expect(runningContainer.childAt(1)).toHaveText('bcdefg')
     })
 
     it("should not render Running's children if promise has been resolved", async done => {
@@ -73,9 +69,8 @@ describe('Running', () => {
       await flushPromises()
       container.update()
 
-      expect(container.children().exists()).toBe(true)
-      const runningContainer = container.childAt(0)
-      expect(runningContainer).toBeDefined()
+      const runningContainer = container.find(AsyncCall.Running)
+      expect(runningContainer).toExist()
       expect(runningContainer).toBeEmptyRender()
 
       done()
@@ -92,9 +87,8 @@ describe('Running', () => {
       await flushPromises()
       container.update()
 
-      expect(container.children().exists()).toBe(true)
-      const runningContainer = container.childAt(0)
-      expect(runningContainer).toBeDefined()
+      const runningContainer = container.find(AsyncCall.Running)
+      expect(runningContainer).toExist()
       expect(runningContainer).toBeEmptyRender()
 
       done()
@@ -111,9 +105,8 @@ describe('Running', () => {
       await flushPromises()
       container.update()
 
-      expect(container.children().exists()).toBe(true)
-      const runningContainer = container.childAt(0)
-      expect(runningContainer).toBeDefined()
+      const runningContainer = container.find(AsyncCall.Running)
+      expect(runningContainer).toExist()
       expect(runningContainer).toBeEmptyRender()
 
       done()
@@ -133,8 +126,8 @@ describe('Running', () => {
         await flushPromises()
         container.update()
 
-        const runningContainer = container.childAt(0)
-        expect(runningContainer).toBeDefined()
+        const runningContainer = container.find(AsyncCall.Running)
+        expect(runningContainer).toExist()
         expect(runningContainer).toBeEmptyRender()
       }
 
@@ -142,20 +135,19 @@ describe('Running', () => {
         container.setProps({ params: 2 })
         container.update()
 
-        const runningContainer = container.childAt(0)
-        expect(runningContainer).toBeDefined()
+        const runningContainer = container.find(AsyncCall.Running)
+        expect(runningContainer).toExist()
         expect(runningContainer).not.toBeEmptyRender()
         expect(runningContainer).toBeDefined()
-        expect(runningContainer.children().length).toBe(1)
-        expect(runningContainer.childAt(0).text()).toBe('abcdef')
+        expect(runningContainer).toHaveText('abcdef')
       }
 
       {
         await flushPromises()
         container.update()
 
-        const runningContainer = container.childAt(0)
-        expect(runningContainer).toBeDefined()
+        const runningContainer = container.find(AsyncCall.Running)
+        expect(runningContainer).toExist()
         expect(runningContainer).toBeEmptyRender()
       }
 
