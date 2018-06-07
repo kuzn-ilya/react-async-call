@@ -38,7 +38,7 @@ describe('Completed', () => {
       expect(container.children().exists()).toBe(true)
       const completedContainer = container.childAt(0)
       expect(completedContainer).toBeDefined()
-      expect(completedContainer).toHaveEmptyRender()
+      expect(completedContainer).toBeEmptyRender()
       expect(completedContainer.children().length).toBe(0)
     })
 
@@ -58,7 +58,7 @@ describe('Completed', () => {
       expect(container.children().exists()).toBe(true)
       const completedContainer = container.childAt(0)
       expect(completedContainer).toBeDefined()
-      expect(completedContainer).not.toHaveEmptyRender()
+      expect(completedContainer).not.toBeEmptyRender()
       expect(completedContainer.children().length).toBe(1)
       expect(completedContainer.childAt(0).text()).toBe('abcdef')
 
@@ -81,7 +81,7 @@ describe('Completed', () => {
       expect(container.children().exists()).toBe(true)
       const completedContainer = container.childAt(0)
       expect(completedContainer).toBeDefined()
-      expect(completedContainer).not.toHaveEmptyRender()
+      expect(completedContainer).not.toBeEmptyRender()
       expect(completedContainer.children().length).toBe(1)
       expect(completedContainer.childAt(0).text()).toBe('abcdef')
 

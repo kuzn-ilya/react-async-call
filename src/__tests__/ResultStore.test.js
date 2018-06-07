@@ -52,7 +52,7 @@ describe('ResultStore', () => {
       expect(container.children().exists()).toBe(true)
       const resultStoreContainer = container.childAt(0)
       expect(resultStoreContainer).toBeDefined()
-      expect(resultStoreContainer).not.toHaveEmptyRender()
+      expect(resultStoreContainer).not.toBeEmptyRender()
       expect(resultStoreContainer.children().length).toBe(1)
       expect(resultStoreContainer.childAt(0).text()).toBe('ABC')
     })
@@ -71,7 +71,7 @@ describe('ResultStore', () => {
       expect(container.children().exists()).toBe(true)
       const resultStoreContainer = container.childAt(0)
       expect(resultStoreContainer).toBeDefined()
-      expect(resultStoreContainer).toHaveEmptyRender()
+      expect(resultStoreContainer).toBeEmptyRender()
 
       expect(children).toHaveBeenCalledWith({ hasResult: false })
     })
@@ -90,7 +90,7 @@ describe('ResultStore', () => {
       expect(container.children().exists()).toBe(true)
       const resultStoreContainer = container.childAt(0)
       expect(resultStoreContainer).toBeDefined()
-      expect(resultStoreContainer).toHaveEmptyRender()
+      expect(resultStoreContainer).toBeEmptyRender()
 
       expect(children).toHaveBeenCalledWith({ hasResult: false })
 
@@ -114,7 +114,7 @@ describe('ResultStore', () => {
       expect(container.children().exists()).toBe(true)
       const resultStoreContainer = container.childAt(0)
       expect(resultStoreContainer).toBeDefined()
-      expect(resultStoreContainer).not.toHaveEmptyRender()
+      expect(resultStoreContainer).not.toBeEmptyRender()
       expect(resultStoreContainer.children().exists()).toBe(true)
       expect(resultStoreContainer.childAt(0).text()).toBe('42')
 

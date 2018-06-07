@@ -67,7 +67,7 @@ describe('Resolved', () => {
       expect(container.children().exists()).toBe(true)
       const resolvedContainer = container.childAt(0)
       expect(resolvedContainer).toBeDefined()
-      expect(resolvedContainer).not.toHaveEmptyRender()
+      expect(resolvedContainer).not.toBeEmptyRender()
       expect(resolvedContainer.text()).toBe('ABCDEF')
 
       done()
@@ -102,7 +102,7 @@ describe('Resolved', () => {
       expect(container.children().exists()).toBe(true)
       const resolvedContainer = container.childAt(0)
       expect(resolvedContainer).toBeDefined()
-      expect(resolvedContainer).toHaveEmptyRender()
+      expect(resolvedContainer).toBeEmptyRender()
     })
 
     it("should not render Resolved's children if promise has been rejected", async done => {
@@ -117,7 +117,7 @@ describe('Resolved', () => {
       expect(container.children().exists()).toBe(true)
       const resolvedContainer = container.childAt(0)
       expect(resolvedContainer).toBeDefined()
-      expect(resolvedContainer).toHaveEmptyRender()
+      expect(resolvedContainer).toBeEmptyRender()
 
       done()
     })
@@ -137,7 +137,7 @@ describe('Resolved', () => {
       const resolvedContainer = container.childAt(0)
 
       expect(resolvedContainer).toBeDefined()
-      expect(resolvedContainer).toHaveEmptyRender()
+      expect(resolvedContainer).toBeEmptyRender()
 
       done()
     })
@@ -158,7 +158,7 @@ describe('Resolved', () => {
       expect(container.children().exists()).toBe(true)
       const resolvedContainer = container.childAt(0)
       expect(resolvedContainer).toBeDefined()
-      expect(resolvedContainer).not.toHaveEmptyRender()
+      expect(resolvedContainer).not.toBeEmptyRender()
       expect(resolvedContainer.text()).toBe('abcdef')
 
       done()
@@ -203,7 +203,7 @@ describe('Resolved', () => {
       expect(fn).toHaveBeenCalledTimes(2)
       const resolvedContainer = container.childAt(0)
       expect(resolvedContainer).toBeDefined()
-      expect(resolvedContainer).toHaveEmptyRender()
+      expect(resolvedContainer).toBeEmptyRender()
 
       done()
     })
@@ -225,7 +225,7 @@ describe('Resolved', () => {
         const resolvedContainer = container.childAt(0)
 
         expect(resolvedContainer).toBeDefined()
-        expect(resolvedContainer).toHaveEmptyRender()
+        expect(resolvedContainer).toBeEmptyRender()
 
         done()
       }),

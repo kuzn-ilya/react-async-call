@@ -3,6 +3,7 @@
 ## 0.2.4
 
 * Chore: Rework and enable all xit'ed tests
+* Chore: Add jest-enzyme package and remove custom assertions
 
 ## 0.2.3
 

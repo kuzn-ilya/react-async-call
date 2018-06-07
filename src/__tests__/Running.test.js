@@ -38,7 +38,7 @@ describe('Running', () => {
       expect(container.children().exists()).toBe(true)
       const runningContainer = container.childAt(0)
       expect(runningContainer).toBeDefined()
-      expect(runningContainer).not.toHaveEmptyRender()
+      expect(runningContainer).not.toBeEmptyRender()
       expect(runningContainer.children().length).toBe(1)
       expect(runningContainer.childAt(0).text()).toBe('abcdef')
     })
@@ -76,7 +76,7 @@ describe('Running', () => {
       expect(container.children().exists()).toBe(true)
       const runningContainer = container.childAt(0)
       expect(runningContainer).toBeDefined()
-      expect(runningContainer).toHaveEmptyRender()
+      expect(runningContainer).toBeEmptyRender()
 
       done()
     })
@@ -95,7 +95,7 @@ describe('Running', () => {
       expect(container.children().exists()).toBe(true)
       const runningContainer = container.childAt(0)
       expect(runningContainer).toBeDefined()
-      expect(runningContainer).toHaveEmptyRender()
+      expect(runningContainer).toBeEmptyRender()
 
       done()
     })
@@ -114,7 +114,7 @@ describe('Running', () => {
       expect(container.children().exists()).toBe(true)
       const runningContainer = container.childAt(0)
       expect(runningContainer).toBeDefined()
-      expect(runningContainer).toHaveEmptyRender()
+      expect(runningContainer).toBeEmptyRender()
 
       done()
     })
@@ -135,7 +135,7 @@ describe('Running', () => {
 
         const runningContainer = container.childAt(0)
         expect(runningContainer).toBeDefined()
-        expect(runningContainer).toHaveEmptyRender()
+        expect(runningContainer).toBeEmptyRender()
       }
 
       {
@@ -144,7 +144,7 @@ describe('Running', () => {
 
         const runningContainer = container.childAt(0)
         expect(runningContainer).toBeDefined()
-        expect(runningContainer).not.toHaveEmptyRender()
+        expect(runningContainer).not.toBeEmptyRender()
         expect(runningContainer).toBeDefined()
         expect(runningContainer.children().length).toBe(1)
         expect(runningContainer.childAt(0).text()).toBe('abcdef')
@@ -156,7 +156,7 @@ describe('Running', () => {
 
         const runningContainer = container.childAt(0)
         expect(runningContainer).toBeDefined()
-        expect(runningContainer).toHaveEmptyRender()
+        expect(runningContainer).toBeEmptyRender()
       }
 
       done()

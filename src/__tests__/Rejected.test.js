@@ -36,7 +36,7 @@ describe('Rejected', () => {
       expect(container.children().exists()).toBe(true)
       const rejectedContainer = container.childAt(0)
       expect(rejectedContainer).toBeDefined()
-      expect(rejectedContainer).toHaveEmptyRender()
+      expect(rejectedContainer).toBeEmptyRender()
     })
 
     it("should not render Rejected's children if promise has been resolved", async done => {
@@ -52,7 +52,7 @@ describe('Rejected', () => {
       expect(container.children().exists()).toBe(true)
       const rejectedContainer = container.childAt(0)
       expect(rejectedContainer).toBeDefined()
-      expect(rejectedContainer).toHaveEmptyRender()
+      expect(rejectedContainer).toBeEmptyRender()
 
       done()
     })
@@ -73,7 +73,7 @@ describe('Rejected', () => {
       expect(container.children().exists()).toBe(true)
       const rejectedContainer = container.childAt(0)
       expect(rejectedContainer).toBeDefined()
-      expect(rejectedContainer).not.toHaveEmptyRender()
+      expect(rejectedContainer).not.toBeEmptyRender()
       expect(rejectedContainer.text()).toBe('abcdef')
 
       done()
@@ -116,7 +116,7 @@ describe('Rejected', () => {
 
       const rejectedContainer = container.childAt(0)
       expect(rejectedContainer).toBeDefined()
-      expect(rejectedContainer).toHaveEmptyRender()
+      expect(rejectedContainer).toBeEmptyRender()
 
       done()
     })

@@ -71,7 +71,7 @@ describe('HasResult', () => {
       expect(resultStoreContainer.children().exists()).toBe(true)
       const resultContainer = resultStoreContainer.childAt(0)
       expect(resultContainer).toBeDefined()
-      expect(resultContainer).toHaveEmptyRender()
+      expect(resultContainer).toBeEmptyRender()
 
       expect(children).not.toHaveBeenCalled()
     })
@@ -96,7 +96,7 @@ describe('HasResult', () => {
       expect(resultStoreContainer.children().exists()).toBe(true)
       const resultContainer = resultStoreContainer.childAt(0)
       expect(resultContainer).toBeDefined()
-      expect(resultContainer).toHaveEmptyRender()
+      expect(resultContainer).toBeEmptyRender()
 
       expect(children).not.toHaveBeenCalled()
 
@@ -122,7 +122,7 @@ describe('HasResult', () => {
       expect(container.children().exists()).toBe(true)
       const resultContainer = container.childAt(0)
       expect(resultContainer).toBeDefined()
-      expect(resultContainer).not.toHaveEmptyRender()
+      expect(resultContainer).not.toBeEmptyRender()
       expect(resultContainer.children().exists()).toBe(true)
       expect(resultContainer.childAt(0).text()).toBe('result')
 
