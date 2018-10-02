@@ -33,9 +33,6 @@
     "release": "npm run test && npm run build && npm version patch && npm publish && git push --tags"
   },
   "pre-commit": ["test"],
-  "dependencies": {
-    "create-react-context": "0.2.2"
-  },
   "peerDependencies": {
     "fbjs": "^0.8.0",
     "prop-types": "^15.0.0",
