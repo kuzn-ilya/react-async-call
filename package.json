@@ -11,18 +11,8 @@
   "repository": "https://github.com/kuzn-ilya/react-async-call",
   "license": "MIT",
   "typings": "src/index.d.ts",
-  "files": [
-    "lib",
-    "src/index.d.ts"
-  ],
-  "keywords": [
-    "react",
-    "reactjs",
-    "render",
-    "props",
-    "promise",
-    "fetch"
-  ],
+  "files": ["lib", "src/index.d.ts"],
+  "keywords": ["react", "reactjs", "render", "props", "promise", "fetch"],
   "bugs": {
     "url": "https://github.com/kuzn-ilya/react-async-call/issues"
   },
@@ -32,17 +22,20 @@
     "build": "npm run clean && npm run rollup && npm run minify",
     "eslint": "eslint ./",
     "minify": "npm run minify:cjs && npm run minify:umd",
-    "minify:cjs": "uglifyjs lib/index.js -cm toplevel -o lib/index.js -p relative --in-source-map lib/index.js.map --source-map lib/index.js.map",
-    "minify:umd": "uglifyjs lib/index.umd.js -cm -o lib/index.umd.js -p relative --in-source-map lib/index.umd.js.map --source-map lib/index.umd.js.map",
+    "minify:cjs":
+      "uglifyjs lib/index.js -cm toplevel -o lib/index.js -p relative --in-source-map lib/index.js.map --source-map lib/index.js.map",
+    "minify:umd":
+      "uglifyjs lib/index.umd.js -cm -o lib/index.umd.js -p relative --in-source-map lib/index.umd.js.map --source-map lib/index.umd.js.map",
     "test": "npm run eslint && jest src --coverage",
     "test:watch": "npm run eslint && jest src --watch",
     "format": "prettier --write **/*.{js,jsx,json,d.ts} !lib/** !.vscode/**",
     "rollup": "rollup -c",
     "release": "npm run test && npm run build && npm version patch && npm publish && git push --tags"
   },
-  "pre-commit": [
-    "test"
-  ],
+  "pre-commit": ["test"],
+  "dependencies": {
+    "create-react-context": "0.2.2"
+  },
   "peerDependencies": {
     "fbjs": "^0.8.0",
     "prop-types": "^15.0.0",
@@ -77,17 +70,11 @@
     "uglifyjs": "^2.4.11"
   },
   "jest": {
-    "coverageDirectory": "/coverage/",
+    "coverageDirectory": "./coverage/",
     "collectCoverage": true,
-    "coveragePathIgnorePatterns": [
-      "/node_modules/",
-      "./src/__tests__/setup.js",
-      "./src/__tests__/common.js"
-    ],
+    "coveragePathIgnorePatterns": ["/node_modules/", "./src/__tests__/setup.js", "./src/__tests__/common.js"],
     "setupTestFrameworkScriptFile": "./src/__tests__/setup.js",
-    "testMatch": [
-      "**/__tests__/**/*.test.js?(x)"
-    ]
+    "testMatch": ["**/__tests__/**/*.test.js?(x)"]
   },
   "eslintConfig": {
     "parser": "babel-eslint",
@@ -95,19 +82,8 @@
       "browser": true,
       "node": true
     },
-    "plugins": [
-      "import",
-      "react"
-    ],
-    "extends": [
-      "eslint:recommended",
-      "plugin:import/errors",
-      "plugin:react/recommended"
-    ]
+    "plugins": ["import", "react"],
+    "extends": ["eslint:recommended", "plugin:import/errors", "plugin:react/recommended"]
   },
-  "eslintIgnore": [
-    "lib/**",
-    "src/__tests__/**",
-    "coverage/**"
-  ]
+  "eslintIgnore": ["lib/**", "src/__tests__/**", "coverage/**"]
 }
