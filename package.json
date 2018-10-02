@@ -71,7 +71,8 @@
     "collectCoverage": true,
     "coveragePathIgnorePatterns": ["/node_modules/", "./src/__tests__/setup.js", "./src/__tests__/common.js"],
     "setupTestFrameworkScriptFile": "./src/__tests__/setup.js",
-    "testMatch": ["**/__tests__/**/*.test.js?(x)"]
+    "testMatch": ["**/__tests__/**/*.test.js?(x)"],
+    "testURL": "http://localhost"
   },
   "eslintConfig": {
     "parser": "babel-eslint",
