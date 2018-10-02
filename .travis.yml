@@ -1,7 +1,8 @@
 language: node_js
 
 node_js:
-  - "7"
+  - '8'
+  - '10'
 
 cache:
   directories:
@@ -15,9 +16,8 @@ before_install:
   - npm install prop-types
   - npm install fbjs
 
+script:
+  - npm run test
+
 after_success:
   - cat ./coverage/lcov.info | ./node_modules/codecov/bin/codecov
-
-cache:
-  directories:
-    - node_modules
