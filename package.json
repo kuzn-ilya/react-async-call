@@ -1,6 +1,6 @@
 {
   "name": "react-async-call",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "Declarative promise handling in React",
   "main": "lib/index.js",
   "module": "lib/index.es.js",
@@ -71,7 +71,7 @@
     "jest-enzyme": "6.0.1",
     "pre-commit": "^1.2.2",
     "prettier": "^1.11.1",
-    "react": "^16.2.0",
+    "react": "^16.5.2",
     "react-dom": "^16.2.0",
     "rimraf": "^2.6.2",
     "rollup": "^0.56.5",
@@ -146,5 +146,9 @@
       "@semantic-release/npm",
       "@semantic-release/github"
     ]
+  },
+  "dependencies": {
+    "codecov": "^3.1.0",
+    "prop-types": "^15.6.2"
   }
 }
