@@ -2,22 +2,15 @@ language: node_js
 
 node_js:
   - '8'
-  - '10'
 
 cache:
   directories:
     - node_modules
 
 before_install:
-  - sudo chown -R $USER ~/
-  - mkdir ~/coverage
   - npm install codecov
   - npm install react
   - npm install prop-types
-  - npm install fbjs
-
-script:
-  - npm run test
 
 after_success:
   - cat ./coverage/lcov.info | ./node_modules/codecov/bin/codecov
