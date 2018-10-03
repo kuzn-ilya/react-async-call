@@ -8,7 +8,7 @@
   "umd:main": "lib/index.umd.js",
   "unpkg": "lib/index.umd.js",
   "author": "Ilya Kuznetsov <kuzn.ilya@gmail.com>",
-  "repository": "https://github.com/kuzn-ilya/react-async-call",
+  "repository": "https://github.com/kuzn-ilya/react-async-call.git",
   "license": "MIT",
   "typings": "src/index.d.ts",
   "files": ["lib", "src/index.d.ts"],
@@ -22,10 +22,9 @@
     "build": "npm run clean && npm run rollup && npm run minify",
     "eslint": "eslint ./",
     "minify": "npm run minify:cjs && npm run minify:umd",
-    "minify:cjs":
-      "uglifyjs lib/index.js -cm toplevel -o lib/index.js -p relative --in-source-map lib/index.js.map --source-map lib/index.js.map",
+    "minify:cjs": "uglifyjs lib/index.js -cm toplevel -o lib/index.js --source-map filename=lib/index.js.map",
     "minify:umd":
-      "uglifyjs lib/index.umd.js -cm -o lib/index.umd.js -p relative --in-source-map lib/index.umd.js.map --source-map lib/index.umd.js.map",
+      "uglifyjs lib/index.umd.js -cm toplevel -o lib/index.umd.js --source-map filename=lib/index.umd.js.map",
     "test": "npm run eslint && jest src --coverage",
     "test:watch": "npm run eslint && jest src --watch",
     "format": "prettier --write **/*.{js,jsx,json,d.ts} !lib/** !.vscode/**",
@@ -39,6 +38,7 @@
     "react": "^16.0.0"
   },
   "devDependencies": {
+    "@semantic-release/changelog": "3.0.0",
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.0",
     "babel-eslint": "^8.2.2",
@@ -64,7 +64,8 @@
     "rimraf": "^2.6.2",
     "rollup": "^0.56.5",
     "rollup-plugin-babel": "^3.0.3",
-    "uglifyjs": "^2.4.11"
+    "semantic-release": "15.9.16",
+    "uglifyjs": "^3.4.9"
   },
   "jest": {
     "coverageDirectory": "./coverage/",
@@ -83,5 +84,30 @@
     "plugins": ["import", "react"],
     "extends": ["eslint:recommended", "plugin:import/errors", "plugin:react/recommended"]
   },
-  "eslintIgnore": ["lib/**", "src/__tests__/**", "coverage/**"]
+  "eslintIgnore": ["lib/**", "src/__tests__/**", "coverage/**"],
+  "release": {
+    "verifyConditions": [
+      {
+        "path": "@semantic-release/changelog",
+        "changelogFile": "docs/changelog.md"
+      },
+      "@semantic-release/npm",
+      "@semantic-release/github",
+      "@semantic-release/git"
+    ],
+    "generateNotes": ["@semantic-release/release-notes-generator"],
+    "prepare": [
+      {
+        "path": "@semantic-release/changelog",
+        "changelogFile": "docs/changelog.md"
+      },
+      "@semantic-release/npm",
+      {
+        "path": "@semantic-release/git",
+        "assets": ["package.json", "docs/CHANGELOG.md"],
+        "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
+      }
+    ],
+    "publish": ["@semantic-release/npm", "@semantic-release/github"]
+  }
 }

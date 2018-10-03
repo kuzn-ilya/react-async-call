@@ -1,13 +1,5 @@
 # Change Log
 
-## 0.2.4
-
-* Chore: Rework and enable all xit'ed tests
-* Chore: Add jest-enzyme package and remove custom assertions
-* Chore: Simplify tests by using jest-enzyme assertions
-* Chore: fix eslint-\* package versions
-* Fix: fix coverage report for travis-ci
-
 ## 0.2.3
 
 * Bug fixing: unmount component during async call correctly

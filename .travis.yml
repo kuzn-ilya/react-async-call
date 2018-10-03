@@ -3,14 +3,20 @@ language: node_js
 node_js:
   - '8'
 
-cache:
-  directories:
-    - node_modules
-
 before_install:
   - npm install codecov
   - npm install react
   - npm install prop-types
 
+script:
+  - npm test
+  - npm run build
+
 after_success:
   - cat ./coverage/lcov.info | ./node_modules/codecov/bin/codecov
+
+deploy:
+  provider: script
+  skip_cleanup: true
+  script:
+    - npx semantic-release
