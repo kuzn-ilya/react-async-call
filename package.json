@@ -50,6 +50,7 @@
   },
   "devDependencies": {
     "@semantic-release/changelog": "3.0.0",
+    "@semantic-release/git": "7.0.4",
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.0",
     "babel-eslint": "^8.2.2",
