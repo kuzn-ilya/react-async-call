@@ -11,8 +11,18 @@
   "repository": "https://github.com/kuzn-ilya/react-async-call.git",
   "license": "MIT",
   "typings": "src/index.d.ts",
-  "files": ["lib", "src/index.d.ts"],
-  "keywords": ["react", "reactjs", "render", "props", "promise", "fetch"],
+  "files": [
+    "lib",
+    "src/index.d.ts"
+  ],
+  "keywords": [
+    "react",
+    "reactjs",
+    "render",
+    "props",
+    "promise",
+    "fetch"
+  ],
   "bugs": {
     "url": "https://github.com/kuzn-ilya/react-async-call/issues"
   },
@@ -23,15 +33,16 @@
     "eslint": "eslint ./",
     "minify": "npm run minify:cjs && npm run minify:umd",
     "minify:cjs": "uglifyjs lib/index.js -cm toplevel -o lib/index.js --source-map filename=lib/index.js.map",
-    "minify:umd":
-      "uglifyjs lib/index.umd.js -cm toplevel -o lib/index.umd.js --source-map filename=lib/index.umd.js.map",
+    "minify:umd": "uglifyjs lib/index.umd.js -cm toplevel -o lib/index.umd.js --source-map filename=lib/index.umd.js.map",
     "test": "npm run eslint && jest src --coverage",
     "test:watch": "npm run eslint && jest src --watch",
     "format": "prettier --write **/*.{js,jsx,json,d.ts} !lib/** !.vscode/**",
     "rollup": "rollup -c",
     "release": "npm run test && npm run build && npm version patch && npm publish && git push --tags"
   },
-  "pre-commit": ["test"],
+  "pre-commit": [
+    "test"
+  ],
   "peerDependencies": {
     "fbjs": "^0.8.0",
     "prop-types": "^15.0.0",
@@ -65,14 +76,20 @@
     "rollup": "^0.56.5",
     "rollup-plugin-babel": "^3.0.3",
     "semantic-release": "15.9.16",
-    "uglifyjs": "^3.4.9"
+    "uglify-js": "^3.4.9"
   },
   "jest": {
     "coverageDirectory": "./coverage/",
     "collectCoverage": true,
-    "coveragePathIgnorePatterns": ["/node_modules/", "./src/__tests__/setup.js", "./src/__tests__/common.js"],
+    "coveragePathIgnorePatterns": [
+      "/node_modules/",
+      "./src/__tests__/setup.js",
+      "./src/__tests__/common.js"
+    ],
     "setupTestFrameworkScriptFile": "./src/__tests__/setup.js",
-    "testMatch": ["**/__tests__/**/*.test.js?(x)"],
+    "testMatch": [
+      "**/__tests__/**/*.test.js?(x)"
+    ],
     "testURL": "http://localhost"
   },
   "eslintConfig": {
@@ -81,10 +98,21 @@
       "browser": true,
       "node": true
     },
-    "plugins": ["import", "react"],
-    "extends": ["eslint:recommended", "plugin:import/errors", "plugin:react/recommended"]
+    "plugins": [
+      "import",
+      "react"
+    ],
+    "extends": [
+      "eslint:recommended",
+      "plugin:import/errors",
+      "plugin:react/recommended"
+    ]
   },
-  "eslintIgnore": ["lib/**", "src/__tests__/**", "coverage/**"],
+  "eslintIgnore": [
+    "lib/**",
+    "src/__tests__/**",
+    "coverage/**"
+  ],
   "release": {
     "verifyConditions": [
       {
@@ -95,7 +123,9 @@
       "@semantic-release/github",
       "@semantic-release/git"
     ],
-    "generateNotes": ["@semantic-release/release-notes-generator"],
+    "generateNotes": [
+      "@semantic-release/release-notes-generator"
+    ],
     "prepare": [
       {
         "path": "@semantic-release/changelog",
@@ -104,10 +134,16 @@
       "@semantic-release/npm",
       {
         "path": "@semantic-release/git",
-        "assets": ["package.json", "docs/CHANGELOG.md"],
+        "assets": [
+          "package.json",
+          "docs/CHANGELOG.md"
+        ],
         "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
       }
     ],
-    "publish": ["@semantic-release/npm", "@semantic-release/github"]
+    "publish": [
+      "@semantic-release/npm",
+      "@semantic-release/github"
+    ]
   }
 }
