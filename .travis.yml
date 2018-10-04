@@ -3,10 +3,20 @@ language: node_js
 node_js:
   - '8'
 
+env:
+  - REACT_VERSION=~16.0.0
+  - REACT_VERSION=~16.1.0
+  - REACT_VERSION=~16.2.0
+  - REACT_VERSION=~16.3.0
+  - REACT_VERSION=~16.4.0
+  - REACT_VERSION=~16.5.0
+
 before_install:
   - npm install codecov
-  - npm install react
-  - npm install prop-types
+
+after_install:
+  - npm install react@$REACT_VERSION --save-dev
+  - npm install react-dom@$REACT_VERSION --save-dev
 
 script:
   - npm test
@@ -19,4 +29,4 @@ deploy:
   provider: script
   skip_cleanup: true
   script:
-    - npx semantic-release
+    - npx travis-deploy-once "npx semantic-release"
