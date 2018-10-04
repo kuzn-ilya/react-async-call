@@ -1,6 +1,6 @@
 {
   "name": "react-async-call",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "description": "Declarative promise handling in React",
   "main": "lib/index.js",
   "module": "lib/index.es.js",
@@ -74,7 +74,7 @@
     "pre-commit": "^1.2.2",
     "prettier": "^1.11.1",
     "react": "^16.5.2",
-    "react-dom": "^16.2.0",
+    "react-dom": "^16.5.2",
     "rimraf": "^2.6.2",
     "rollup": "^0.56.5",
     "rollup-plugin-babel": "^3.0.3",

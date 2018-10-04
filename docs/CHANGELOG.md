@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.2.6](https://github.com/kuzn-ilya/react-async-call/compare/v0.2.5...v0.2.6) (2018-10-04)
+
+
+### Bug Fixes
+
+* **rollup:** remove fbjs from external dependencies ([09d607f](https://github.com/kuzn-ilya/react-async-call/commit/09d607f))
+
 ## [0.2.5](https://github.com/kuzn-ilya/react-async-call/compare/v0.2.4...v0.2.5) (2018-10-04)
 
 
