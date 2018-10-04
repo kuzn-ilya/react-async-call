@@ -43,8 +43,11 @@
   "pre-commit": [
     "test"
   ],
+  "dependencies": {
+    "fbjs": "0.8.0",
+    "prop-types": "^15.6.2"
+  },
   "peerDependencies": {
-    "fbjs": "^0.8.0",
     "react": "^16.0.0"
   },
   "devDependencies": {
@@ -141,8 +144,5 @@
       "@semantic-release/npm",
       "@semantic-release/github"
     ]
-  },
-  "dependencies": {
-    "prop-types": "^15.6.2"
   }
 }
