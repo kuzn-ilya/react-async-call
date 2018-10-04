@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.2.5](https://github.com/kuzn-ilya/react-async-call/compare/v0.2.4...v0.2.5) (2018-10-04)
+
+
+### Bug Fixes
+
+* add fbjs@0.8.0 as dependency instead of peer dependency ([83538f2](https://github.com/kuzn-ilya/react-async-call/commit/83538f2)), closes [#19](https://github.com/kuzn-ilya/react-async-call/issues/19)
+
 ## 0.2.3
 
 * Bug fixing: unmount component during async call correctly
