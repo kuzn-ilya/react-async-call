@@ -1,5 +1,4 @@
 import * as React from 'react'
-import * as PropTypes from 'prop-types'
 import { shallow, mount } from 'enzyme'
 
 import createAsyncCallComponent from '../index'
@@ -18,23 +17,37 @@ describe('ResultStore', () => {
       expect(AsyncCall.ResultStore.displayName).toBe('AsyncCall.ResultStore')
     })
 
-    it('should throw an error if ResultStore component rendered alone', () => {
-      const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
-      expect(() => shallow(<AsyncCall.ResultStore>{result => null}</AsyncCall.ResultStore>)).toThrow(
-        '<AsyncCall.ResultStore> must be a child (direct or indirect) of <AsyncCall>.',
-      )
-    })
+    describe('', () => {
+      let spy
 
-    it('should throw an error if children is not passed', () => {
-      const spy = jest.spyOn(console, 'error').mockImplementation(() => {})
-      const AsyncCall = createAsyncCallComponent(value => Promise.resolve(value))
-      mount(
-        <AsyncCall params="first">
-          <AsyncCall.ResultStore />
-        </AsyncCall>,
-      )
+      beforeEach(() => {
+        spy = jest.spyOn(console, 'error').mockImplementation(() => {})
+      })
 
-      expect(spy).toHaveBeenCalled()
+      afterEach(() => {
+        spy.mockRestore()
+      })
+
+      it('should throw an error if ResultStore component rendered alone', () => {
+        const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
+        expect(() => mount(<AsyncCall.ResultStore>{result => null}</AsyncCall.ResultStore>)).toThrow(
+          '<AsyncCall.ResultStore> must be a child (direct or indirect) of <AsyncCall>.',
+        )
+      })
+
+      it('should throw an error if children is not passed', () => {
+        const AsyncCall = createAsyncCallComponent(value => Promise.resolve(value))
+        mount(
+          <AsyncCall params="first">
+            <AsyncCall.ResultStore />
+          </AsyncCall>,
+        )
+
+        expect(spy).toHaveBeenCalled()
+        expect(spy.mock.calls[0][0]).toContain(
+          'The prop `children` is marked as required in `AsyncCall.ResultStore`, but its value is `undefined`',
+        )
+      })
     })
   })
 
@@ -68,7 +81,6 @@ describe('ResultStore', () => {
 
       const resultStoreContainer = container.find(AsyncCall.ResultStore)
       expect(resultStoreContainer).toExist()
-      expect(resultStoreContainer).toBeEmptyRender()
 
       expect(children).toHaveBeenCalledWith({ hasResult: false })
     })
@@ -86,7 +98,6 @@ describe('ResultStore', () => {
 
       const resultStoreContainer = container.find(AsyncCall.ResultStore)
       expect(resultStoreContainer).toExist()
-      expect(resultStoreContainer).toBeEmptyRender()
 
       expect(children).toHaveBeenCalledWith({ hasResult: false })
 

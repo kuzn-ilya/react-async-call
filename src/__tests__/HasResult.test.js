@@ -2,7 +2,7 @@ import * as React from 'react'
 import { shallow, mount } from 'enzyme'
 
 import createAsyncCallComponent from '../index'
-import { flushPromises } from './common'
+import { getChildrenContainer, getResultStoreChildrenContainer, flushPromises } from './common'
 
 describe('HasResult', () => {
   describe('invariants', () => {
@@ -23,32 +23,45 @@ describe('HasResult', () => {
       )
     })
 
-    it('should throw an error if HasResult component rendered as a direct child of <AsyncCall>', () => {
-      const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
-      const container = shallow(
-        <AsyncCall params={1}>
-          <AsyncCall.ResultStore.HasResult>{() => null}</AsyncCall.ResultStore.HasResult>
-        </AsyncCall>,
-      )
+    describe('', () => {
+      let spy
 
-      expect(() => container.dive()).toThrow(
-        '<AsyncCall.ResultStore.HasResult> must be a child (direct or indirect) of <AsyncCall.ResultStore>.',
-      )
-    })
+      beforeEach(() => {
+        spy = jest.spyOn(console, 'error').mockImplementation(() => {})
+      })
 
-    it('should throw an error if children is not passed', () => {
-      const spy = jest.spyOn(console, 'error').mockImplementation(() => {})
-      const AsyncCall = createAsyncCallComponent(value => Promise.resolve(value))
+      afterEach(() => {
+        spy.mockRestore()
+      })
 
-      mount(
-        <AsyncCall params="first">
-          <AsyncCall.ResultStore>
-            <AsyncCall.ResultStore.HasResult />
-          </AsyncCall.ResultStore>
-        </AsyncCall>,
-      )
+      it('should throw an error if HasResult component rendered as a direct child of <AsyncCall>', () => {
+        const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
 
-      expect(spy).toHaveBeenCalled()
+        expect(() =>
+          mount(
+            <AsyncCall params={1}>
+              <AsyncCall.ResultStore.HasResult>{() => null}</AsyncCall.ResultStore.HasResult>
+            </AsyncCall>,
+          ),
+        ).toThrow('<AsyncCall.ResultStore.HasResult> must be a child (direct or indirect) of <AsyncCall.ResultStore>.')
+      })
+
+      it('should throw an error if children is not passed', () => {
+        const AsyncCall = createAsyncCallComponent(value => Promise.resolve(value))
+
+        mount(
+          <AsyncCall params="first">
+            <AsyncCall.ResultStore>
+              <AsyncCall.ResultStore.HasResult />
+            </AsyncCall.ResultStore>
+          </AsyncCall>,
+        )
+
+        expect(spy).toHaveBeenCalled()
+        expect(spy.mock.calls[0][0]).toContain(
+          'The prop `children` is marked as required in `AsyncCall.ResultStore.HasResult`, but its value is `undefined`',
+        )
+      })
     })
   })
 
@@ -64,10 +77,10 @@ describe('HasResult', () => {
         </AsyncCall>,
       )
 
-      const resultStoreContainer = container.find(AsyncCall.ResultStore)
+      const resultStoreContainer = getChildrenContainer(container, AsyncCall.ResultStore)
       expect(resultStoreContainer).toExist()
 
-      const resultContainer = resultStoreContainer.find(AsyncCall.ResultStore.HasResult)
+      const resultContainer = getResultStoreChildrenContainer(resultStoreContainer, AsyncCall.ResultStore.HasResult)
       expect(resultContainer).toExist()
       expect(resultContainer).toBeEmptyRender()
 
@@ -87,10 +100,10 @@ describe('HasResult', () => {
 
       await flushPromises()
 
-      const resultStoreContainer = container.find(AsyncCall.ResultStore)
+      const resultStoreContainer = getChildrenContainer(container, AsyncCall.ResultStore)
       expect(resultStoreContainer).toExist()
 
-      const resultContainer = resultStoreContainer.find(AsyncCall.ResultStore.HasResult)
+      const resultContainer = getResultStoreChildrenContainer(resultStoreContainer, AsyncCall.ResultStore.HasResult)
       expect(resultContainer).toExist()
       expect(resultContainer).toBeEmptyRender()
 
@@ -115,7 +128,7 @@ describe('HasResult', () => {
 
       expect(children).toHaveBeenCalledWith({ result: 42 })
 
-      const resultContainer = container.find(AsyncCall.ResultStore.HasResult)
+      const resultContainer = getResultStoreChildrenContainer(container, AsyncCall.ResultStore.HasResult)
       expect(resultContainer).toExist()
       expect(resultContainer).not.toBeEmptyRender()
       expect(resultContainer).toHaveText('result')

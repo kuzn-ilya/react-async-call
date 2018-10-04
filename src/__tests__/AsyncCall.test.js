@@ -3,7 +3,7 @@ import * as PropTypes from 'prop-types'
 import { shallow, mount } from 'enzyme'
 
 import createAsyncCallComponent from '../'
-import { flushPromises } from './common'
+import { getAsyncCallChildrenContainer, flushPromises } from './common'
 
 describe('AsyncCall', () => {
   describe('invariants', () => {
@@ -20,7 +20,7 @@ describe('AsyncCall', () => {
       expect(AsyncCall).toBeDefined()
     })
 
-    it('should expose default display names', () => {
+    it('should expose default display name', () => {
       const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
       expect(AsyncCall.displayName).toBe('AsyncCall')
     })
@@ -60,7 +60,7 @@ describe('AsyncCall', () => {
       const fn = jest.fn(value => Promise.resolve())
       const AsyncCall = createAsyncCallComponent(fn)
 
-      const container = shallow(<AsyncCall params={'abc'} />)
+      const container = shallow(<AsyncCall params="abc" />)
       expect(fn).toHaveBeenLastCalledWith('abc')
 
       container.setProps({ params: 'bcd' })
@@ -184,17 +184,19 @@ describe('AsyncCall', () => {
   describe('children', () => {
     it('should render children as is if children property is not a function', () => {
       const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
-      const container = shallow(<AsyncCall params={{}}>abcdef</AsyncCall>)
+      const container = getAsyncCallChildrenContainer(shallow(<AsyncCall params={{}}>abcdef</AsyncCall>))
       expect(container).toHaveText('abcdef')
     })
 
     it('should render children as is if children property is array', () => {
       const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
-      const container = mount(
-        <AsyncCall params={{}}>
-          <div>abcdef</div>
-          <div>12345</div>
-        </AsyncCall>,
+      const container = getAsyncCallChildrenContainer(
+        mount(
+          <AsyncCall params={{}}>
+            <div>abcdef</div>
+            <div>12345</div>
+          </AsyncCall>,
+        ),
       )
       expect(container.children().length).toBe(2)
       expect(container.childAt(0)).toHaveText('abcdef')
@@ -203,7 +205,7 @@ describe('AsyncCall', () => {
   })
 
   describe('unmount', () => {
-    it('should not throw an error when component unmounts during resolving', async done => {
+    it('should not throw an error when component is unmounted during resolving', async done => {
       const fn = jest.fn(() => Promise.resolve())
       const AsyncCall = createAsyncCallComponent(fn)
 
@@ -215,7 +217,7 @@ describe('AsyncCall', () => {
       done()
     })
 
-    it('should not throw an error when component unmounts during rejection', async done => {
+    it('should not throw an error when component is unmounted during rejection', async done => {
       const fn = jest.fn(() => Promise.reject())
       const AsyncCall = createAsyncCallComponent(fn)
 
@@ -229,7 +231,7 @@ describe('AsyncCall', () => {
   })
 
   describe('lazy', () => {
-    describe('should not call function passed to createAsyncCallComponent', () => {
+    describe('should not call a function passed to createAsyncCallComponent', () => {
       it('on mount', () => {
         const fn = jest.fn(() => Promise.resolve())
         const AsyncCall = createAsyncCallComponent(fn)
@@ -290,7 +292,7 @@ describe('AsyncCall', () => {
       contextPropName = undefined
     })
 
-    it('should pass its state to child context', () => {
+    it('should pass its state to a child context', () => {
       const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
       prepareContextChecker(AsyncCall)
 
@@ -308,7 +310,7 @@ describe('AsyncCall', () => {
       expect(rootContext).not.toHaveProperty('result')
     })
 
-    it('should pass appropriate properties to child context on the first run', () => {
+    it('should pass appropriate properties to a child context on the first run', () => {
       const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
       prepareContextChecker(AsyncCall)
 
@@ -325,7 +327,7 @@ describe('AsyncCall', () => {
       expect(rootContext).not.toHaveProperty('result')
     })
 
-    it('should pass appropriate properties to child context on promise resolve', async done => {
+    it('should pass appropriate properties to a child context on promise resolve', async done => {
       const AsyncCall = createAsyncCallComponent(() => Promise.resolve(42))
       prepareContextChecker(AsyncCall)
 
@@ -347,7 +349,7 @@ describe('AsyncCall', () => {
       done()
     })
 
-    it('should pass appropriate properties to child context on promise rejection', async done => {
+    it('should pass appropriate properties to a child context on promise rejection', async done => {
       const AsyncCall = createAsyncCallComponent(() => Promise.reject('rejected'))
       prepareContextChecker(AsyncCall)
       const container = mount(
@@ -368,7 +370,7 @@ describe('AsyncCall', () => {
       done()
     })
 
-    it('should pass appropriate properties to child context on second run', async done => {
+    it('should pass appropriate properties to a child context on second run', async done => {
       const AsyncCall = createAsyncCallComponent(value => Promise.resolve(value))
       prepareContextChecker(AsyncCall)
       const container = mount(
@@ -390,7 +392,7 @@ describe('AsyncCall', () => {
       done()
     })
 
-    it('should pass appropriate properties to child context on second run after rejection', async done => {
+    it('should pass appropriate properties to a child context on second run after rejection', async done => {
       const AsyncCall = createAsyncCallComponent(() => Promise.reject('rejected'))
       prepareContextChecker(AsyncCall)
       const container = mount(

@@ -17,8 +17,10 @@ describe('Rejected', () => {
     })
 
     it('should throw an error if Rejected component rendered alone', () => {
+      jest.spyOn(console, 'error').mockImplementation(() => {})
+
       const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
-      expect(() => shallow(<AsyncCall.Rejected />)).toThrow(
+      expect(() => mount(<AsyncCall.Rejected />)).toThrow(
         '<AsyncCall.Rejected> must be a child (direct or indirect) of <AsyncCall>.',
       )
     })

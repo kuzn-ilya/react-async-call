@@ -2,7 +2,7 @@ import * as React from 'react'
 import { shallow, mount } from 'enzyme'
 
 import createAsyncCallComponent from '../'
-import { flushPromises } from './common'
+import { getChildrenContainer, flushPromises } from './common'
 
 describe('Completed', () => {
   describe('invariants', () => {
@@ -17,8 +17,10 @@ describe('Completed', () => {
     })
 
     it('should throw an error if Completed component rendered alone', () => {
+      jest.spyOn(console, 'error').mockImplementation(() => {})
+
       const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
-      expect(() => shallow(<AsyncCall.Completed />)).toThrow(
+      expect(() => mount(<AsyncCall.Completed />)).toThrow(
         '<AsyncCall.Completed> must be a child (direct or indirect) of <AsyncCall>.',
       )
     })
@@ -35,7 +37,7 @@ describe('Completed', () => {
         </AsyncCall>,
       )
 
-      const completedContainer = container.find(AsyncCall.Completed)
+      const completedContainer = getChildrenContainer(container, AsyncCall.Completed)
       expect(completedContainer).toBeEmptyRender()
     })
 
@@ -52,7 +54,7 @@ describe('Completed', () => {
       await flushPromises()
       container.update()
 
-      const completedContainer = container.find(AsyncCall.Completed)
+      const completedContainer = getChildrenContainer(container, AsyncCall.Completed)
       expect(completedContainer).not.toBeEmptyRender()
       expect(completedContainer).toHaveText('abcdef')
 
@@ -72,7 +74,7 @@ describe('Completed', () => {
       await flushPromises()
       container.update()
 
-      const completedContainer = container.find(AsyncCall.Completed)
+      const completedContainer = getChildrenContainer(container, AsyncCall.Completed)
       expect(completedContainer).not.toBeEmptyRender()
       expect(completedContainer).toHaveText('abcdef')
 

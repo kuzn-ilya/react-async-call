@@ -2,7 +2,7 @@ import * as React from 'react'
 import { shallow, mount } from 'enzyme'
 
 import createAsyncCallComponent from '../index'
-import { flushPromises } from './common'
+import { getChildrenContainer, getAsyncCallChildrenContainer, flushPromises } from './common'
 
 describe('Resolved', () => {
   describe('invariants', () => {
@@ -17,8 +17,10 @@ describe('Resolved', () => {
     })
 
     it('should throw an error if Resolved component rendered alone', () => {
+      jest.spyOn(console, 'error').mockImplementation(() => {})
+
       const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
-      expect(() => shallow(<AsyncCall.Resolved />)).toThrow(
+      expect(() => mount(<AsyncCall.Resolved />)).toThrow(
         '<AsyncCall.Resolved> must be a child (direct or indirect) of <AsyncCall>.',
       )
     })
@@ -64,7 +66,7 @@ describe('Resolved', () => {
       container.update()
 
       expect(children).toHaveBeenCalledWith({ result: 42 })
-      const resolvedContainer = container.find(AsyncCall.Resolved)
+      const resolvedContainer = getChildrenContainer(container, AsyncCall.Resolved)
       expect(resolvedContainer).toExist()
       expect(resolvedContainer).not.toBeEmptyRender()
       expect(resolvedContainer).toHaveText('ABCDEF')
@@ -98,7 +100,7 @@ describe('Resolved', () => {
         </AsyncCall>,
       )
 
-      const resolvedContainer = container.find(AsyncCall.Resolved)
+      const resolvedContainer = getChildrenContainer(container, AsyncCall.Resolved)
       expect(resolvedContainer).toExist()
       expect(resolvedContainer).toBeEmptyRender()
     })
@@ -113,7 +115,7 @@ describe('Resolved', () => {
 
       await flushPromises()
 
-      const resolvedContainer = container.find(AsyncCall.Resolved)
+      const resolvedContainer = getChildrenContainer(container, AsyncCall.Resolved)
       expect(resolvedContainer).toExist()
       expect(resolvedContainer).toBeEmptyRender()
 
@@ -131,7 +133,7 @@ describe('Resolved', () => {
       await flushPromises()
       container.update()
 
-      const resolvedContainer = container.find(AsyncCall.Resolved)
+      const resolvedContainer = getChildrenContainer(container, AsyncCall.Resolved)
       expect(resolvedContainer).toExist()
       expect(resolvedContainer).toBeEmptyRender()
 
@@ -151,7 +153,7 @@ describe('Resolved', () => {
       await flushPromises()
       container.update()
 
-      const resolvedContainer = container.find(AsyncCall.Resolved)
+      const resolvedContainer = getChildrenContainer(container, AsyncCall.Resolved)
       expect(resolvedContainer).toExist()
       expect(resolvedContainer).not.toBeEmptyRender()
       expect(resolvedContainer).toHaveText('abcdef')
@@ -173,7 +175,7 @@ describe('Resolved', () => {
       await flushPromises()
       container.update()
 
-      const resolvedContainer = container.find(AsyncCall.Resolved)
+      const resolvedContainer = getChildrenContainer(container, AsyncCall.Resolved)
       expect(resolvedContainer.children().length).toBe(2)
       expect(resolvedContainer.childAt(0)).toHaveText('abcdef')
       expect(resolvedContainer.childAt(1)).toHaveText('qwerty')
@@ -194,7 +196,7 @@ describe('Resolved', () => {
       container.instance().execute()
 
       expect(fn).toHaveBeenCalledTimes(2)
-      const resolvedContainer = container.find(AsyncCall.Resolved)
+      const resolvedContainer = getChildrenContainer(container, AsyncCall.Resolved)
       expect(resolvedContainer).toExist()
       expect(resolvedContainer).toBeEmptyRender()
 
@@ -214,7 +216,7 @@ describe('Resolved', () => {
         await flushPromises()
         container.update()
 
-        const resolvedContainer = container.find(AsyncCall.Resolved)
+        const resolvedContainer = getChildrenContainer(container, AsyncCall.Resolved)
         expect(resolvedContainer).toExist()
         expect(resolvedContainer).toBeEmptyRender()
 
@@ -242,7 +244,7 @@ describe('Resolved', () => {
       await flushPromises()
       secondAsyncCall.update()
 
-      const firstAsyncCall = secondAsyncCall.find(FirstAsyncCall)
+      const firstAsyncCall = getAsyncCallChildrenContainer(secondAsyncCall.find(FirstAsyncCall))
       expect(firstAsyncCall.children().length).toBe(2)
       expect(firstAsyncCall.childAt(0)).toHaveText('first')
       expect(firstAsyncCall.childAt(1)).toHaveText('second')

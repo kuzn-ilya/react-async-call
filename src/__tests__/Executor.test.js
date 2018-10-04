@@ -15,23 +15,37 @@ describe('Executor', () => {
       expect(AsyncCall.Executor.displayName).toBe('AsyncCall.Executor')
     })
 
-    it('should throw an error if Executor component rendered alone', () => {
-      const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
-      expect(() => shallow(<AsyncCall.Executor>{() => void 0}</AsyncCall.Executor>)).toThrow(
-        '<AsyncCall.Executor> must be a child (direct or indirect) of <AsyncCall>.',
-      )
-    })
+    describe('', () => {
+      let spy
 
-    it('should throw an error if children is not passed', () => {
-      const spy = jest.spyOn(console, 'error').mockImplementation(() => {})
-      const AsyncCall = createAsyncCallComponent(value => Promise.resolve(value))
-      mount(
-        <AsyncCall params="first">
-          <AsyncCall.Executor />
-        </AsyncCall>,
-      )
+      beforeEach(() => {
+        spy = jest.spyOn(console, 'error').mockImplementation(() => {})
+      })
 
-      expect(spy).toHaveBeenCalled()
+      afterEach(() => {
+        spy.mockRestore()
+      })
+
+      it('should throw an error if Executor component rendered alone', () => {
+        const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
+        expect(() => mount(<AsyncCall.Executor>{() => void 0}</AsyncCall.Executor>)).toThrow(
+          '<AsyncCall.Executor> must be a child (direct or indirect) of <AsyncCall>.',
+        )
+      })
+
+      it('should throw an error if children is not passed', () => {
+        const AsyncCall = createAsyncCallComponent(value => Promise.resolve(value))
+        mount(
+          <AsyncCall params="first">
+            <AsyncCall.Executor />
+          </AsyncCall>,
+        )
+
+        expect(spy).toHaveBeenCalled()
+        expect(spy.mock.calls[0][0]).toContain(
+          'The prop `children` is marked as required in `AsyncCall.Executor`, but its value is `undefined`',
+        )
+      })
     })
   })
 
