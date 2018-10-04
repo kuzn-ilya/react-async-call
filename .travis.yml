@@ -14,7 +14,8 @@ env:
 before_install:
   - npm install codecov
 
-after_install:
+install:
+  - npm install
   - npm install react@$REACT_VERSION --save-dev
   - npm install react-dom@$REACT_VERSION --save-dev
 
