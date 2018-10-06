@@ -11,9 +11,6 @@ env:
   - REACT_VERSION=~16.4.0
   - REACT_VERSION=~16.5.0
 
-before_install:
-  - npm install codecov
-
 install:
   - npm install
   - npm install react@$REACT_VERSION --save-dev
@@ -22,6 +19,7 @@ install:
 script:
   - npm test
   - npm run build
+  - npm run docs
 
 after_success:
   - cat ./coverage/lcov.info | ./node_modules/codecov/bin/codecov

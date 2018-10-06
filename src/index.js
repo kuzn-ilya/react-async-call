@@ -1,2 +1,2 @@
-import { createAsynCallComponent } from './createAsyncCallComponent'
-export default createAsynCallComponent
+import { createAsyncCallComponent } from './createAsyncCallComponent'
+export default createAsyncCallComponent
