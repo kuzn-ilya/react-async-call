@@ -45,7 +45,6 @@
     "test"
   ],
   "dependencies": {
-    "codecov": "^3.1.0",
     "fbjs": "0.8.0",
     "prop-types": "^15.6.2"
   },
@@ -64,6 +63,7 @@
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-preset-env": "^1.6.1",
     "babel-preset-react": "^6.24.1",
+    "codecov": "3.1.0",
     "enzyme": "^3.3.0",
     "enzyme-adapter-react-16": "^1.1.1",
     "eslint": "4.19.0",
@@ -140,7 +140,8 @@
         "path": "@semantic-release/git",
         "assets": [
           "package.json",
-          "docs/CHANGELOG.md"
+          "docs/CHANGELOG.md",
+          "docs/API.md"
         ],
         "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
       }
