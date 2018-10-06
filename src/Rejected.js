@@ -3,13 +3,40 @@ import invariant from 'fbjs/lib/invariant'
 import { isFunction } from './common'
 
 export const createRejected = (contextPropName, rootDisplayName) => {
+  /**
+   * Type of children function for {@link AsyncCall.Rejected}
+   * @function RejectedChildrenFunction
+   * @param {object} params
+   * @param {any} params.rejectReason
+   * @returns {ReactNode} Should return rendered React component(s) depending on supplied params.
+   * @remark type definition
+   */
+
+  /**
+   * @class
+   * @static
+   * @classdesc
+   * React Component. Renders its children whenever async operation has been completed with failure (promise was rejected),
+   * but is still not started again. Otherwise renders nothing.
+   * Property `children` can be either React node(s) or children function with the only argument receiving object with the only field `rejectReason`
+   * (promise reject reason).
+   * @example
+   * ```jsx
+   * <AsyncCall.Rejected>Error!</AsyncCall.Rejected>
+   * ```
+   *
+   * or
+   * ```jsx
+   * <AsyncCall.Rejected>{({ rejectReason }) => Error: {rejectReason}}</AsyncCall.Rejected>
+   * ```
+   * @property {ReactNode | RejectedChildrenFunction} children
+   * @extends {React.StatelessComponent}
+   * @memberof AsyncCall
+   */
   const Rejected = (props, context) => {
     const contextProps = context[contextPropName]
-    
-    invariant(
-      contextProps,
-      `<${Rejected.displayName}> must be a child (direct or indirect) of <${rootDisplayName}>.`,
-    )
+
+    invariant(contextProps, `<${Rejected.displayName}> must be a child (direct or indirect) of <${rootDisplayName}>.`)
 
     return (
       (contextProps.rejected &&

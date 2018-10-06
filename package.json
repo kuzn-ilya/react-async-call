@@ -30,6 +30,7 @@
   "scripts": {
     "clean": "rimraf lib",
     "build": "npm run clean && npm run rollup && npm run minify",
+    "docs": "jsdoc2md --name-format --separators --template ./docs/API.template.md --heading-depth 3 ./src/*.js  > docs/API.md",
     "eslint": "eslint ./",
     "minify": "npm run minify:cjs && npm run minify:umd",
     "minify:cjs": "uglifyjs lib/index.js -cm toplevel -o lib/index.js --source-map filename=lib/index.js.map",
@@ -71,6 +72,7 @@
     "eslint-plugin-react": "7.7.0",
     "jest": "^22.4.2",
     "jest-enzyme": "6.0.1",
+    "jsdoc-to-markdown": "4.0.1",
     "pre-commit": "^1.2.2",
     "prettier": "^1.11.1",
     "react": "^16.5.2",

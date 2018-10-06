@@ -5,6 +5,61 @@ import { isFunction, resultStoreContextPropType, resultStoreContextPropName } fr
 import { createHasResult } from './HasResult'
 
 export const createResultStore = (contextPropName, rootDisplayName) => {
+  /**
+   * Type of `children` function of a {@link AsyncCall.ResultStore} component.
+   * @function ResultStoreChildrenFunction
+   * @param {object} params
+   * @param {boolean} params.hasResult
+   * @param {any=} params.result
+   * @returns {ReactNode} Should return rendered React component(s) depending on supplied params.
+   * @remark type definition
+   */
+
+  /**
+   * Type of `reduce` property of a {@link AsyncCall.ResultStore} component.
+   * @function ReduceFunction
+   * @param {any} previousResult
+   * @param {any} currentResult
+   * @returns {any}
+   * @remark type definition
+   */
+
+  /**
+   * @class
+   * @classdesc
+   * React Component. Implements store of results of sequential async calls.
+   * Useful when you need to accumulate results of async calls (e.g., to glue together sequential calls of server API).
+   * @example
+   * ```jsx
+   * const concatResults = (previousResult, currentResult) => [...previousResult, ...currentResult]
+   *
+   * ...
+   *
+   * <AsyncCall params={{ page: this.state.page }}>
+   *   <AsyncCall.ResultStore reduce={concatResults} reset={this.state.page === 0}>
+   *     <AsyncCall.ResultStore.HasResult>
+   *       {({ result }) => <pre>{JSON.stringify(result)}</pre>}
+   *     </AsyncCall.ResultStore.HasResult>
+   *   </AsyncCall.ResultStore>
+   *   <button onClick={() => this.setState(({ page }) => ({ page: page + 1}))}>
+   *     Load more
+   *   </button>
+   *   <button onClick={() => this.setState({ page: 0 })}>
+   *     Reload
+   *   </button>
+   * </AsyncCall>
+   * ```
+   * @property {ResultStoreChildrenFunction | ReactNode} children React children or function that returns rendered result
+   * depending on `hasResult` flag and `result`.
+   * @property {ReduceFunction} reduce Function from previousResult and currentResult to a new result.
+   * Useful, for example, when you need to accumulate sequential async calls
+   * (e.g. for fetching data for infinte page scroll).
+   * @property {any=} initialValue Optional initial value for the result store. If value is provided, result store will have result always.
+   * @property {boolean} [reset=false] If `true`, clears the store.
+   * @static
+   * @extends {React.Component}
+   * @memberof AsyncCall
+   */
   class ResultStore extends React.Component {
     static childContextTypes = {
       [contextPropName]: resultStoreContextPropType,
