@@ -1,5 +1,12 @@
 # Change Log
 
+## [0.2.7](https://github.com/kuzn-ilya/react-async-call/compare/v0.2.6...v0.2.7) (2018-10-06)
+
+
+### Bug Fixes
+
+* move codecov from dependencies into devDependencies ([b594fc3](https://github.com/kuzn-ilya/react-async-call/commit/b594fc3))
+
 ## [0.2.6](https://github.com/kuzn-ilya/react-async-call/compare/v0.2.5...v0.2.6) (2018-10-04)
 
 
