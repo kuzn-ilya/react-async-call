@@ -30,7 +30,7 @@
   "scripts": {
     "clean": "rimraf lib",
     "build": "npm run clean && npm run rollup && npm run minify",
-    "docs": "jsdoc2md --name-format --separators --template ./docs/API.template.md --heading-depth 3 ./src/*.js  > docs/API.md",
+    "docs": "jsdoc2md --name-format --separators --helper ./docs/helpers/isTypeDefinition.js --partial ./docs/partials/scope.hbs ./docs/partials/body.hbs ./docs/partials/params.hbs --template ./docs/API.hbs --heading-depth 3 ./src/*.js  > docs/API.md",
     "eslint": "eslint ./",
     "minify": "npm run minify:cjs && npm run minify:umd",
     "minify:cjs": "uglifyjs lib/index.js -cm toplevel -o lib/index.js --source-map filename=lib/index.js.map",

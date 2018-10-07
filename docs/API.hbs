@@ -15,14 +15,8 @@
 ## Function Signatures
 
 {{#identifiers~}}
-  {{#if customTags~}}
-    {{#each customTags~}}
-      {{#if (equal tag "remark")~}}
-        {{#if (equal value "type definition")~}}
-{{>docs ../this~}}
-        {{/if~}}
-      {{/if~}}
-    {{/each~}}
+  {{#if (isTypeDefinition)~}}
+{{>docs~}}
   {{/if~}}
 {{/identifiers~}}
 
