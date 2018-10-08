@@ -313,14 +313,14 @@ describe('<ResultStore>', () => {
     let rootContext
     let contextPropName
     const ContextChecker = (props, context) => {
-      rootContext = context[contextPropName][resultStoreContextPropName]
+      rootContext = context[contextPropName]
       return null
     }
 
     const prepareContextChecker = parent => {
-      contextPropName = parent.contextPropName
+      contextPropName = parent.ResultStore.contextPropName
       ContextChecker.contextTypes = {
-        [parent.contextPropName]: resultStoreContextPropType,
+        [contextPropName]: resultStoreContextPropType,
       }
     }
 

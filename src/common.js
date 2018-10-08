@@ -2,12 +2,12 @@ import * as PropTypes from 'prop-types'
 
 export const isFunction = value => !!(value && value.constructor && value.call && value.apply)
 
-export const resultStoreContextPropName = 'resultStore'
+let contextCounter = 1
+
+export const generateContextName = () => `__react-async-call__${contextCounter++}`
 
 export const resultStoreContextPropType = PropTypes.shape({
-  [resultStoreContextPropName]: PropTypes.shape({
-    hasResult: PropTypes.bool,
-    result: PropTypes.any,
-    reset: PropTypes.func,
-  }),
+  hasResult: PropTypes.bool,
+  result: PropTypes.any,
+  reset: PropTypes.func,
 })

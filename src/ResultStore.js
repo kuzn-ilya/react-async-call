@@ -1,11 +1,11 @@
 import * as React from 'react'
 import * as PropTypes from 'prop-types'
 import invariant from 'fbjs/lib/invariant'
-import { isFunction, resultStoreContextPropType, resultStoreContextPropName } from './common'
+import { isFunction, generateContextName, resultStoreContextPropType } from './common'
 import { createHasResult } from './HasResult'
 import { createResetter } from './Resetter'
 
-export const createResultStore = (contextPropName, rootDisplayName) => {
+export const createResultStore = (rootContextPropName, rootDisplayName) => {
   /**
    * Type of `children` function of a {@link AsyncCall.ResultStore} component.
    * @function ResultStoreChildrenFunction
@@ -63,12 +63,13 @@ export const createResultStore = (contextPropName, rootDisplayName) => {
    * @memberof AsyncCall
    */
   class ResultStore extends React.Component {
+    static contextPropName = generateContextName()
     static childContextTypes = {
-      [contextPropName]: resultStoreContextPropType,
+      [ResultStore.contextPropName]: resultStoreContextPropType,
     }
 
     static contextTypes = {
-      [contextPropName]: PropTypes.shape({
+      [rootContextPropName]: PropTypes.shape({
         resolved: PropTypes.bool,
         result: PropTypes.any,
       }),
@@ -87,8 +88,8 @@ export const createResultStore = (contextPropName, rootDisplayName) => {
 
     static displayName = `${rootDisplayName}.ResultStore`
 
-    static HasResult = createHasResult(contextPropName, ResultStore.displayName)
-    static Resetter = createResetter(contextPropName, ResultStore.displayName)
+    static HasResult = createHasResult(ResultStore.contextPropName, ResultStore.displayName)
+    static Resetter = createResetter(ResultStore.contextPropName, ResultStore.displayName)
 
     state = {
       hasResult: false,
@@ -96,14 +97,12 @@ export const createResultStore = (contextPropName, rootDisplayName) => {
 
     getChildContext() {
       return {
-        [contextPropName]: {
-          [resultStoreContextPropName]: this._getState(),
-        },
+        [ResultStore.contextPropName]: this._getState(),
       }
     }
 
     componentDidMount() {
-      const contextProps = this.context[contextPropName]
+      const contextProps = this.context[rootContextPropName]
 
       if (contextProps.resolved || this.props.hasOwnProperty('initialValue')) {
         this.setState({
@@ -118,21 +117,21 @@ export const createResultStore = (contextPropName, rootDisplayName) => {
         this.reset()
       }
 
-      if (nextContext[contextPropName].resolved && !this.context[contextPropName].resolved) {
+      if (nextContext[rootContextPropName].resolved && !this.context[rootContextPropName].resolved) {
         this.setState(
           prevState =>
             prevState.hasResult
               ? {
-                  result: this.props.reduce(prevState.result, nextContext[contextPropName].result),
+                  result: this.props.reduce(prevState.result, nextContext[rootContextPropName].result),
                 }
-              : { hasResult: true, result: nextContext[contextPropName].result },
+              : { hasResult: true, result: nextContext[rootContextPropName].result },
         )
       }
     }
 
     render() {
       invariant(
-        this.context[contextPropName],
+        this.context[rootContextPropName],
         `<${ResultStore.displayName}> must be a child (direct or indirect) of <${rootDisplayName}>.`,
       )
 
@@ -162,7 +161,7 @@ export const createResultStore = (contextPropName, rootDisplayName) => {
             },
       )
       if (execute) {
-        this.context[contextPropName].execute()
+        this.context[ResultStore.contextPropName].execute()
       }
     }
   }

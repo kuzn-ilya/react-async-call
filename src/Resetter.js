@@ -1,6 +1,6 @@
 import * as PropTypes from 'prop-types'
 import invariant from 'fbjs/lib/invariant'
-import { resultStoreContextPropType, resultStoreContextPropName } from './common'
+import { resultStoreContextPropType } from './common'
 import { isFunction } from './common'
 
 export const createResetter = (contextPropName, rootDisplayName) => {
@@ -35,7 +35,7 @@ export const createResetter = (contextPropName, rootDisplayName) => {
    * @memberof AsyncCall.ResultStore
    */
   const Resetter = (props, context) => {
-    const contextProps = context[contextPropName] && context[contextPropName][resultStoreContextPropName]
+    const contextProps = context[contextPropName]
 
     invariant(contextProps, `<${Resetter.displayName}> must be a child (direct or indirect) of <${rootDisplayName}>.`)
 

@@ -2,7 +2,7 @@ import * as React from 'react'
 import * as PropTypes from 'prop-types'
 import shallowEqual from 'fbjs/lib/shallowEqual'
 import invariant from 'fbjs/lib/invariant'
-import { isFunction } from './common'
+import { isFunction, generateContextName } from './common'
 import { createRunning } from './Running'
 import { createResolved } from './Resolved'
 import { createRejected } from './Rejected'
@@ -11,7 +11,6 @@ import { createState } from './State'
 import { createResultStore } from './ResultStore'
 import { createCompleted } from './Completed'
 
-let counter = 1
 /**
  * Asynchronous function (aka asynchronous operation or promise-returning function)
  * which returns promise based on supplied parameter.
@@ -69,7 +68,7 @@ let counter = 1
  */
 
 export const createAsyncCallComponent = (fn, displayName) => {
-  const contextPropName = `__react-async-call__${counter++}`
+  const contextPropName = generateContextName()
   const rootDisplayName = `${displayName || 'AsyncCall'}`
 
   /**

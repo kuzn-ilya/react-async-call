@@ -1,6 +1,6 @@
 import * as PropTypes from 'prop-types'
 import invariant from 'fbjs/lib/invariant'
-import { resultStoreContextPropType, resultStoreContextPropName } from './common'
+import { resultStoreContextPropType } from './common'
 import { isFunction } from './common'
 
 export const createHasResult = (contextPropName, rootDisplayName) => {
@@ -28,7 +28,7 @@ export const createHasResult = (contextPropName, rootDisplayName) => {
    * @memberof AsyncCall.ResultStore
    */
   const HasResult = (props, context) => {
-    const contextProps = context[contextPropName] && context[contextPropName][resultStoreContextPropName]
+    const contextProps = context[contextPropName]
 
     invariant(contextProps, `<${HasResult.displayName}> must be a child (direct or indirect) of <${rootDisplayName}>.`)
 
