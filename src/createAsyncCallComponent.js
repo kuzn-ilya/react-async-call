@@ -218,10 +218,9 @@ export const createAsyncCallComponent = (fn, displayName) => {
     }
 
     /**
-     * @method
-     * @desc
      * Method for executing async operation manually.
      * It is recommended to use [`<Executor>` component]{@link AsyncCall.Executor} instead.
+     * @method
      */
     execute = () => {
       this._callQueryFunc(this.props.params)

@@ -82,7 +82,7 @@ describe('<ResultStore>', () => {
       const resultStoreContainer = container.find(AsyncCall.ResultStore)
       expect(resultStoreContainer).toExist()
 
-      expect(children).toHaveBeenCalledWith({ hasResult: false })
+      expect(children).toHaveBeenCalledWith({ hasResult: false, reset: resultStoreContainer.instance().reset })
     })
 
     it('should call `children` and pass { hasResult: false } if promise has been rejected', async done => {
@@ -99,7 +99,7 @@ describe('<ResultStore>', () => {
       const resultStoreContainer = container.find(AsyncCall.ResultStore)
       expect(resultStoreContainer).toExist()
 
-      expect(children).toHaveBeenCalledWith({ hasResult: false })
+      expect(children).toHaveBeenCalledWith({ hasResult: false, reset: resultStoreContainer.instance().reset })
 
       done()
     })
@@ -112,13 +112,17 @@ describe('<ResultStore>', () => {
           <AsyncCall.ResultStore>{children}</AsyncCall.ResultStore>
         </AsyncCall>,
       )
+      const resultStoreContainer = container.find(AsyncCall.ResultStore)
 
       await flushPromises()
       container.update()
 
-      expect(children).toHaveBeenLastCalledWith({ hasResult: true, result: 42 })
+      expect(children).toHaveBeenLastCalledWith({
+        hasResult: true,
+        result: 42,
+        reset: resultStoreContainer.instance().reset,
+      })
 
-      const resultStoreContainer = container.find(AsyncCall.ResultStore)
       expect(resultStoreContainer).toExist()
       expect(resultStoreContainer).not.toBeEmptyRender()
       expect(resultStoreContainer).toHaveText('42')
@@ -173,12 +177,17 @@ describe('<ResultStore>', () => {
           </AsyncCall.ResultStore>
         </AsyncCall>,
       )
+      const resultStoreContainer = container.find(AsyncCall.ResultStore)
 
       await flushPromises()
       container.setProps({ params: 32 })
 
       await flushPromises()
-      expect(children).toHaveBeenLastCalledWith({ hasResult: true, result: 42 })
+      expect(children).toHaveBeenLastCalledWith({
+        hasResult: true,
+        result: 42,
+        reset: resultStoreContainer.instance().reset,
+      })
 
       done()
     })
@@ -241,15 +250,24 @@ describe('<ResultStore>', () => {
           <AsyncCall.ResultStore>{children}</AsyncCall.ResultStore>
         </AsyncCall>,
       )
+      const resultStoreContainer = container.find(AsyncCall.ResultStore)
 
       await flushPromises()
       container.update()
-      expect(children).toHaveBeenCalledWith({ result: 1, hasResult: true })
+      expect(children).toHaveBeenCalledWith({
+        result: 1,
+        hasResult: true,
+        reset: resultStoreContainer.instance().reset,
+      })
 
       container.setProps({ params: 2 })
       await flushPromises()
       container.update()
-      expect(children).toHaveBeenCalledWith({ result: 2, hasResult: true })
+      expect(children).toHaveBeenCalledWith({
+        result: 2,
+        hasResult: true,
+        reset: resultStoreContainer.instance().reset,
+      })
 
       done()
     })
@@ -263,17 +281,17 @@ describe('<ResultStore>', () => {
         context: { [AsyncCall.contextPropName]: { resolved: true, result: 1 } },
       })
 
-      expect(children).toHaveBeenLastCalledWith({ hasResult: true, result: 1 })
+      expect(children).toHaveBeenLastCalledWith({ hasResult: true, result: 1, reset: container.instance().reset })
 
       container.setProps({ reset: true })
       container.setContext({ [AsyncCall.contextPropName]: { resolved: false } })
       container.update()
-      expect(children).toHaveBeenLastCalledWith({ hasResult: false })
+      expect(children).toHaveBeenLastCalledWith({ hasResult: false, reset: container.instance().reset })
 
       container.setProps({ reset: false })
       container.setContext({ [AsyncCall.contextPropName]: { resolved: true, result: 2 } })
       container.update()
-      expect(children).toHaveBeenLastCalledWith({ hasResult: true, result: 2 })
+      expect(children).toHaveBeenLastCalledWith({ hasResult: true, result: 2, reset: container.instance().reset })
 
       done()
     })
@@ -283,11 +301,11 @@ describe('<ResultStore>', () => {
     it('should pass `initialValue` property value to result when component is mounted', () => {
       const AsyncCall = createAsyncCallComponent(value => Promise.resolve(value))
       const children = jest.fn(() => null)
-      mount(<AsyncCall.ResultStore initialValue={100500}>{children}</AsyncCall.ResultStore>, {
+      const container = mount(<AsyncCall.ResultStore initialValue={100500}>{children}</AsyncCall.ResultStore>, {
         context: { [AsyncCall.contextPropName]: { resolved: false } },
       })
 
-      expect(children).toHaveBeenLastCalledWith({ hasResult: true, result: 100500 })
+      expect(children).toHaveBeenLastCalledWith({ hasResult: true, result: 100500, reset: container.instance().reset })
     })
   })
 
@@ -343,6 +361,73 @@ describe('<ResultStore>', () => {
       expect(rootContext).toBeDefined()
       expect(rootContext.hasResult).toBe(true)
       expect(rootContext.result).toBe(42)
+
+      done()
+    })
+  })
+
+  describe('reset', () => {
+    it('should expose `reset` method via ref', () => {
+      const AsyncCall = createAsyncCallComponent(() => Promise.resolve(null))
+      const container = mount(
+        <AsyncCall params={{}}>
+          <AsyncCall.ResultStore />
+        </AsyncCall>,
+      )
+      const resultStoreContainer = container.find(AsyncCall.ResultStore)
+      expect(resultStoreContainer.instance().reset).toBeFunction()
+    })
+
+    it('should reset result', async done => {
+      const AsyncCall = createAsyncCallComponent(value => Promise.resolve(value))
+      const children = jest.fn(() => null)
+      const container = mount(
+        <AsyncCall params={1}>
+          <AsyncCall.ResultStore>{children}</AsyncCall.ResultStore>
+        </AsyncCall>,
+      )
+      const resultStoreContainer = container.find(AsyncCall.ResultStore)
+
+      await flushPromises()
+      expect(children).toHaveBeenLastCalledWith({
+        hasResult: true,
+        result: 1,
+        reset: resultStoreContainer.instance().reset,
+      })
+
+      resultStoreContainer.instance().reset()
+      await flushPromises()
+
+      expect(children).toHaveBeenLastCalledWith({ hasResult: false, reset: resultStoreContainer.instance().reset })
+
+      done()
+    })
+
+    it('should reset result to `initialValue` if it is set ', async done => {
+      const AsyncCall = createAsyncCallComponent(value => Promise.resolve(value))
+      const children = jest.fn(() => null)
+      const container = mount(
+        <AsyncCall params={1}>
+          <AsyncCall.ResultStore initialValue={'intitalValue'}>{children}</AsyncCall.ResultStore>
+        </AsyncCall>,
+      )
+      const resultStoreContainer = container.find(AsyncCall.ResultStore)
+
+      await flushPromises()
+      expect(children).toHaveBeenLastCalledWith({
+        hasResult: true,
+        result: 1,
+        reset: resultStoreContainer.instance().reset,
+      })
+
+      resultStoreContainer.instance().reset()
+      await flushPromises()
+
+      expect(children).toHaveBeenLastCalledWith({
+        hasResult: true,
+        result: 'intitalValue',
+        reset: resultStoreContainer.instance().reset,
+      })
 
       done()
     })

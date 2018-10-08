@@ -8,5 +8,6 @@ export const resultStoreContextPropType = PropTypes.shape({
   [resultStoreContextPropName]: PropTypes.shape({
     hasResult: PropTypes.bool,
     result: PropTypes.any,
+    reset: PropTypes.func,
   }),
 })

@@ -3,6 +3,7 @@ import * as PropTypes from 'prop-types'
 import invariant from 'fbjs/lib/invariant'
 import { isFunction, resultStoreContextPropType, resultStoreContextPropName } from './common'
 import { createHasResult } from './HasResult'
+import { createResetter } from './Resetter'
 
 export const createResultStore = (contextPropName, rootDisplayName) => {
   /**
@@ -11,6 +12,7 @@ export const createResultStore = (contextPropName, rootDisplayName) => {
    * @param {object} params
    * @param {boolean} params.hasResult
    * @param {any=} params.result
+   * @param {ResetFunction} params.reset Function for manual store cleaning.
    * @returns {ReactNode} Should return rendered React component(s) depending on supplied params.
    * @remark type definition
    */
@@ -55,7 +57,7 @@ export const createResultStore = (contextPropName, rootDisplayName) => {
    * Useful, for example, when you need to accumulate sequential async calls
    * (e.g. for fetching data for infinte page scroll).
    * @property {any=} initialValue Optional initial value for the result store. If value is provided, result store will have result always.
-   * @property {boolean} [reset=false] If `true`, clears the store.
+   * @property {boolean} [reset=false] @deprecated If `true`, clears the store (**Deprecated, will be removed in version 1.0.0. Use {@link AsyncCall.ResultStore.Resetter} instead**).
    * @static
    * @extends {React.Component}
    * @memberof AsyncCall
@@ -86,6 +88,7 @@ export const createResultStore = (contextPropName, rootDisplayName) => {
     static displayName = `${rootDisplayName}.ResultStore`
 
     static HasResult = createHasResult(contextPropName, ResultStore.displayName)
+    static Resetter = createResetter(contextPropName, ResultStore.displayName)
 
     state = {
       hasResult: false,
@@ -112,9 +115,7 @@ export const createResultStore = (contextPropName, rootDisplayName) => {
 
     componentWillReceiveProps(nextProps, nextContext) {
       if (nextProps.reset) {
-        this.setState({
-          hasResult: false,
-        })
+        this.reset()
       }
 
       if (nextContext[contextPropName].resolved && !this.context[contextPropName].resolved) {
@@ -142,7 +143,26 @@ export const createResultStore = (contextPropName, rootDisplayName) => {
       const result = this.state.hasResult ? { result: this.state.result } : {}
       return {
         hasResult: this.state.hasResult,
+        reset: this.reset,
         ...result,
+      }
+    }
+
+    /**
+     * Resets result store to its intial state.
+     * @method
+     * @param {bool} [execute=false] Wether execute promise-returning function after resetting or not.
+     */
+    reset = execute => {
+      this.setState(
+        this.props.hasOwnProperty('initialValue')
+          ? { hasResult: true, result: this.props.initialValue }
+          : {
+              hasResult: false,
+            },
+      )
+      if (execute) {
+        this.context[contextPropName].execute()
       }
     }
   }
