@@ -4,9 +4,9 @@ import { shallow, mount } from 'enzyme'
 import createAsyncCallComponent from '../'
 import { getChildrenContainer, flushPromises } from './common'
 
-describe('Completed', () => {
+describe('<Completed>', () => {
   describe('invariants', () => {
-    it('should be exposed as a static prop from AsyncCall', () => {
+    it('should be exposed as a static prop from <AsyncCall>', () => {
       const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
       expect(AsyncCall.Completed).toBeDefined()
     })
@@ -16,7 +16,7 @@ describe('Completed', () => {
       expect(AsyncCall.Completed.displayName).toBe('AsyncCall.Completed')
     })
 
-    it('should throw an error if Completed component rendered alone', () => {
+    it('should throw an error if <Completed> component is rendered alone', () => {
       jest.spyOn(console, 'error').mockImplementation(() => {})
 
       const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
@@ -27,7 +27,7 @@ describe('Completed', () => {
   })
 
   describe('children', () => {
-    it("should not render Completed's children if promise has not been resolved yet", () => {
+    it("should not render <Completed>'s children if promise has not been resolved yet", () => {
       const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
       const container = mount(
         <AsyncCall params={{}}>
@@ -41,7 +41,7 @@ describe('Completed', () => {
       expect(completedContainer).toBeEmptyRender()
     })
 
-    it("should render Completed's children if promise has been resolved", async done => {
+    it("should render <Completed>'s children if promise has been resolved", async done => {
       const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
       const container = mount(
         <AsyncCall params={{}}>
@@ -61,7 +61,7 @@ describe('Completed', () => {
       done()
     })
 
-    it("should render Completed's children if promise has been rejected", async done => {
+    it("should render <Completed>'s children if promise has been rejected", async done => {
       const AsyncCall = createAsyncCallComponent(() => Promise.reject('error'))
       const container = mount(
         <AsyncCall params={{}}>

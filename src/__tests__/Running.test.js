@@ -6,7 +6,7 @@ import { getChildrenContainer, flushPromises } from './common'
 
 describe('Running', () => {
   describe('invariants', () => {
-    it('should be exposed as static prop from AsyncCall', () => {
+    it('should be exposed as a static prop from <AsyncCall>', () => {
       const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
       expect(AsyncCall.Running).toBeDefined()
     })
@@ -16,7 +16,7 @@ describe('Running', () => {
       expect(AsyncCall.Running.displayName).toBe('AsyncCall.Running')
     })
 
-    it('should throw an error if Running component rendered alone', () => {
+    it('should throw an error if <Running> component is rendered alone', () => {
       jest.spyOn(console, 'error').mockImplementation(() => {})
 
       const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
@@ -27,7 +27,7 @@ describe('Running', () => {
   })
 
   describe('children', () => {
-    it("should render Running's children if promise has not been resolved yet", () => {
+    it("should render <Running>'s children if promise has not been resolved yet", () => {
       const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
       const container = mount(
         <AsyncCall params={{}}>
@@ -43,7 +43,7 @@ describe('Running', () => {
       expect(runningContainer).toHaveText('abcdef')
     })
 
-    it("should render Running's children array if promise has not been resolved yet", () => {
+    it("should render <Running>'s children array if promise has not been resolved yet", () => {
       const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
       const container = mount(
         <AsyncCall params={{}}>
@@ -60,7 +60,7 @@ describe('Running', () => {
       expect(runningContainer.childAt(1)).toHaveText('bcdefg')
     })
 
-    it("should not render Running's children if promise has been resolved", async done => {
+    it("should not render <Running>'s children if promise has been resolved", async done => {
       const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
       const container = mount(
         <AsyncCall params={{}}>
@@ -78,7 +78,7 @@ describe('Running', () => {
       done()
     })
 
-    it("should not render Running's children if promise has been resolved and returned truthy value", async done => {
+    it("should not render <Running>'s children if promise has been resolved and returned truthy value", async done => {
       const AsyncCall = createAsyncCallComponent(() => Promise.resolve('abcdef'))
       const container = mount(
         <AsyncCall params={{}}>
@@ -96,7 +96,7 @@ describe('Running', () => {
       done()
     })
 
-    it("should not render Running's children if promise has been rejected", async done => {
+    it("should not render <Running>'s children if promise has been rejected", async done => {
       const AsyncCall = createAsyncCallComponent(() => Promise.reject('error'))
       const container = mount(
         <AsyncCall params={{}}>
@@ -114,7 +114,7 @@ describe('Running', () => {
       done()
     })
 
-    it("should render Running's children whenever render-returning function is called second time", async done => {
+    it("should render <Running>'s children when render-returning function is called second time", async done => {
       const AsyncCall = createAsyncCallComponent(x => Promise.resolve('abcdef'))
       const container = mount(
         <AsyncCall params={1}>

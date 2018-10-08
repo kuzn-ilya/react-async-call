@@ -4,9 +4,9 @@ import { shallow, mount } from 'enzyme'
 import createAsyncCallComponent from '../index'
 import { getChildrenContainer, getAsyncCallChildrenContainer, flushPromises } from './common'
 
-describe('Resolved', () => {
+describe('<Resolved>', () => {
   describe('invariants', () => {
-    it('should be exposed as a static prop from AsyncCall', () => {
+    it('should be exposed as a static prop from <AsyncCall>', () => {
       const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
       expect(AsyncCall.Resolved).toBeDefined()
     })
@@ -16,7 +16,7 @@ describe('Resolved', () => {
       expect(AsyncCall.Resolved.displayName).toBe('AsyncCall.Resolved')
     })
 
-    it('should throw an error if Resolved component rendered alone', () => {
+    it('should throw an error if <Resolved> component is rendered alone', () => {
       jest.spyOn(console, 'error').mockImplementation(() => {})
 
       const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
@@ -27,7 +27,7 @@ describe('Resolved', () => {
   })
 
   describe('render props', () => {
-    it("should not call Resolved's children fn if promise has not been resolved yet", () => {
+    it("should not call <Resolved>'s `children` function if promise has not been resolved yet", () => {
       const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
       const children = jest.fn(() => void 0)
       mount(
@@ -39,7 +39,7 @@ describe('Resolved', () => {
       expect(children).not.toHaveBeenCalled()
     })
 
-    it("should not call Resolved's children fn if promise has been rejected", async done => {
+    it("should not call <Resolved>'s `children` function if promise has been rejected", async done => {
       const AsyncCall = createAsyncCallComponent(() => Promise.reject('error'))
       const children = jest.fn(() => void 0)
       mount(
@@ -53,7 +53,7 @@ describe('Resolved', () => {
       done()
     })
 
-    it("should call Resolved's children fn if promise has been resolved", async done => {
+    it("should call <Resolved>'s `children` function if promise has been resolved", async done => {
       const AsyncCall = createAsyncCallComponent(() => Promise.resolve(42))
       const children = jest.fn(() => <div>ABCDEF</div>)
       const container = mount(
@@ -74,7 +74,7 @@ describe('Resolved', () => {
       done()
     })
 
-    it("should not call Resolved's children function if promise has not been resolved the second time", async done => {
+    it("should not call <Resolved>'s `children` function if promise has not been resolved the second time", async done => {
       const AsyncCall = createAsyncCallComponent(value => Promise.resolve(value))
       const children = jest.fn(result => null)
       const container = mount(
@@ -92,7 +92,7 @@ describe('Resolved', () => {
   })
 
   describe('children', () => {
-    it("should not render Resolved's children if promise has not been resolved yet", () => {
+    it("should not render <Resolved>'s children if promise has not been resolved yet", () => {
       const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
       const container = mount(
         <AsyncCall params={{}}>
@@ -105,7 +105,7 @@ describe('Resolved', () => {
       expect(resolvedContainer).toBeEmptyRender()
     })
 
-    it("should not render Resolved's children if promise has been rejected", async done => {
+    it("should not render <Resolved>'s children if promise has been rejected", async done => {
       const AsyncCall = createAsyncCallComponent(() => Promise.reject('error'))
       const container = mount(
         <AsyncCall params={{}}>
@@ -122,7 +122,7 @@ describe('Resolved', () => {
       done()
     })
 
-    it("should render Resolved's empty children if promise has been resolved", async done => {
+    it("should render <Resolved>'s empty children if promise has been resolved", async done => {
       const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
       const container = mount(
         <AsyncCall params={{}}>
@@ -140,7 +140,7 @@ describe('Resolved', () => {
       done()
     })
 
-    it("should render Resolved's children if promise has been resolved", async done => {
+    it("should render <Resolved>'s children if promise has been resolved", async done => {
       const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
       const container = mount(
         <AsyncCall params={{}}>
@@ -161,7 +161,7 @@ describe('Resolved', () => {
       done()
     })
 
-    it("should render Resolved's children array if promise has been resolved", async done => {
+    it("should render <Resolved>'s children array if promise has been resolved", async done => {
       const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
       const container = mount(
         <AsyncCall params={{}}>
@@ -183,7 +183,7 @@ describe('Resolved', () => {
       done()
     })
 
-    it("should not render Resolved's children if promise has not been resolved the second time", async done => {
+    it("should not render <Resolved>'s children if promise has not been resolved the second time", async done => {
       const fn = jest.fn(value => Promise.resolve(value))
       const AsyncCall = createAsyncCallComponent(fn)
       const container = mount(
@@ -205,7 +205,7 @@ describe('Resolved', () => {
 
     const values = [false, null, undefined]
     values.forEach(value =>
-      it(`should render Resolved's children fn that returns ${value} if promise has been resolved`, async done => {
+      it(`should render <Resolved>'s \`children\` function that returns ${value} if promise has been resolved`, async done => {
         const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
         const container = mount(
           <AsyncCall params={{}}>
@@ -224,7 +224,7 @@ describe('Resolved', () => {
       }),
     )
 
-    it('should not clash two promise renderers', async done => {
+    it('should not clash nested <AsyncCall> components', async done => {
       const FirstAsyncCall = createAsyncCallComponent(() => Promise.resolve('first'))
       const SecondAsyncCall = createAsyncCallComponent(() => Promise.resolve('second'))
       const secondAsyncCall = mount(

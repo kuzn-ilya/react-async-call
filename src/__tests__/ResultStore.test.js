@@ -5,9 +5,9 @@ import createAsyncCallComponent from '../index'
 import { resultStoreContextPropName, resultStoreContextPropType } from '../common'
 import { flushPromises } from './common'
 
-describe('ResultStore', () => {
+describe('<ResultStore>', () => {
   describe('invariants', () => {
-    it('should be exposed as static prop from AsyncCall', () => {
+    it('should be exposed as a static prop from <AsyncCall>', () => {
       const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
       expect(AsyncCall.ResultStore).toBeDefined()
     })
@@ -16,43 +16,43 @@ describe('ResultStore', () => {
       const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
       expect(AsyncCall.ResultStore.displayName).toBe('AsyncCall.ResultStore')
     })
+  })
 
-    describe('', () => {
-      let spy
+  describe('invariants', () => {
+    let spy
 
-      beforeEach(() => {
-        spy = jest.spyOn(console, 'error').mockImplementation(() => {})
-      })
+    beforeEach(() => {
+      spy = jest.spyOn(console, 'error').mockImplementation(() => {})
+    })
 
-      afterEach(() => {
-        spy.mockRestore()
-      })
+    afterEach(() => {
+      spy.mockRestore()
+    })
 
-      it('should throw an error if ResultStore component rendered alone', () => {
-        const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
-        expect(() => mount(<AsyncCall.ResultStore>{result => null}</AsyncCall.ResultStore>)).toThrow(
-          '<AsyncCall.ResultStore> must be a child (direct or indirect) of <AsyncCall>.',
-        )
-      })
+    it('should throw an error if <ResultStore> component is rendered alone', () => {
+      const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
+      expect(() => mount(<AsyncCall.ResultStore>{result => null}</AsyncCall.ResultStore>)).toThrow(
+        '<AsyncCall.ResultStore> must be a child (direct or indirect) of <AsyncCall>.',
+      )
+    })
 
-      it('should throw an error if children is not passed', () => {
-        const AsyncCall = createAsyncCallComponent(value => Promise.resolve(value))
-        mount(
-          <AsyncCall params="first">
-            <AsyncCall.ResultStore />
-          </AsyncCall>,
-        )
+    it('should throw an error if `children` property is not set', () => {
+      const AsyncCall = createAsyncCallComponent(value => Promise.resolve(value))
+      mount(
+        <AsyncCall params="first">
+          <AsyncCall.ResultStore />
+        </AsyncCall>,
+      )
 
-        expect(spy).toHaveBeenCalled()
-        expect(spy.mock.calls[0][0]).toContain(
-          'The prop `children` is marked as required in `AsyncCall.ResultStore`, but its value is `undefined`',
-        )
-      })
+      expect(spy).toHaveBeenCalled()
+      expect(spy.mock.calls[0][0]).toContain(
+        'The prop `children` is marked as required in `AsyncCall.ResultStore`, but its value is `undefined`',
+      )
     })
   })
 
   describe('children', () => {
-    it('should render child "as is" if it is not a function', () => {
+    it('should render child "as is" if child is not a function', () => {
       const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
       const container = mount(
         <AsyncCall params={{}}>
@@ -70,7 +70,7 @@ describe('ResultStore', () => {
   })
 
   describe('render props', () => {
-    it('should call children fn passing { hasResult: false } to it if promise has not been resolved yet', () => {
+    it('should call `children` and pass { hasResult: false } if promise has not been resolved yet', () => {
       const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
       const children = jest.fn(() => null)
       const container = mount(
@@ -85,7 +85,7 @@ describe('ResultStore', () => {
       expect(children).toHaveBeenCalledWith({ hasResult: false })
     })
 
-    it('should call children fn passing { hasResult: false } to it if promise has been rejected', async done => {
+    it('should call `children` and pass { hasResult: false } if promise has been rejected', async done => {
       const AsyncCall = createAsyncCallComponent(() => Promise.reject('error'))
       const children = jest.fn(() => null)
       const container = mount(
@@ -104,7 +104,7 @@ describe('ResultStore', () => {
       done()
     })
 
-    it('should call children fn and render its result if promise has been resolved', async done => {
+    it('should call `children` and render its result if promise has been resolved', async done => {
       const AsyncCall = createAsyncCallComponent(() => Promise.resolve(42))
       const children = jest.fn(({ result }) => <div>{result}</div>)
       const container = mount(
@@ -128,7 +128,7 @@ describe('ResultStore', () => {
   })
 
   describe('reduce', () => {
-    it("should not call 'reduce' if promise has been called the first time", async done => {
+    it('should not call `reduce` if promise has been resolved the first time', async done => {
       const AsyncCall = createAsyncCallComponent(() => Promise.resolve(42))
       const reduce = jest.fn(() => void 0)
       mount(
@@ -143,7 +143,7 @@ describe('ResultStore', () => {
       done()
     })
 
-    it("should call 'reduce' if promise has been called the second time", async done => {
+    it('should call `reduce` if promise has been resolved the second time', async done => {
       const AsyncCall = createAsyncCallComponent(value => Promise.resolve(value))
       const reduce = jest.fn(() => void 0)
       const container = mount(
@@ -163,7 +163,7 @@ describe('ResultStore', () => {
       done()
     })
 
-    it("should call 'reduce' and pass returning value of 'reduce' to a children function", async done => {
+    it('should call `reduce` and pass returning value of `reduce` to a `children` function', async done => {
       const AsyncCall = createAsyncCallComponent(value => Promise.resolve(value))
       const children = jest.fn(({ result }) => <div>{result}</div>)
       const container = mount(
@@ -183,7 +183,7 @@ describe('ResultStore', () => {
       done()
     })
 
-    it("should not call 'reduce' if promise has not been resolved yet", () => {
+    it('should not call `reduce` if promise has not been resolved yet', () => {
       const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
       const reduce = jest.fn(() => void 0)
       mount(
@@ -194,7 +194,7 @@ describe('ResultStore', () => {
       expect(reduce).not.toHaveBeenCalled()
     })
 
-    it("should not call 'reduce' if promise has been resolved only once", async done => {
+    it('should not call `reduce` if promise has been resolved only once', async done => {
       const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
       const reduce = jest.fn(() => void 0)
       const container = mount(
@@ -211,7 +211,7 @@ describe('ResultStore', () => {
       done()
     })
 
-    it("should call 'reduce' once if promise has been resolved twice", async done => {
+    it('should call `reduce` once promise has been resolved twice', async done => {
       const AsyncCall = createAsyncCallComponent(value => Promise.resolve(value))
       const reduce = jest.fn(() => void 0)
       const container = mount(
@@ -233,7 +233,7 @@ describe('ResultStore', () => {
       done()
     })
 
-    it('should pass result twice if promise has been resolved twice but no reduce callback was supplied', async done => {
+    it('should pass different results of promise resolving to `children` function if `reduce` property is not set and promise has been resolved twice', async done => {
       const children = jest.fn(({ result }) => <div>{result}</div>)
       const AsyncCall = createAsyncCallComponent(value => Promise.resolve(value))
       const container = mount(
@@ -280,7 +280,7 @@ describe('ResultStore', () => {
   })
 
   describe('initialValue', () => {
-    it("should pass 'initialValue' to result", () => {
+    it('should pass `initialValue` property value to result when component is mounted', () => {
       const AsyncCall = createAsyncCallComponent(value => Promise.resolve(value))
       const children = jest.fn(() => null)
       mount(<AsyncCall.ResultStore initialValue={100500}>{children}</AsyncCall.ResultStore>, {
@@ -311,7 +311,7 @@ describe('ResultStore', () => {
       contextPropName = undefined
     })
 
-    it("should pass it's state to child context", () => {
+    it("should pass component's state to child context", () => {
       const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
       prepareContextChecker(AsyncCall)
 
@@ -327,7 +327,7 @@ describe('ResultStore', () => {
       expect(rootContext).not.toHaveProperty('result')
     })
 
-    it('should pass result to child context if promise was resolved', async done => {
+    it('should pass result to child context if promise has been resolved', async done => {
       const AsyncCall = createAsyncCallComponent(() => Promise.resolve(42))
       prepareContextChecker(AsyncCall)
 

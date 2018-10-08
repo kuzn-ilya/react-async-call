@@ -4,9 +4,9 @@ import { shallow, mount } from 'enzyme'
 import createAsyncCallComponent from '../index'
 import { getChildrenContainer, getResultStoreChildrenContainer, flushPromises } from './common'
 
-describe('HasResult', () => {
+describe('<HasResult>', () => {
   describe('invariants', () => {
-    it('should be exposed as static prop from AsyncCall', () => {
+    it('should be exposed as a static prop from <AsyncCall.ResultStore>', () => {
       const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
       expect(AsyncCall.ResultStore.HasResult).toBeDefined()
     })
@@ -16,57 +16,57 @@ describe('HasResult', () => {
       expect(AsyncCall.ResultStore.HasResult.displayName).toBe('AsyncCall.ResultStore.HasResult')
     })
 
-    it('should throw an error if HasResult component rendered alone', () => {
+    it('should throw an error if <HasResult> component is rendered alone', () => {
       const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
       expect(() => shallow(<AsyncCall.ResultStore.HasResult>{() => null}</AsyncCall.ResultStore.HasResult>)).toThrow(
         '<AsyncCall.ResultStore.HasResult> must be a child (direct or indirect) of <AsyncCall.ResultStore>.',
       )
     })
+  })
 
-    describe('', () => {
-      let spy
+  describe('invariants', () => {
+    let spy
 
-      beforeEach(() => {
-        spy = jest.spyOn(console, 'error').mockImplementation(() => {})
-      })
+    beforeEach(() => {
+      spy = jest.spyOn(console, 'error').mockImplementation(() => {})
+    })
 
-      afterEach(() => {
-        spy.mockRestore()
-      })
+    afterEach(() => {
+      spy.mockRestore()
+    })
 
-      it('should throw an error if HasResult component rendered as a direct child of <AsyncCall>', () => {
-        const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
+    it('should throw an error if <HasResult> component is rendered as a direct child of <AsyncCall>', () => {
+      const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
 
-        expect(() =>
-          mount(
-            <AsyncCall params={1}>
-              <AsyncCall.ResultStore.HasResult>{() => null}</AsyncCall.ResultStore.HasResult>
-            </AsyncCall>,
-          ),
-        ).toThrow('<AsyncCall.ResultStore.HasResult> must be a child (direct or indirect) of <AsyncCall.ResultStore>.')
-      })
-
-      it('should throw an error if children is not passed', () => {
-        const AsyncCall = createAsyncCallComponent(value => Promise.resolve(value))
-
+      expect(() =>
         mount(
-          <AsyncCall params="first">
-            <AsyncCall.ResultStore>
-              <AsyncCall.ResultStore.HasResult />
-            </AsyncCall.ResultStore>
+          <AsyncCall params={1}>
+            <AsyncCall.ResultStore.HasResult>{() => null}</AsyncCall.ResultStore.HasResult>
           </AsyncCall>,
-        )
+        ),
+      ).toThrow('<AsyncCall.ResultStore.HasResult> must be a child (direct or indirect) of <AsyncCall.ResultStore>.')
+    })
 
-        expect(spy).toHaveBeenCalled()
-        expect(spy.mock.calls[0][0]).toContain(
-          'The prop `children` is marked as required in `AsyncCall.ResultStore.HasResult`, but its value is `undefined`',
-        )
-      })
+    it('should throw an error if `children` property is not set', () => {
+      const AsyncCall = createAsyncCallComponent(value => Promise.resolve(value))
+
+      mount(
+        <AsyncCall params="first">
+          <AsyncCall.ResultStore>
+            <AsyncCall.ResultStore.HasResult />
+          </AsyncCall.ResultStore>
+        </AsyncCall>,
+      )
+
+      expect(spy).toHaveBeenCalled()
+      expect(spy.mock.calls[0][0]).toContain(
+        'The prop `children` is marked as required in `AsyncCall.ResultStore.HasResult`, but its value is `undefined`',
+      )
     })
   })
 
   describe('render props', () => {
-    it('should not call children fn if promise has not been resolved yet', () => {
+    it('should not call `children` if promise has not been resolved yet', () => {
       const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
       const children = jest.fn(() => null)
       const container = mount(
@@ -87,7 +87,7 @@ describe('HasResult', () => {
       expect(children).not.toHaveBeenCalled()
     })
 
-    it('should not call children fn if promise has been rejected', async done => {
+    it('should not call `children` if promise has been rejected', async done => {
       const AsyncCall = createAsyncCallComponent(() => Promise.reject('error'))
       const children = jest.fn(() => null)
       const container = mount(
@@ -112,7 +112,7 @@ describe('HasResult', () => {
       done()
     })
 
-    it('should call children fn and render its result if promise has been resolved', async done => {
+    it('should call `children` and render its result if promise has been resolved', async done => {
       const AsyncCall = createAsyncCallComponent(() => Promise.resolve(42))
       const children = jest.fn(value => <div>result</div>)
       const container = mount(

@@ -4,9 +4,9 @@ import { shallow, mount } from 'enzyme'
 import createAsyncCallComponent from '../index'
 import { flushPromises } from './common'
 
-describe('State', () => {
+describe('<State>', () => {
   describe('invariants', () => {
-    it('should be exposed as static prop from AsyncCall', () => {
+    it('should be exposed as a static prop from <AsyncCall>', () => {
       const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
       expect(AsyncCall.State).toBeDefined()
     })
@@ -15,42 +15,42 @@ describe('State', () => {
       const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
       expect(AsyncCall.State.displayName).toBe('AsyncCall.State')
     })
+  })
+})
 
-    describe('', () => {
-      let spy
+describe('invariants', () => {
+  let spy
 
-      beforeEach(() => {
-        spy = jest.spyOn(console, 'error').mockImplementation(() => {})
-      })
+  beforeEach(() => {
+    spy = jest.spyOn(console, 'error').mockImplementation(() => {})
+  })
 
-      afterEach(() => {
-        spy.mockRestore()
-      })
+  afterEach(() => {
+    spy.mockRestore()
+  })
 
-      it('should throw an error if State component rendered alone', () => {
-        const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
-        expect(() => mount(<AsyncCall.State>{() => {}}</AsyncCall.State>)).toThrow(
-          '<AsyncCall.State> must be a child (direct or indirect) of <AsyncCall>.',
-        )
-      })
+  it('should throw an error if <State> component is rendered alone', () => {
+    const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
+    expect(() => mount(<AsyncCall.State>{() => {}}</AsyncCall.State>)).toThrow(
+      '<AsyncCall.State> must be a child (direct or indirect) of <AsyncCall>.',
+    )
+  })
 
-      it('should throw an error if children is not passed', () => {
-        const AsyncCall = createAsyncCallComponent(value => Promise.resolve(value))
-        mount(
-          <AsyncCall params="first">
-            <AsyncCall.State />
-          </AsyncCall>,
-        )
-        expect(spy).toHaveBeenCalled()
-        expect(spy.mock.calls[0][0]).toContain(
-          'The prop `children` is marked as required in `AsyncCall.State`, but its value is `undefined`',
-        )
-      })
-    })
+  it('should throw an error `children` property is not set', () => {
+    const AsyncCall = createAsyncCallComponent(value => Promise.resolve(value))
+    mount(
+      <AsyncCall params="first">
+        <AsyncCall.State />
+      </AsyncCall>,
+    )
+    expect(spy).toHaveBeenCalled()
+    expect(spy.mock.calls[0][0]).toContain(
+      'The prop `children` is marked as required in `AsyncCall.State`, but its value is `undefined`',
+    )
   })
 
   describe('render props', () => {
-    it('should call children fn and pass { running: true, rejected: false, resolved: false, execute: <fn> } as an argument to it if promise has not been resolved yet', () => {
+    it('should call `children` and pass { running: true, rejected: false, resolved: false, execute: <fn> } as an argument if promise has not been resolved yet', () => {
       const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
       const children = jest.fn(() => null)
       const container = mount(
@@ -67,7 +67,7 @@ describe('State', () => {
       })
     })
 
-    it('should call children fn and pass { running: false, result: 42, resolved: true, rejected: false } as an argument to it if promise has been resolved', async done => {
+    it('should call `children` and pass { running: false, result: 42, resolved: true, rejected: false } as an argument if promise has been resolved', async done => {
       const AsyncCall = createAsyncCallComponent(() => Promise.resolve(42))
       const children = jest.fn(() => null)
       const container = mount(
@@ -96,7 +96,7 @@ describe('State', () => {
       done()
     })
 
-    it("should call children fn and pass { running: false, resolved: false, rejected: true, rejectReason: 'rejected' } as an arguments to it if promise has been rejected", async done => {
+    it("should call `children` and pass { running: false, resolved: false, rejected: true, rejectReason: 'rejected' } as an argument if promise has been rejected", async done => {
       const AsyncCall = createAsyncCallComponent(() => Promise.reject('rejected'))
       const children = jest.fn(() => null)
       const container = mount(
@@ -125,7 +125,7 @@ describe('State', () => {
       done()
     })
 
-    it('should call children fn and pass { running: true, rejected: false, resolved: false } as an arguments to it if promise has been called the second time after resolving', async done => {
+    it('should call `children` and pass { running: true, rejected: false, resolved: false } as an argument if promise-returning function is called the second time after promise resolving', async done => {
       const AsyncCall = createAsyncCallComponent(value => Promise.resolve(value))
       const children = jest.fn(() => null)
       const container = mount(
@@ -147,7 +147,7 @@ describe('State', () => {
       done()
     })
 
-    it('should call children fn and pass { running: true, rejected: false, resolved: false } as an arguments to it if promise has been called the second time after rejection', async done => {
+    it('should call `children` and pass { running: true, rejected: false, resolved: false } as an argument if promise-returning function is called the second time after promise rejection', async done => {
       const AsyncCall = createAsyncCallComponent(() => Promise.reject('rejected'))
       const children = jest.fn(() => null)
       const container = mount(

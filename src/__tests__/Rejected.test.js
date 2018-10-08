@@ -4,9 +4,9 @@ import { shallow, mount } from 'enzyme'
 import createAsyncCallComponent from '../index'
 import { flushPromises } from './common'
 
-describe('Rejected', () => {
+describe('<Rejected>', () => {
   describe('invariants', () => {
-    it('should be exposed as static prop from AsyncCall', () => {
+    it('should be exposed as a static prop from <AsyncCall>', () => {
       const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
       expect(AsyncCall.Rejected).toBeDefined()
     })
@@ -16,7 +16,7 @@ describe('Rejected', () => {
       expect(AsyncCall.Rejected.displayName).toBe('AsyncCall.Rejected')
     })
 
-    it('should throw an error if Rejected component rendered alone', () => {
+    it('should throw an error if <Rejected> component is rendered alone', () => {
       jest.spyOn(console, 'error').mockImplementation(() => {})
 
       const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
@@ -27,7 +27,7 @@ describe('Rejected', () => {
   })
 
   describe('children', () => {
-    it("should not render Rejected's children if promise has not been resolved yet", () => {
+    it("should not render <Rejected>'s children if promise has not been resolved yet", () => {
       const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
       const container = mount(
         <AsyncCall params={{}}>
@@ -40,7 +40,7 @@ describe('Rejected', () => {
       expect(rejectedContainer).toBeEmptyRender()
     })
 
-    it("should not render Rejected's children if promise has been resolved", async done => {
+    it("should not render <Rejected>'s children if promise has been resolved", async done => {
       const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
       const container = mount(
         <AsyncCall params={{}}>
@@ -57,7 +57,7 @@ describe('Rejected', () => {
       done()
     })
 
-    it("should render Rejected's children if promise has been rejected", async done => {
+    it("should render <Rejected>'s children if promise has been rejected", async done => {
       const AsyncCall = createAsyncCallComponent(() => Promise.reject('error'))
       const container = mount(
         <AsyncCall params={{}}>
@@ -78,7 +78,7 @@ describe('Rejected', () => {
       done()
     })
 
-    it("should render Rejected's children array if promise has been rejected", async done => {
+    it("should render <Rejected>'s children array if promise has been rejected", async done => {
       const AsyncCall = createAsyncCallComponent(() => Promise.reject('error'))
       const container = mount(
         <AsyncCall params={{}}>
@@ -101,7 +101,7 @@ describe('Rejected', () => {
       done()
     })
 
-    it("should not render Rejected's children if promise has not been resolved the second time", async done => {
+    it("should not render <Rejected>'s children if promise has not been resolved the second time", async done => {
       const AsyncCall = createAsyncCallComponent(value => Promise.reject(value))
       const container = mount(
         <AsyncCall params="first">
@@ -121,7 +121,7 @@ describe('Rejected', () => {
   })
 
   describe('render props', () => {
-    it("should call Rejected's children fn if promise has been rejected", async done => {
+    it("should call <Rejected>'s `children` function if promise has been rejected", async done => {
       const AsyncCall = createAsyncCallComponent(() => Promise.reject('error:'))
       const children = jest.fn(({ rejectReason }) => (
         <div>
