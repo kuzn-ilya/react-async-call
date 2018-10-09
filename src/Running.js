@@ -1,5 +1,5 @@
 import * as PropTypes from 'prop-types'
-import { invariant } from './common'
+import { invariant, INVARIANT_MUST_BE_A_CHILD } from './common'
 
 export const createRunning = (contextPropName, rootDisplayName) => {
   /**
@@ -18,7 +18,7 @@ export const createRunning = (contextPropName, rootDisplayName) => {
   const Running = (props, context) => {
     const contextProps = context[contextPropName]
 
-    invariant(contextProps, `<${Running.displayName}> must be a child (direct or indirect) of <${rootDisplayName}>.`)
+    invariant(contextProps, INVARIANT_MUST_BE_A_CHILD, Running.displayName, rootDisplayName)
 
     return (contextProps.running && props.children) || null
   }

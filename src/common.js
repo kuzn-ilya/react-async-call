@@ -14,4 +14,6 @@ export const resultStoreContextPropType = PropTypes.shape({
   reset: PropTypes.func.isRequired,
 })
 
+export const INVARIANT_MUST_BE_A_CHILD = '<%s> must be a child (direct or indirect) of <%s>.'
+
 export { invariant, shallowEqual }

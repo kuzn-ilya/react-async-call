@@ -1,6 +1,6 @@
 import * as PropTypes from 'prop-types'
 import { resultStoreContextPropType } from './common'
-import { isFunction, invariant } from './common'
+import { isFunction, invariant, INVARIANT_MUST_BE_A_CHILD } from './common'
 
 export const createHasResult = (contextPropName, rootDisplayName) => {
   /**
@@ -29,7 +29,7 @@ export const createHasResult = (contextPropName, rootDisplayName) => {
   const HasResult = (props, context) => {
     const contextProps = context[contextPropName]
 
-    invariant(contextProps, `<${HasResult.displayName}> must be a child (direct or indirect) of <${rootDisplayName}>.`)
+    invariant(contextProps, INVARIANT_MUST_BE_A_CHILD, HasResult.displayName, rootDisplayName)
 
     return (
       (contextProps.hasResult && isFunction(props.children) && props.children({ result: contextProps.result })) || null

@@ -1,5 +1,5 @@
 import * as PropTypes from 'prop-types'
-import { isFunction, invariant } from './common'
+import { isFunction, invariant, INVARIANT_MUST_BE_A_CHILD } from './common'
 
 export const createState = (contextPropName, rootDisplayName) => {
   /**
@@ -45,7 +45,7 @@ export const createState = (contextPropName, rootDisplayName) => {
   const State = (props, context) => {
     const contextProps = context[contextPropName]
 
-    invariant(contextProps, `<${State.displayName}> must be a child (direct or indirect) of <${rootDisplayName}>.`)
+    invariant(contextProps, INVARIANT_MUST_BE_A_CHILD, State.displayName, rootDisplayName)
 
     return (
       (isFunction(props.children) &&

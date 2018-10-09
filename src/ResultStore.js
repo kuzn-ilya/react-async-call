@@ -1,6 +1,12 @@
 import * as React from 'react'
 import * as PropTypes from 'prop-types'
-import { isFunction, invariant, generateContextName, resultStoreContextPropType } from './common'
+import {
+  isFunction,
+  invariant,
+  generateContextName,
+  resultStoreContextPropType,
+  INVARIANT_MUST_BE_A_CHILD,
+} from './common'
 import { createHasResult } from './HasResult'
 import { createResetter } from './Resetter'
 
@@ -129,10 +135,7 @@ export const createResultStore = (rootContextPropName, rootDisplayName) => {
     }
 
     render() {
-      invariant(
-        this.context[rootContextPropName],
-        `<${ResultStore.displayName}> must be a child (direct or indirect) of <${rootDisplayName}>.`,
-      )
+      invariant(this.context[rootContextPropName], INVARIANT_MUST_BE_A_CHILD, ResultStore.displayName, rootDisplayName)
 
       return (isFunction(this.props.children) ? this.props.children(this._getState()) : this.props.children) || null
     }

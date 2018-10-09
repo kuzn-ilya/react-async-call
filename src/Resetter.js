@@ -1,6 +1,6 @@
 import * as PropTypes from 'prop-types'
 import { resultStoreContextPropType } from './common'
-import { isFunction, invariant } from './common'
+import { isFunction, invariant, INVARIANT_MUST_BE_A_CHILD } from './common'
 
 export const createResetter = (contextPropName, rootDisplayName) => {
   /**
@@ -36,7 +36,7 @@ export const createResetter = (contextPropName, rootDisplayName) => {
   const Resetter = (props, context) => {
     const contextProps = context[contextPropName]
 
-    invariant(contextProps, `<${Resetter.displayName}> must be a child (direct or indirect) of <${rootDisplayName}>.`)
+    invariant(contextProps, INVARIANT_MUST_BE_A_CHILD, Resetter.displayName, rootDisplayName)
 
     return (isFunction(props.children) && props.children({ reset: contextProps.reset })) || null
   }
