@@ -1,6 +1,6 @@
 {
   "name": "react-async-call",
-  "version": "0.2.7",
+  "version": "0.3.1",
   "description": "Declarative promise handling in React",
   "main": "lib/index.js",
   "module": "lib/index.es.js",

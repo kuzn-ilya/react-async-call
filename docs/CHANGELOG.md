@@ -1,5 +1,19 @@
 # Change Log
 
+# [0.3.1](https://github.com/kuzn-ilya/react-async-call/compare/v0.2.7...v0.3.1) (2018-10-09)
+
+
+### Bug Fixes
+
+* **AsyncCall.ResultStore:** drill down root context of AsyncCall component properly ([8cd56b8](https://github.com/kuzn-ilya/react-async-call/commit/8cd56b8)), closes [#24](https://github.com/kuzn-ilya/react-async-call/issues/24)
+* **AsyncCall.ResultStore.Resetter:** add default value for reset method (execute = true) [skip release] ([f6f9096](https://github.com/kuzn-ilya/react-async-call/commit/f6f9096))
+
+
+### Features
+
+* **AsyncCall.ResultStore.Resetter:** new static component AsyncCall.ResultStore.Resetter for store cleaning ([78126a9](https://github.com/kuzn-ilya/react-async-call/commit/78126a9))
+* **AsyncCall.ResultStore.Resetter:** add Resetter to index.d.ts [skip release] ([cd8cae3](https://github.com/kuzn-ilya/react-async-call/commit/cd8cae3))
+
 ## [0.2.7](https://github.com/kuzn-ilya/react-async-call/compare/v0.2.6...v0.2.7) (2018-10-06)
 
 
