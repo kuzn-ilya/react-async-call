@@ -395,7 +395,7 @@ describe('<ResultStore>', () => {
         reset: resultStoreContainer.instance().reset,
       })
 
-      resultStoreContainer.instance().reset()
+      resultStoreContainer.instance().reset(false)
       await flushPromises()
 
       expect(children).toHaveBeenLastCalledWith({ hasResult: false, reset: resultStoreContainer.instance().reset })
@@ -420,7 +420,7 @@ describe('<ResultStore>', () => {
         reset: resultStoreContainer.instance().reset,
       })
 
-      resultStoreContainer.instance().reset()
+      resultStoreContainer.instance().reset(false)
       await flushPromises()
 
       expect(children).toHaveBeenLastCalledWith({
@@ -428,6 +428,48 @@ describe('<ResultStore>', () => {
         result: 'intitalValue',
         reset: resultStoreContainer.instance().reset,
       })
+
+      done()
+    })
+
+    it('should call `execute` method if no arguments is passed to `reset` method', async done => {
+      const AsyncCall = createAsyncCallComponent(value => Promise.resolve(value))
+      const children = jest.fn(() => null)
+      const container = mount(
+        <AsyncCall params={1}>
+          <AsyncCall.ResultStore>{children}</AsyncCall.ResultStore>
+        </AsyncCall>,
+      )
+      const spyOnExecute = jest.spyOn(container.instance(), 'execute')
+      container.update()
+      await flushPromises()
+
+      const resultStoreContainer = container.find(AsyncCall.ResultStore)
+      resultStoreContainer.instance().reset()
+      await flushPromises()
+
+      expect(spyOnExecute).toHaveBeenCalled()
+
+      done()
+    })
+
+    it('should not call `execute` method if `false` is passed to `reset` method', async done => {
+      const AsyncCall = createAsyncCallComponent(value => Promise.resolve(value))
+      const children = jest.fn(() => null)
+      const container = mount(
+        <AsyncCall params={1}>
+          <AsyncCall.ResultStore>{children}</AsyncCall.ResultStore>
+        </AsyncCall>,
+      )
+      const spyOnExecute = jest.spyOn(container.instance(), 'execute')
+      container.update()
+      await flushPromises()
+
+      const resultStoreContainer = container.find(AsyncCall.ResultStore)
+      resultStoreContainer.instance().reset(false)
+      await flushPromises()
+
+      expect(spyOnExecute).not.toHaveBeenCalled()
 
       done()
     })

@@ -9,5 +9,5 @@ export const generateContextName = () => `__react-async-call__${contextCounter++
 export const resultStoreContextPropType = PropTypes.shape({
   hasResult: PropTypes.bool,
   result: PropTypes.any,
-  reset: PropTypes.func,
+  reset: PropTypes.func.isRequired,
 })

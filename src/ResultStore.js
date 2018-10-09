@@ -114,7 +114,7 @@ export const createResultStore = (rootContextPropName, rootDisplayName) => {
 
     componentWillReceiveProps(nextProps, nextContext) {
       if (nextProps.reset) {
-        this.reset()
+        this.reset(false)
       }
 
       if (nextContext[rootContextPropName].resolved && !this.context[rootContextPropName].resolved) {
@@ -150,9 +150,9 @@ export const createResultStore = (rootContextPropName, rootDisplayName) => {
     /**
      * Resets result store to its intial state.
      * @method
-     * @param {bool} [execute=false] Wether execute promise-returning function after resetting or not.
+     * @param {bool} [execute=true] Wether execute promise-returning function after resetting or not.
      */
-    reset = execute => {
+    reset = (execute = true) => {
       this.setState(
         this.props.hasOwnProperty('initialValue')
           ? { hasResult: true, result: this.props.initialValue }
@@ -161,7 +161,7 @@ export const createResultStore = (rootContextPropName, rootDisplayName) => {
             },
       )
       if (execute) {
-        this.context[ResultStore.contextPropName].execute()
+        this.context[rootContextPropName].execute()
       }
     }
   }
