@@ -5,7 +5,7 @@ import createAsyncCallComponent from '../index'
 import { flushPromises } from './common'
 
 describe('<Rejected>', () => {
-  afterEach(() => jest.resetAllMocks())
+  afterEach(jest.restoreAllMocks)
 
   it('should throw an error if <Rejected> component is rendered alone', () => {
     jest.spyOn(console, 'error').mockImplementation(() => {})
@@ -24,8 +24,8 @@ describe('<Rejected>', () => {
   })
 
   afterEach(() => {
+    jest.restoreAllMocks()
     expect(spyOnConsoleError).not.toHaveBeenCalled()
-    jest.resetAllMocks()
   })
 
   it('should be exposed as a static prop from <AsyncCall>', () => {

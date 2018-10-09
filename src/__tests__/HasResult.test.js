@@ -11,7 +11,7 @@ describe('<HasResult>', () => {
     spyOnConsoleError = jest.spyOn(console, 'error').mockImplementation(() => {})
   })
 
-  afterEach(() => jest.resetAllMocks())
+  afterEach(jest.restoreAllMocks)
 
   it('should throw an error if <HasResult> component is rendered as a direct child of <AsyncCall>', () => {
     const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
@@ -50,8 +50,8 @@ describe('<HasResult>', () => {
   })
 
   afterEach(() => {
+    jest.restoreAllMocks()
     expect(spyOnConsoleError).not.toHaveBeenCalled()
-    jest.resetAllMocks()
   })
 
   it('should be exposed as a static prop from <AsyncCall.ResultStore>', () => {

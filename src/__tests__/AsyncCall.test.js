@@ -12,8 +12,8 @@ describe('<AsyncCall>', () => {
   })
 
   afterEach(() => {
+    jest.restoreAllMocks()
     expect(spyOnConsoleError).not.toHaveBeenCalled()
-    jest.resetAllMocks()
   })
 
   it('should throw an error if a function is not passed to createAsyncCallComponent as a first argument', () => {

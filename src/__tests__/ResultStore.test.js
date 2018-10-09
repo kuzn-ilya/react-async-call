@@ -12,7 +12,7 @@ describe('<ResultStore>', () => {
     spyOnConsoleError = jest.spyOn(console, 'error').mockImplementation(() => {})
   })
 
-  afterEach(() => jest.resetAllMocks())
+  afterEach(jest.restoreAllMocks)
 
   it('should throw an error if <ResultStore> component is rendered alone', () => {
     const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
@@ -34,6 +34,32 @@ describe('<ResultStore>', () => {
       'The prop `children` is marked as required in `AsyncCall.ResultStore`, but its value is `undefined`',
     )
   })
+
+  it('should reset result if `reset` property is set', async done => {
+    const AsyncCall = createAsyncCallComponent(value => Promise.resolve(value))
+    const children = jest.fn(() => null)
+    const container = mount(<AsyncCall.ResultStore>{children}</AsyncCall.ResultStore>, {
+      context: { [AsyncCall.contextPropName]: { resolved: true, result: 1 } },
+    })
+
+    expect(children).toHaveBeenLastCalledWith({ hasResult: true, result: 1, reset: container.instance().reset })
+
+    container.setProps({ reset: true })
+    container.setContext({ [AsyncCall.contextPropName]: { resolved: false } })
+    container.update()
+    expect(children).toHaveBeenLastCalledWith({ hasResult: false, reset: container.instance().reset })
+
+    container.setProps({ reset: false })
+    container.setContext({ [AsyncCall.contextPropName]: { resolved: true, result: 2 } })
+    container.update()
+    expect(children).toHaveBeenLastCalledWith({ hasResult: true, result: 2, reset: container.instance().reset })
+
+    expect(spyOnConsoleError).toHaveBeenCalledWith(
+      'Warning: Property `reset` of <AsyncCall.ResultStore> component is deprecated. Use <AsyncCall.ResultStore.Resetter> component instead.',
+    )
+
+    done()
+  })
 })
 
 describe('<ResultStore>', () => {
@@ -43,8 +69,8 @@ describe('<ResultStore>', () => {
   })
 
   afterEach(() => {
+    jest.restoreAllMocks()
     expect(spyOnConsoleError).not.toHaveBeenCalled()
-    jest.resetAllMocks()
   })
 
   it('should be exposed as a static prop from <AsyncCall>', () => {
@@ -269,28 +295,6 @@ describe('<ResultStore>', () => {
       hasResult: true,
       reset: resultStoreContainer.instance().reset,
     })
-
-    done()
-  })
-
-  it('should reset result if `result` property is set', async done => {
-    const AsyncCall = createAsyncCallComponent(value => Promise.resolve(value))
-    const children = jest.fn(() => null)
-    const container = mount(<AsyncCall.ResultStore>{children}</AsyncCall.ResultStore>, {
-      context: { [AsyncCall.contextPropName]: { resolved: true, result: 1 } },
-    })
-
-    expect(children).toHaveBeenLastCalledWith({ hasResult: true, result: 1, reset: container.instance().reset })
-
-    container.setProps({ reset: true })
-    container.setContext({ [AsyncCall.contextPropName]: { resolved: false } })
-    container.update()
-    expect(children).toHaveBeenLastCalledWith({ hasResult: false, reset: container.instance().reset })
-
-    container.setProps({ reset: false })
-    container.setContext({ [AsyncCall.contextPropName]: { resolved: true, result: 2 } })
-    container.update()
-    expect(children).toHaveBeenLastCalledWith({ hasResult: true, result: 2, reset: container.instance().reset })
 
     done()
   })

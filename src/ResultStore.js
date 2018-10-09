@@ -3,6 +3,7 @@ import * as PropTypes from 'prop-types'
 import {
   isFunction,
   invariant,
+  warning,
   generateContextName,
   resultStoreContextPropType,
   INVARIANT_MUST_BE_A_CHILD,
@@ -136,6 +137,10 @@ export const createResultStore = (rootContextPropName, rootDisplayName) => {
 
     render() {
       invariant(this.context[rootContextPropName], INVARIANT_MUST_BE_A_CHILD, ResultStore.displayName, rootDisplayName)
+      warning(
+        !this.props.hasOwnProperty('reset'),
+        'Property `reset` of <AsyncCall.ResultStore> component is deprecated. Use <AsyncCall.ResultStore.Resetter> component instead.',
+      )
 
       return (isFunction(this.props.children) ? this.props.children(this._getState()) : this.props.children) || null
     }

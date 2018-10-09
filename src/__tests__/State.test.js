@@ -11,7 +11,7 @@ describe('<State>', () => {
     spyOnConsoleError = jest.spyOn(console, 'error').mockImplementation(() => {})
   })
 
-  afterEach(() => jest.resetAllMocks())
+  afterEach(jest.restoreAllMocks)
 
   it('should throw an error if <State> component is rendered alone', () => {
     const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
@@ -41,8 +41,8 @@ describe('<State>', () => {
   })
 
   afterEach(() => {
+    jest.restoreAllMocks()
     expect(spyOnConsoleError).not.toHaveBeenCalled()
-    jest.resetAllMocks()
   })
 
   it('should be exposed as a static prop from <AsyncCall>', () => {
