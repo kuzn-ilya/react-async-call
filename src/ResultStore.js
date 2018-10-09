@@ -1,7 +1,6 @@
 import * as React from 'react'
 import * as PropTypes from 'prop-types'
-import invariant from 'fbjs/lib/invariant'
-import { isFunction, generateContextName, resultStoreContextPropType } from './common'
+import { isFunction, invariant, generateContextName, resultStoreContextPropType } from './common'
 import { createHasResult } from './HasResult'
 import { createResetter } from './Resetter'
 

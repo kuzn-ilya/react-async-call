@@ -1,6 +1,5 @@
 import * as PropTypes from 'prop-types'
-import invariant from 'fbjs/lib/invariant'
-import { isFunction } from './common'
+import { isFunction, invariant } from './common'
 
 export const createState = (contextPropName, rootDisplayName) => {
   /**

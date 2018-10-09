@@ -1,7 +1,6 @@
 import * as PropTypes from 'prop-types'
-import invariant from 'fbjs/lib/invariant'
 import { resultStoreContextPropType } from './common'
-import { isFunction } from './common'
+import { isFunction, invariant } from './common'
 
 export const createHasResult = (contextPropName, rootDisplayName) => {
   /**

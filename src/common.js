@@ -1,4 +1,6 @@
 import * as PropTypes from 'prop-types'
+import invariant from 'fbjs/lib/invariant'
+import shallowEqual from 'fbjs/lib/shallowEqual'
 
 export const isFunction = value => !!(value && value.constructor && value.call && value.apply)
 
@@ -11,3 +13,5 @@ export const resultStoreContextPropType = PropTypes.shape({
   result: PropTypes.any,
   reset: PropTypes.func.isRequired,
 })
+
+export { invariant, shallowEqual }

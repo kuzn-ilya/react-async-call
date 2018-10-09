@@ -1,5 +1,5 @@
 import * as PropTypes from 'prop-types'
-import invariant from 'fbjs/lib/invariant'
+import { invariant } from './common'
 
 export const createCompleted = (contextPropName, rootDisplayName) => {
   /**
