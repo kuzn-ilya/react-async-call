@@ -1,6 +1,5 @@
 import * as PropTypes from 'prop-types'
-import invariant from 'fbjs/lib/invariant'
-import { isFunction } from './common'
+import { isFunction, invariant, INVARIANT_MUST_BE_A_CHILD } from './common'
 
 export const createResolved = (contextPropName, rootDisplayName) => {
   /**
@@ -36,7 +35,7 @@ export const createResolved = (contextPropName, rootDisplayName) => {
   const Resolved = (props, context) => {
     const contextProps = context[contextPropName]
 
-    invariant(contextProps, `<${Resolved.displayName}> must be a child (direct or indirect) of <${rootDisplayName}>.`)
+    invariant(contextProps, INVARIANT_MUST_BE_A_CHILD, Resolved.displayName, rootDisplayName)
 
     return (
       (contextProps.resolved &&

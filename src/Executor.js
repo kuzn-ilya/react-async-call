@@ -1,6 +1,5 @@
 import * as PropTypes from 'prop-types'
-import invariant from 'fbjs/lib/invariant'
-import { isFunction } from './common'
+import { isFunction, invariant, INVARIANT_MUST_BE_A_CHILD } from './common'
 
 export const createExecutor = (contextPropName, rootDisplayName) => {
   /**
@@ -29,7 +28,7 @@ export const createExecutor = (contextPropName, rootDisplayName) => {
   const Executor = (props, context) => {
     const contextProps = context[contextPropName]
 
-    invariant(contextProps, `<${Executor.displayName}> must be a child (direct or indirect) of <${rootDisplayName}>.`)
+    invariant(contextProps, INVARIANT_MUST_BE_A_CHILD, Executor.displayName, rootDisplayName)
 
     return (isFunction(props.children) && props.children({ execute: contextProps.execute })) || null
   }

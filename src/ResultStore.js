@@ -1,16 +1,24 @@
 import * as React from 'react'
 import * as PropTypes from 'prop-types'
-import invariant from 'fbjs/lib/invariant'
-import { isFunction, resultStoreContextPropType, resultStoreContextPropName } from './common'
+import {
+  isFunction,
+  invariant,
+  warning,
+  generateContextName,
+  resultStoreContextPropType,
+  INVARIANT_MUST_BE_A_CHILD,
+} from './common'
 import { createHasResult } from './HasResult'
+import { createResetter } from './Resetter'
 
-export const createResultStore = (contextPropName, rootDisplayName) => {
+export const createResultStore = (rootContextPropName, rootDisplayName) => {
   /**
    * Type of `children` function of a {@link AsyncCall.ResultStore} component.
    * @function ResultStoreChildrenFunction
    * @param {object} params
    * @param {boolean} params.hasResult
    * @param {any=} params.result
+   * @param {ResetFunction} params.reset Function for manual store cleaning.
    * @returns {ReactNode} Should return rendered React component(s) depending on supplied params.
    * @remark type definition
    */
@@ -55,18 +63,19 @@ export const createResultStore = (contextPropName, rootDisplayName) => {
    * Useful, for example, when you need to accumulate sequential async calls
    * (e.g. for fetching data for infinte page scroll).
    * @property {any=} initialValue Optional initial value for the result store. If value is provided, result store will have result always.
-   * @property {boolean} [reset=false] If `true`, clears the store.
+   * @property {boolean} [reset=false] @deprecated If `true`, clears the store (**Deprecated, will be removed in version 1.0.0. Use {@link AsyncCall.ResultStore.Resetter} instead**).
    * @static
    * @extends {React.Component}
    * @memberof AsyncCall
    */
   class ResultStore extends React.Component {
+    static contextPropName = generateContextName()
     static childContextTypes = {
-      [contextPropName]: resultStoreContextPropType,
+      [ResultStore.contextPropName]: resultStoreContextPropType,
     }
 
     static contextTypes = {
-      [contextPropName]: PropTypes.shape({
+      [rootContextPropName]: PropTypes.shape({
         resolved: PropTypes.bool,
         result: PropTypes.any,
       }),
@@ -85,7 +94,8 @@ export const createResultStore = (contextPropName, rootDisplayName) => {
 
     static displayName = `${rootDisplayName}.ResultStore`
 
-    static HasResult = createHasResult(contextPropName, ResultStore.displayName)
+    static HasResult = createHasResult(ResultStore.contextPropName, ResultStore.displayName)
+    static Resetter = createResetter(ResultStore.contextPropName, ResultStore.displayName)
 
     state = {
       hasResult: false,
@@ -93,14 +103,12 @@ export const createResultStore = (contextPropName, rootDisplayName) => {
 
     getChildContext() {
       return {
-        [contextPropName]: {
-          [resultStoreContextPropName]: this._getState(),
-        },
+        [ResultStore.contextPropName]: this._getState(),
       }
     }
 
     componentDidMount() {
-      const contextProps = this.context[contextPropName]
+      const contextProps = this.context[rootContextPropName]
 
       if (contextProps.resolved || this.props.hasOwnProperty('initialValue')) {
         this.setState({
@@ -112,27 +120,26 @@ export const createResultStore = (contextPropName, rootDisplayName) => {
 
     componentWillReceiveProps(nextProps, nextContext) {
       if (nextProps.reset) {
-        this.setState({
-          hasResult: false,
-        })
+        this.reset(false)
       }
 
-      if (nextContext[contextPropName].resolved && !this.context[contextPropName].resolved) {
+      if (nextContext[rootContextPropName].resolved && !this.context[rootContextPropName].resolved) {
         this.setState(
           prevState =>
             prevState.hasResult
               ? {
-                  result: this.props.reduce(prevState.result, nextContext[contextPropName].result),
+                  result: this.props.reduce(prevState.result, nextContext[rootContextPropName].result),
                 }
-              : { hasResult: true, result: nextContext[contextPropName].result },
+              : { hasResult: true, result: nextContext[rootContextPropName].result },
         )
       }
     }
 
     render() {
-      invariant(
-        this.context[contextPropName],
-        `<${ResultStore.displayName}> must be a child (direct or indirect) of <${rootDisplayName}>.`,
+      invariant(this.context[rootContextPropName], INVARIANT_MUST_BE_A_CHILD, ResultStore.displayName, rootDisplayName)
+      warning(
+        !this.props.hasOwnProperty('reset'),
+        'Property `reset` of <AsyncCall.ResultStore> component is deprecated. Use <AsyncCall.ResultStore.Resetter> component instead.',
       )
 
       return (isFunction(this.props.children) ? this.props.children(this._getState()) : this.props.children) || null
@@ -142,7 +149,26 @@ export const createResultStore = (contextPropName, rootDisplayName) => {
       const result = this.state.hasResult ? { result: this.state.result } : {}
       return {
         hasResult: this.state.hasResult,
+        reset: this.reset,
         ...result,
+      }
+    }
+
+    /**
+     * Resets result store to its intial state.
+     * @method
+     * @param {bool} [execute=true] Wether execute promise-returning function after resetting or not.
+     */
+    reset = (execute = true) => {
+      this.setState(
+        this.props.hasOwnProperty('initialValue')
+          ? { hasResult: true, result: this.props.initialValue }
+          : {
+              hasResult: false,
+            },
+      )
+      if (execute) {
+        this.context[rootContextPropName].execute()
       }
     }
   }

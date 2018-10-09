@@ -65,6 +65,16 @@ interface IHasResultProps<Result> {
   children: HasResultChildrenFunction<Result>
 }
 
+interface IResetterChildrenFunctionParams {
+  reset: (execute: boolean = true) => void
+}
+
+type ResetterChildrenFunction = (params: IResetterChildrenFunctionParams) => RenderResult
+
+interface IResetterProps {
+  children: ResetterChildrenFunction
+}
+
 interface IStateChildrenFunctionParams<Result> {
   running: boolean
   rejected: boolean
@@ -83,6 +93,7 @@ interface IStateProps<Result> {
 interface IResultStoreChildrenFunction<Result> {
   result?: Result
   hasResult: boolean
+  reset: (execute: boolean) => void
 }
 
 type ResultStoreChildrenFunction<Result> = (params: IResultStoreChildrenFunction<Result>) => RenderResult
@@ -94,13 +105,14 @@ interface IResultStoreProps<Result> {
   children?: ResultStoreChildrenFunction<Result> | RenderResult
 }
 
-declare class AsyncCall<Params, Result> extends React.Component<IAsyncCallProps<Params, Result>> {
-  execute()
-}
-
 interface IResultStore<Result> {
   HasResult: React.ComponentType<IHasResultProps<Result>>
+  Resetter: React.ComponentType<IResetterProps>
   new(): React.Component<IResultStoreProps<Result>>
+}
+
+declare class AsyncCall<Params, Result> extends React.Component<IAsyncCallProps<Params, Result>> {
+  execute()
 }
 
 interface IAsyncCall<Params, Result> {

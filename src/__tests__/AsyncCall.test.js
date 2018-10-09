@@ -6,270 +6,262 @@ import createAsyncCallComponent from '../'
 import { getAsyncCallChildrenContainer, flushPromises } from './common'
 
 describe('<AsyncCall>', () => {
-  describe('invariants', () => {
-    it('should throw an error if a function is not passed to createAsyncCallComponent as a first argument', () => {
-      const AsyncCall = createAsyncCallComponent(undefined)
+  let spyOnConsoleError
+  beforeEach(() => {
+    spyOnConsoleError = jest.spyOn(console, 'error')
+  })
 
-      expect(() => shallow(<AsyncCall params={{}} />)).toThrow(
-        'Function should be passed to createAsyncCallComponent as a first argument but got undefined.',
-      )
-    })
+  afterEach(() => {
+    jest.restoreAllMocks()
+    expect(spyOnConsoleError).not.toHaveBeenCalled()
+  })
 
-    it('should return a component class', () => {
-      const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
-      expect(AsyncCall).toBeDefined()
-    })
+  it('should throw an error if a function is not passed to createAsyncCallComponent as a first argument', () => {
+    const AsyncCall = createAsyncCallComponent(undefined)
 
-    it('should expose default display name', () => {
-      const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
-      expect(AsyncCall.displayName).toBe('AsyncCall')
+    expect(() => shallow(<AsyncCall params={{}} />)).toThrow(
+      'Function should be passed to createAsyncCallComponent as a first argument but got undefined.',
+    )
+  })
+
+  it('should return a component class', () => {
+    const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
+    expect(AsyncCall).toBeDefined()
+  })
+
+  it('should expose default display name', () => {
+    const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
+    expect(AsyncCall.displayName).toBe('AsyncCall')
+  })
+
+  it("should call promise-returning function on component's mount", () => {
+    const fn = jest.fn(() => Promise.resolve())
+    const AsyncCall = createAsyncCallComponent(fn)
+
+    shallow(<AsyncCall params={{}} />)
+
+    expect(fn).toHaveBeenCalled()
+  })
+
+  it("should pass `params` property to a promise-returning function as an argument on component's mount", () => {
+    const fn = jest.fn(value => Promise.resolve())
+    const AsyncCall = createAsyncCallComponent(fn)
+
+    shallow(<AsyncCall params="abcdef" />)
+
+    expect(fn).toHaveBeenLastCalledWith('abcdef')
+  })
+
+  it('should call promise-returning function only once if `params` property was not changed', () => {
+    const fn = jest.fn(() => Promise.resolve())
+    const AsyncCall = createAsyncCallComponent(fn)
+
+    const container = shallow(<AsyncCall params={{}} />)
+    expect(fn).toHaveBeenLastCalledWith({})
+
+    container.setProps({ params: {} })
+    expect(fn).toHaveBeenCalledTimes(1)
+  })
+
+  it('should call promise-returning fuction twice if `params` property was changed', () => {
+    const fn = jest.fn(value => Promise.resolve())
+    const AsyncCall = createAsyncCallComponent(fn)
+
+    const container = shallow(<AsyncCall params="abc" />)
+    expect(fn).toHaveBeenLastCalledWith('abc')
+
+    container.setProps({ params: 'bcd' })
+    expect(fn).toHaveBeenLastCalledWith('bcd')
+    expect(fn).toHaveBeenCalledTimes(2)
+  })
+
+  it('should call promise-returning function only once even if `params` property references were changed but old and new values of property are shallow equal', () => {
+    const fn = jest.fn(value => Promise.resolve())
+    const AsyncCall = createAsyncCallComponent(fn)
+    const container = shallow(<AsyncCall params={{ a: 1 }} />)
+    container.setProps({ params: { a: 1 } })
+
+    expect(fn).toHaveBeenCalledWith({ a: 1 })
+    expect(fn).toHaveBeenCalledTimes(1)
+  })
+
+  it('should throw an error if promise-returning function does not return promise', () => {
+    const AsyncCall = createAsyncCallComponent(() => void 0)
+    expect(() => shallow(<AsyncCall params={{}} />)).toThrow(
+      'Function supplied to "createAsyncCallComponent" function should return a promise.',
+    )
+  })
+
+  it('should expose `execute` method via ref', () => {
+    const AsyncCall = createAsyncCallComponent(() => Promise.resolve(null))
+    const container = shallow(<AsyncCall params={{}} />)
+    expect(container.instance().execute).toBeFunction()
+  })
+
+  it('should call promise-returning function twice if `execute` method is called explicitly', () => {
+    const fn = jest.fn(() => Promise.resolve())
+    const AsyncCall = createAsyncCallComponent(fn)
+    const container = shallow(<AsyncCall params={{}} />)
+    container.instance().execute()
+    expect(fn).toHaveBeenCalledTimes(2)
+  })
+
+  it('should pass `params` to a promise-returning function if `execute` method is called explicitly', () => {
+    const fn = jest.fn(value => Promise.resolve(value))
+    const AsyncCall = createAsyncCallComponent(fn)
+    const container = shallow(<AsyncCall params={42} />)
+    container.instance().execute()
+    expect(fn).toHaveBeenLastCalledWith(42)
+  })
+
+  it('render props: should call `children` and pass { running: true, resolved: false, rejected: false, execute: <fn> } as an argument if promise has not been resolved yet', () => {
+    const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
+    const children = jest.fn(() => null)
+    const container = shallow(<AsyncCall params={{}}>{children}</AsyncCall>)
+
+    expect(children).toHaveBeenLastCalledWith({
+      running: true,
+      resolved: false,
+      rejected: false,
+      execute: container.instance().execute,
     })
   })
 
-  describe('promise-returning fn', () => {
-    it("should be called on component's mount", () => {
-      const fn = jest.fn(() => Promise.resolve())
-      const AsyncCall = createAsyncCallComponent(fn)
+  it('render props: should call `children` and pass { running: false, resolved: true, result: 42, rejected: false } as an argument if promise has been resolved', async done => {
+    const AsyncCall = createAsyncCallComponent(() => Promise.resolve(42))
+    const children = jest.fn(() => null)
+    const container = shallow(<AsyncCall params={{}}>{children}</AsyncCall>)
 
-      shallow(<AsyncCall params={{}} />)
+    await flushPromises()
 
-      expect(fn).toHaveBeenCalled()
+    expect(children).toHaveBeenLastCalledWith({
+      running: false,
+      resolved: true,
+      result: 42,
+      rejected: false,
+      execute: container.instance().execute,
     })
 
-    it("should pass `params` property to a promise-returning function as an argument on component's mount", () => {
-      const fn = jest.fn(value => Promise.resolve())
-      const AsyncCall = createAsyncCallComponent(fn)
-
-      shallow(<AsyncCall params="abcdef" />)
-
-      expect(fn).toHaveBeenLastCalledWith('abcdef')
-    })
-
-    it('should be called once if `params` property was not changed', () => {
-      const fn = jest.fn(() => Promise.resolve())
-      const AsyncCall = createAsyncCallComponent(fn)
-
-      const container = shallow(<AsyncCall params={{}} />)
-      expect(fn).toHaveBeenLastCalledWith({})
-
-      container.setProps({ params: {} })
-      expect(fn).toHaveBeenCalledTimes(1)
-    })
-
-    it('should be called twice if `params` property was changed', () => {
-      const fn = jest.fn(value => Promise.resolve())
-      const AsyncCall = createAsyncCallComponent(fn)
-
-      const container = shallow(<AsyncCall params="abc" />)
-      expect(fn).toHaveBeenLastCalledWith('abc')
-
-      container.setProps({ params: 'bcd' })
-      expect(fn).toHaveBeenLastCalledWith('bcd')
-      expect(fn).toHaveBeenCalledTimes(2)
-    })
-
-    it('should be called once even if `params` property references were changed but old and new values of property are shallow equal', () => {
-      const fn = jest.fn(value => Promise.resolve())
-      const AsyncCall = createAsyncCallComponent(fn)
-      const container = shallow(<AsyncCall params={{ a: 1 }} />)
-      container.setProps({ params: { a: 1 } })
-
-      expect(fn).toHaveBeenCalledWith({ a: 1 })
-      expect(fn).toHaveBeenCalledTimes(1)
-    })
-
-    it('should throw an error if promise-returning function does not return promise', () => {
-      const AsyncCall = createAsyncCallComponent(() => void 0)
-      expect(() => shallow(<AsyncCall params={{}} />)).toThrow(
-        'Function supplied to "createAsyncCallComponent" function should return a promise.',
-      )
-    })
+    done()
   })
 
-  describe('execute', () => {
-    it('should expose `execute` method via ref', () => {
-      const AsyncCall = createAsyncCallComponent(() => Promise.resolve(null))
-      const container = shallow(<AsyncCall params={{}} />)
-      expect(container.instance().execute).toBeFunction()
+  it("render props: should call `children` and pass { running: false, resolved: false, rejected: true, rejectReason: 'rejected' } as an argument if promise has been rejected", async done => {
+    const AsyncCall = createAsyncCallComponent(() => Promise.reject('rejected'))
+    const children = jest.fn(() => null)
+    const container = shallow(<AsyncCall params={{}}>{children}</AsyncCall>)
+
+    await flushPromises()
+
+    expect(children).toHaveBeenLastCalledWith({
+      running: false,
+      rejected: true,
+      resolved: false,
+      rejectReason: 'rejected',
+      execute: container.instance().execute,
     })
 
-    it('should call promise-returning function twice if `execute` method is called explicitly', () => {
-      const fn = jest.fn(() => Promise.resolve())
-      const AsyncCall = createAsyncCallComponent(fn)
-      const container = shallow(<AsyncCall params={{}} />)
-      container.instance().execute()
-      expect(fn).toHaveBeenCalledTimes(2)
-    })
-
-    it('should pass `params` to a promise-returning function if `execute` method is called explicitly', () => {
-      const fn = jest.fn(value => Promise.resolve(value))
-      const AsyncCall = createAsyncCallComponent(fn)
-      const container = shallow(<AsyncCall params={42} />)
-      container.instance().execute()
-      expect(fn).toHaveBeenLastCalledWith(42)
-    })
+    done()
   })
 
-  describe('render props', () => {
-    describe('should call `children`', () => {
-      it('and pass { running: true, resolved: false, rejected: false, execute: <fn> } as an argument if promise has not been resolved yet', () => {
-        const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
-        const children = jest.fn(() => null)
-        const container = shallow(<AsyncCall params={{}}>{children}</AsyncCall>)
+  it('render props: should call `children` and pass { running: true, resolved: false, rejected: false } as an argument if promise-returning function is called the second time after promise rejection', async done => {
+    const AsyncCall = createAsyncCallComponent(() => Promise.reject('rejected'))
+    const children = jest.fn(() => null)
+    const container = shallow(<AsyncCall params={{ a: 1 }}>{children}</AsyncCall>)
 
-        expect(children).toHaveBeenLastCalledWith({
-          running: true,
-          resolved: false,
-          rejected: false,
-          execute: container.instance().execute,
-        })
-      })
+    await flushPromises()
+    container.setProps({ params: { a: 2 } })
 
-      it('and pass { running: false, resolved: true, result: 42, rejected: false } as an argument if promise has been resolved', async done => {
-        const AsyncCall = createAsyncCallComponent(() => Promise.resolve(42))
-        const children = jest.fn(() => null)
-        const container = shallow(<AsyncCall params={{}}>{children}</AsyncCall>)
-
-        await flushPromises()
-
-        expect(children).toHaveBeenLastCalledWith({
-          running: false,
-          resolved: true,
-          result: 42,
-          rejected: false,
-          execute: container.instance().execute,
-        })
-
-        done()
-      })
-
-      it("and pass { running: false, resolved: false, rejected: true, rejectReason: 'rejected' } as an argument if promise has been rejected", async done => {
-        const AsyncCall = createAsyncCallComponent(() => Promise.reject('rejected'))
-        const children = jest.fn(() => null)
-        const container = shallow(<AsyncCall params={{}}>{children}</AsyncCall>)
-
-        await flushPromises()
-
-        expect(children).toHaveBeenLastCalledWith({
-          running: false,
-          rejected: true,
-          resolved: false,
-          rejectReason: 'rejected',
-          execute: container.instance().execute,
-        })
-
-        done()
-      })
-
-      it('and pass { running: true, resolved: false, rejected: false } as an argument if promise-returning function is called the second time after promise rejection', async done => {
-        const AsyncCall = createAsyncCallComponent(() => Promise.reject('rejected'))
-        const children = jest.fn(() => null)
-        const container = shallow(<AsyncCall params={{ a: 1 }}>{children}</AsyncCall>)
-
-        await flushPromises()
-        container.setProps({ params: { a: 2 } })
-
-        expect(children).toHaveBeenLastCalledWith({
-          running: true,
-          rejected: false,
-          resolved: false,
-          execute: container.instance().execute,
-        })
-
-        done()
-      })
+    expect(children).toHaveBeenLastCalledWith({
+      running: true,
+      rejected: false,
+      resolved: false,
+      execute: container.instance().execute,
     })
+
+    done()
   })
 
-  describe('children', () => {
-    it('should render children "as is" if `children` property is not a function', () => {
-      const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
-      const container = getAsyncCallChildrenContainer(shallow(<AsyncCall params={{}}>abcdef</AsyncCall>))
-      expect(container).toHaveText('abcdef')
-    })
-
-    it('should render children "as is" if `children` property is array', () => {
-      const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
-      const container = getAsyncCallChildrenContainer(
-        mount(
-          <AsyncCall params={{}}>
-            <div>abcdef</div>
-            <div>12345</div>
-          </AsyncCall>,
-        ),
-      )
-      expect(container.children().length).toBe(2)
-      expect(container.childAt(0)).toHaveText('abcdef')
-      expect(container.childAt(1)).toHaveText('12345')
-    })
+  it('should render children "as is" if `children` property is not a function', () => {
+    const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
+    const container = getAsyncCallChildrenContainer(shallow(<AsyncCall params={{}}>abcdef</AsyncCall>))
+    expect(container).toHaveText('abcdef')
   })
 
-  describe('unmount', () => {
-    it('should not throw an error when component is unmounted during promise resolving', async done => {
-      const fn = jest.fn(() => Promise.resolve())
-      const AsyncCall = createAsyncCallComponent(fn)
-
-      const container = shallow(<AsyncCall params={{}} />)
-      container.unmount()
-
-      await flushPromises()
-
-      done()
-    })
-
-    it('should not throw an error when component is unmounted during promise rejection', async done => {
-      const fn = jest.fn(() => Promise.reject())
-      const AsyncCall = createAsyncCallComponent(fn)
-
-      const container = shallow(<AsyncCall params={{}} />)
-      container.unmount()
-
-      await flushPromises()
-
-      done()
-    })
+  it('should render children "as is" if `children` property is array', () => {
+    const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
+    const container = getAsyncCallChildrenContainer(
+      mount(
+        <AsyncCall params={{}}>
+          <div>abcdef</div>
+          <div>12345</div>
+        </AsyncCall>,
+      ),
+    )
+    expect(container.children().length).toBe(2)
+    expect(container.childAt(0)).toHaveText('abcdef')
+    expect(container.childAt(1)).toHaveText('12345')
   })
 
-  describe('lazy', () => {
-    describe('should not call a function passed to createAsyncCallComponent', () => {
-      it("on component's mount", () => {
-        const fn = jest.fn(() => Promise.resolve())
-        const AsyncCall = createAsyncCallComponent(fn)
+  it('should not throw an error when component is unmounted during promise resolving', async done => {
+    const fn = jest.fn(() => Promise.resolve())
+    const AsyncCall = createAsyncCallComponent(fn)
 
-        shallow(<AsyncCall lazy params={{}} />)
+    const container = shallow(<AsyncCall params={{}} />)
+    container.unmount()
 
-        expect(fn).not.toHaveBeenCalled()
-      })
+    await flushPromises()
 
-      it('if `params` property was not changed', () => {
-        const fn = jest.fn(() => Promise.resolve())
-        const AsyncCall = createAsyncCallComponent(fn)
+    done()
+  })
 
-        const container = shallow(<AsyncCall lazy params={{}} />)
-        container.setProps({ params: {} })
+  it('should not throw an error when component is unmounted during promise rejection', async done => {
+    const fn = jest.fn(() => Promise.reject())
+    const AsyncCall = createAsyncCallComponent(fn)
 
-        expect(fn).not.toHaveBeenCalled()
-      })
+    const container = shallow(<AsyncCall params={{}} />)
+    container.unmount()
 
-      it('if `params` property was changed', () => {
-        const fn = jest.fn(value => Promise.resolve())
-        const AsyncCall = createAsyncCallComponent(fn)
+    await flushPromises()
 
-        const container = shallow(<AsyncCall lazy params={'abc'} />)
+    done()
+  })
 
-        container.setProps({ params: 'bcd' })
-        expect(fn).not.toHaveBeenCalled()
-      })
+  it("lazy: should not call a function passed to createAsyncCallComponent on component's mount", () => {
+    const fn = jest.fn(() => Promise.resolve())
+    const AsyncCall = createAsyncCallComponent(fn)
 
-      it('if `params` property references were changed but old and new values of property are shallow equal', () => {
-        const fn = jest.fn(value => Promise.resolve())
-        const AsyncCall = createAsyncCallComponent(fn)
-        const container = shallow(<AsyncCall lazy params={{ a: 1 }} />)
-        container.setProps({ params: { a: 1 } })
+    shallow(<AsyncCall lazy params={{}} />)
 
-        expect(fn).not.toHaveBeenCalled()
-      })
-    })
+    expect(fn).not.toHaveBeenCalled()
+  })
+
+  it('lazy: should not call a function passed to createAsyncCallComponent if `params` property was not changed', () => {
+    const fn = jest.fn(() => Promise.resolve())
+    const AsyncCall = createAsyncCallComponent(fn)
+
+    const container = shallow(<AsyncCall lazy params={{}} />)
+    container.setProps({ params: {} })
+
+    expect(fn).not.toHaveBeenCalled()
+  })
+
+  it('lazy: should not call a function passed to createAsyncCallComponent if `params` property was changed', () => {
+    const fn = jest.fn(value => Promise.resolve())
+    const AsyncCall = createAsyncCallComponent(fn)
+
+    const container = shallow(<AsyncCall lazy params={'abc'} />)
+
+    container.setProps({ params: 'bcd' })
+    expect(fn).not.toHaveBeenCalled()
+  })
+
+  it('lazy: should not call a function passed to createAsyncCallComponent if `params` property references were changed but old and new values of property are shallow equal', () => {
+    const fn = jest.fn(value => Promise.resolve())
+    const AsyncCall = createAsyncCallComponent(fn)
+    const container = shallow(<AsyncCall lazy params={{ a: 1 }} />)
+    container.setProps({ params: { a: 1 } })
+
+    expect(fn).not.toHaveBeenCalled()
   })
 
   describe('context', () => {
