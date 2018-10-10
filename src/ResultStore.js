@@ -81,21 +81,9 @@ export const createResultStore = (rootContextPropName, rootDisplayName) => {
       }),
     }
 
-    static propTypes = {
-      children: PropTypes.oneOfType([PropTypes.func, PropTypes.node]).isRequired,
-      reduce: PropTypes.func,
-      reset: PropTypes.bool,
-      initialValue: PropTypes.any,
-    }
-
     static defaultProps = {
       reduce: (_, value) => value,
     }
-
-    static displayName = `${rootDisplayName}.ResultStore`
-
-    static HasResult = createHasResult(ResultStore.contextPropName, ResultStore.displayName)
-    static Resetter = createResetter(ResultStore.contextPropName, ResultStore.displayName)
 
     state = {
       hasResult: false,
@@ -172,6 +160,18 @@ export const createResultStore = (rootContextPropName, rootDisplayName) => {
       }
     }
   }
+
+  if (process.env.NODE_ENV !== 'production') {
+    ResultStore.propTypes = {
+      children: PropTypes.oneOfType([PropTypes.func, PropTypes.node]).isRequired,
+      reduce: PropTypes.func,
+      reset: PropTypes.bool,
+      initialValue: PropTypes.any,
+    }
+    ResultStore.displayName = `${rootDisplayName}.ResultStore`
+  }
+  ResultStore.HasResult = createHasResult(ResultStore.contextPropName, ResultStore.displayName)
+  ResultStore.Resetter = createResetter(ResultStore.contextPropName, ResultStore.displayName)
 
   return ResultStore
 }

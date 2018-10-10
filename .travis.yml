@@ -17,9 +17,7 @@ install:
   - npm install react-dom@$REACT_VERSION --save-dev
 
 script:
-  - npm test
   - npm run build
-  - npm run docs
 
 after_success:
   - cat ./coverage/lcov.info | ./node_modules/codecov/bin/codecov

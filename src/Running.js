@@ -29,7 +29,9 @@ export const createRunning = (contextPropName, rootDisplayName) => {
     }),
   }
 
-  Running.displayName = `${rootDisplayName}.Running`
+  if (process.env.NODE_ENV !== 'production') {
+    Running.displayName = `${rootDisplayName}.Running`
+  }
 
   return Running
 }

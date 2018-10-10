@@ -40,11 +40,12 @@ export const createHasResult = (contextPropName, rootDisplayName) => {
     [contextPropName]: resultStoreContextPropType,
   }
 
-  HasResult.propTypes = {
-    children: PropTypes.func.isRequired,
+  if (process.env.NODE_ENV !== 'production') {
+    HasResult.propTypes = {
+      children: PropTypes.func.isRequired,
+    }
+    HasResult.displayName = `${rootDisplayName}.HasResult`
   }
-
-  HasResult.displayName = `${rootDisplayName}.HasResult`
 
   return HasResult
 }

@@ -33,16 +33,17 @@ export const createExecutor = (contextPropName, rootDisplayName) => {
     return (isFunction(props.children) && props.children({ execute: contextProps.execute })) || null
   }
 
+  if (process.env.NODE_ENV !== 'production') {
+    Executor.propTypes = {
+      children: PropTypes.func.isRequired,
+    }
+    Executor.displayName = `${rootDisplayName}.Executor`
+  }
+
   Executor.contextTypes = {
     [contextPropName]: PropTypes.shape({
       execute: PropTypes.func.isRequired,
     }),
-  }
-
-  Executor.displayName = `${rootDisplayName}.Executor`
-
-  Executor.propTypes = {
-    children: PropTypes.func.isRequired,
   }
 
   return Executor

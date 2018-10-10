@@ -45,11 +45,12 @@ export const createResetter = (contextPropName, rootDisplayName) => {
     [contextPropName]: resultStoreContextPropType,
   }
 
-  Resetter.propTypes = {
-    children: PropTypes.func.isRequired,
+  if (process.env.NODE_ENV !== 'production') {
+    Resetter.propTypes = {
+      children: PropTypes.func.isRequired,
+    }
+    Resetter.displayName = `${rootDisplayName}.Resetter`
   }
-
-  Resetter.displayName = `${rootDisplayName}.Resetter`
 
   return Resetter
 }
