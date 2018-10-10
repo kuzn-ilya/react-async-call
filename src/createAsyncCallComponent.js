@@ -131,7 +131,6 @@ export const createAsyncCallComponent = (fn, displayName) => {
     static State = createState(contextPropName, rootDisplayName)
     static ResultStore = createResultStore(contextPropName, rootDisplayName)
     static Completed = createCompleted(contextPropName, rootDisplayName)
-    static contextPropName = contextPropName
 
     state = {
       running: true,
@@ -231,6 +230,7 @@ export const createAsyncCallComponent = (fn, displayName) => {
       children: PropTypes.oneOfType([PropTypes.node, PropTypes.func]),
     }
     AsyncCall.displayName = rootDisplayName
+    AsyncCall.contextPropName = contextPropName
   }
 
   return AsyncCall

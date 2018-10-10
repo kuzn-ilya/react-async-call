@@ -12,6 +12,8 @@ import { createHasResult } from './HasResult'
 import { createResetter } from './Resetter'
 
 export const createResultStore = (rootContextPropName, rootDisplayName) => {
+  const contextPropName = generateContextName()
+
   /**
    * Type of `children` function of a {@link AsyncCall.ResultStore} component.
    * @function ResultStoreChildrenFunction
@@ -69,9 +71,8 @@ export const createResultStore = (rootContextPropName, rootDisplayName) => {
    * @memberof AsyncCall
    */
   class ResultStore extends React.Component {
-    static contextPropName = generateContextName()
     static childContextTypes = {
-      [ResultStore.contextPropName]: resultStoreContextPropType,
+      [contextPropName]: resultStoreContextPropType,
     }
 
     static contextTypes = {
@@ -91,7 +92,7 @@ export const createResultStore = (rootContextPropName, rootDisplayName) => {
 
     getChildContext() {
       return {
-        [ResultStore.contextPropName]: this._getState(),
+        [contextPropName]: this._getState(),
       }
     }
 
@@ -169,9 +170,10 @@ export const createResultStore = (rootContextPropName, rootDisplayName) => {
       initialValue: PropTypes.any,
     }
     ResultStore.displayName = `${rootDisplayName}.ResultStore`
+    ResultStore.contextPropName = contextPropName
   }
-  ResultStore.HasResult = createHasResult(ResultStore.contextPropName, ResultStore.displayName)
-  ResultStore.Resetter = createResetter(ResultStore.contextPropName, ResultStore.displayName)
+  ResultStore.HasResult = createHasResult(contextPropName, ResultStore.displayName)
+  ResultStore.Resetter = createResetter(contextPropName, ResultStore.displayName)
 
   return ResultStore
 }
