@@ -126,9 +126,9 @@
   ],
   "release": {
     "verifyConditions": [
-      { 
+      {
         "path": "@semantic-release/npm",
-        "pkgRoot": "./build" 
+        "pkgRoot": "./build"
       },
       "@semantic-release/github",
       "@semantic-release/git"
@@ -142,9 +142,9 @@
         "changelogFile": "docs/CHANGELOG.md",
         "changelogTitle": "# Change Log"
       },
-      { 
+      {
         "path": "@semantic-release/npm",
-        "pkgRoot": "./build" 
+        "pkgRoot": "./build"
       },
       {
         "path": "@semantic-release/git",
@@ -157,9 +157,9 @@
       }
     ],
     "publish": [
-      { 
+      {
         "path": "@semantic-release/npm",
-        "pkgRoot": "./build" 
+        "pkgRoot": "./build"
       },
       "@semantic-release/github"
     ]

@@ -1,5 +1,12 @@
 # Change Log
 
+# [0.4.0](https://github.com/kuzn-ilya/react-async-call/compare/v0.3.1...v0.4.0) (2018-10-10)
+
+
+### Features
+
+* split build into production and development ([d3e20b2](https://github.com/kuzn-ilya/react-async-call/commit/d3e20b2)), closes [#26](https://github.com/kuzn-ilya/react-async-call/issues/26)
+
 # [0.3.1](https://github.com/kuzn-ilya/react-async-call/compare/v0.2.7...v0.3.1) (2018-10-09)
 
 
