@@ -50,8 +50,10 @@ export const createResolved = (contextPropName, rootDisplayName) => {
     }),
   }
 
-  Resolved.propTypes = {
-    children: PropTypes.oneOfType([PropTypes.node, PropTypes.func]),
+  if (process.env.NODE_ENV !== 'production') {
+    Resolved.propTypes = {
+      children: PropTypes.oneOfType([PropTypes.node, PropTypes.func]),
+    }
   }
 
   Resolved.displayName = `${rootDisplayName}.Resolved`

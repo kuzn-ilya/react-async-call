@@ -33,7 +33,9 @@ export const createCompleted = (contextPropName, rootDisplayName) => {
     }),
   }
 
-  Completed.displayName = `${rootDisplayName}.Completed`
+  if (process.env.NODE_ENV !== 'production') {
+    Completed.displayName = `${rootDisplayName}.Completed`
+  }
 
   return Completed
 }

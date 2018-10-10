@@ -51,11 +51,12 @@ export const createRejected = (contextPropName, rootDisplayName) => {
     }),
   }
 
-  Rejected.propTypes = {
-    children: PropTypes.oneOfType([PropTypes.node, PropTypes.func]),
+  if (process.env.NODE_ENV !== 'production') {
+    Rejected.propTypes = {
+      children: PropTypes.oneOfType([PropTypes.node, PropTypes.func]),
+    }
+    Rejected.displayName = `${rootDisplayName}.Rejected`
   }
-
-  Rejected.displayName = `${rootDisplayName}.Rejected`
 
   return Rejected
 }

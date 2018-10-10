@@ -108,7 +108,7 @@ interface IResultStoreProps<Result> {
 interface IResultStore<Result> {
   HasResult: React.ComponentType<IHasResultProps<Result>>
   Resetter: React.ComponentType<IResetterProps>
-  new(): React.Component<IResultStoreProps<Result>>
+  new (): React.Component<IResultStoreProps<Result>>
 }
 
 declare class AsyncCall<Params, Result> extends React.Component<IAsyncCallProps<Params, Result>> {
@@ -123,8 +123,7 @@ interface IAsyncCall<Params, Result> {
   Executor: React.ComponentType<IExecutorProps>
   State: React.ComponentType<IStateProps<Result>>
   ResultStore: IResultStore<Result>
-  contextPropName: string
-  new(): AsyncCall<Params, Result>
+  new (): AsyncCall<Params, Result>
 }
 
 declare function createAsyncCallComponent<Params, Result>(

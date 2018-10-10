@@ -123,13 +123,6 @@ export const createAsyncCallComponent = (fn, displayName) => {
         execute: PropTypes.func,
       }),
     }
-    static propTypes = {
-      params: PropTypes.any.isRequired,
-      lazy: PropTypes.bool,
-      children: PropTypes.oneOfType([PropTypes.node, PropTypes.func]),
-    }
-
-    static displayName = rootDisplayName
 
     static Running = createRunning(contextPropName, rootDisplayName)
     static Resolved = createResolved(contextPropName, rootDisplayName)
@@ -138,7 +131,6 @@ export const createAsyncCallComponent = (fn, displayName) => {
     static State = createState(contextPropName, rootDisplayName)
     static ResultStore = createResultStore(contextPropName, rootDisplayName)
     static Completed = createCompleted(contextPropName, rootDisplayName)
-    static contextPropName = contextPropName
 
     state = {
       running: true,
@@ -229,6 +221,16 @@ export const createAsyncCallComponent = (fn, displayName) => {
         (isFunction(this.props.children) ? this.props.children(this._getState()) || null : this.props.children)
       )
     }
+  }
+
+  if (process.env.NODE_ENV !== 'production') {
+    AsyncCall.propTypes = {
+      params: PropTypes.any.isRequired,
+      lazy: PropTypes.bool,
+      children: PropTypes.oneOfType([PropTypes.node, PropTypes.func]),
+    }
+    AsyncCall.displayName = rootDisplayName
+    AsyncCall.contextPropName = contextPropName
   }
 
   return AsyncCall

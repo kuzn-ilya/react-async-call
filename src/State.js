@@ -68,11 +68,12 @@ export const createState = (contextPropName, rootDisplayName) => {
     }),
   }
 
-  State.propTypes = {
-    children: PropTypes.func.isRequired,
+  if (process.env.NODE_ENV !== 'production') {
+    State.propTypes = {
+      children: PropTypes.func.isRequired,
+    }
+    State.displayName = `${rootDisplayName}.State`
   }
-
-  State.displayName = `${rootDisplayName}.State`
 
   return State
 }
