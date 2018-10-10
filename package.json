@@ -38,7 +38,7 @@
     "test": "npm run eslint && jest src --coverage",
     "test:watch": "npm run eslint && jest src --watch",
     "format": "prettier --write **/*.{js,jsx,json,d.ts} !lib/** !.vscode/**",
-    "rollup": "rollup -c",
+    "rollup": "rollup -c ./scripts/rollup.config.js",
     "release": "npm run test && npm run build && npm version patch && npm publish && git push --tags"
   },
   "pre-commit": [
@@ -67,8 +67,10 @@
     "enzyme": "^3.3.0",
     "enzyme-adapter-react-16": "^1.1.1",
     "eslint": "4.19.0",
-    "eslint-config-react-app": "2.1.0",
+    "eslint-config-react-app": "3.0.3",
+    "eslint-plugin-flowtype": "2.50.3",
     "eslint-plugin-import": "2.9.0",
+    "eslint-plugin-jsx-a11y": "6.1.2",
     "eslint-plugin-react": "7.7.0",
     "jest": "^22.4.2",
     "jest-enzyme": "6.0.1",
