@@ -25,6 +25,13 @@ describe('<HasResult>', () => {
     ).toThrow('<AsyncCall.ResultStore.HasResult> must be a child (direct or indirect) of <AsyncCall.ResultStore>.')
   })
 
+  it('should throw an error if <HasResult> component is rendered alone', () => {
+    const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
+    expect(() => mount(<AsyncCall.ResultStore.HasResult>{() => null}</AsyncCall.ResultStore.HasResult>)).toThrow(
+      '<AsyncCall.ResultStore.HasResult> must be a child (direct or indirect) of <AsyncCall.ResultStore>.',
+    )
+  })
+
   it('should throw an error if `children` property is not set', () => {
     const AsyncCall = createAsyncCallComponent(value => Promise.resolve(value))
 
@@ -62,13 +69,6 @@ describe('<HasResult>', () => {
   it('should expose default display name', () => {
     const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
     expect(AsyncCall.ResultStore.HasResult.displayName).toBe('AsyncCall.ResultStore.HasResult')
-  })
-
-  it('should throw an error if <HasResult> component is rendered alone', () => {
-    const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
-    expect(() => shallow(<AsyncCall.ResultStore.HasResult>{() => null}</AsyncCall.ResultStore.HasResult>)).toThrow(
-      '<AsyncCall.ResultStore.HasResult> must be a child (direct or indirect) of <AsyncCall.ResultStore>.',
-    )
   })
 
   it('render props: should not call `children` if promise has not been resolved yet', () => {

@@ -37,22 +37,30 @@ describe('<ResultStore>', () => {
 
   it('should reset result if `reset` property is set', async done => {
     const AsyncCall = createAsyncCallComponent(value => Promise.resolve(value))
+    let resultStoreInstance
+    const Component = ({ reset, params }) => (
+      <AsyncCall params={params}>
+        <AsyncCall.ResultStore ref={ref => (resultStoreInstance = ref)} reset={reset}>
+          {children}
+        </AsyncCall.ResultStore>
+      </AsyncCall>
+    )
     const children = jest.fn(() => null)
-    const container = mount(<AsyncCall.ResultStore>{children}</AsyncCall.ResultStore>, {
-      context: { [AsyncCall.contextPropName]: { resolved: true, result: 1 } },
-    })
 
-    expect(children).toHaveBeenLastCalledWith({ hasResult: true, result: 1, reset: container.instance().reset })
+    const container = mount(<Component params={1} />)
+
+    await flushPromises()
+
+    expect(children).toHaveBeenLastCalledWith({ hasResult: true, result: 1, reset: resultStoreInstance.reset })
 
     container.setProps({ reset: true })
-    container.setContext({ [AsyncCall.contextPropName]: { resolved: false } })
     container.update()
-    expect(children).toHaveBeenLastCalledWith({ hasResult: false, reset: container.instance().reset })
+    expect(children).toHaveBeenLastCalledWith({ hasResult: false, reset: resultStoreInstance.reset })
 
-    container.setProps({ reset: false })
-    container.setContext({ [AsyncCall.contextPropName]: { resolved: true, result: 2 } })
-    container.update()
-    expect(children).toHaveBeenLastCalledWith({ hasResult: true, result: 2, reset: container.instance().reset })
+    container.setProps({ reset: false, params: 2 })
+    await flushPromises()
+
+    expect(children).toHaveBeenLastCalledWith({ hasResult: true, result: 2, reset: resultStoreInstance.reset })
 
     expect(spyOnConsoleError).toHaveBeenCalledWith(
       'Warning: Property `reset` of <AsyncCall.ResultStore> component is deprecated. Use <AsyncCall.ResultStore.Resetter> component instead.',
@@ -302,11 +310,17 @@ describe('<ResultStore>', () => {
   it('should pass `initialValue` property value to result when component is mounted', () => {
     const AsyncCall = createAsyncCallComponent(value => Promise.resolve(value))
     const children = jest.fn(() => null)
-    const container = mount(<AsyncCall.ResultStore initialValue={100500}>{children}</AsyncCall.ResultStore>, {
-      context: { [AsyncCall.contextPropName]: { resolved: false } },
-    })
 
-    expect(children).toHaveBeenLastCalledWith({ hasResult: true, result: 100500, reset: container.instance().reset })
+    let resultStoreInstance
+    const container = mount(
+      <AsyncCall params={{}}>
+        <AsyncCall.ResultStore ref={ref => (resultStoreInstance = ref)} initialValue={100500}>
+          {children}
+        </AsyncCall.ResultStore>
+      </AsyncCall>,
+    )
+
+    expect(children).toHaveBeenLastCalledWith({ hasResult: true, result: 100500, reset: resultStoreInstance.reset })
   })
 
   describe('child context', () => {

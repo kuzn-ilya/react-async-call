@@ -24,6 +24,13 @@ describe('<Resetter>', () => {
     ).toThrow('<AsyncCall.ResultStore.Resetter> must be a child (direct or indirect) of <AsyncCall.ResultStore>.')
   })
 
+  it('should throw an error if <Resetter> component is rendered alone', () => {
+    const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
+    expect(() => mount(<AsyncCall.ResultStore.Resetter>{() => null}</AsyncCall.ResultStore.Resetter>)).toThrow(
+      '<AsyncCall.ResultStore.Resetter> must be a child (direct or indirect) of <AsyncCall.ResultStore>.',
+    )
+  })
+
   it('should throw an error if `children` property is not set', () => {
     const AsyncCall = createAsyncCallComponent(value => Promise.resolve(value))
 
@@ -61,13 +68,6 @@ describe('<Resetter>', () => {
   it('should expose default display name', () => {
     const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
     expect(AsyncCall.ResultStore.Resetter.displayName).toBe('AsyncCall.ResultStore.Resetter')
-  })
-
-  it('should throw an error if <Resetter> component is rendered alone', () => {
-    const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
-    expect(() => shallow(<AsyncCall.ResultStore.Resetter>{() => null}</AsyncCall.ResultStore.Resetter>)).toThrow(
-      '<AsyncCall.ResultStore.Resetter> must be a child (direct or indirect) of <AsyncCall.ResultStore>.',
-    )
   })
 
   it("render props: should pass `reset` method as a children's argument", () => {
