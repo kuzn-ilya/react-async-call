@@ -14,6 +14,86 @@ import { createResetter } from './Resetter'
 export const createResultStore = (rootContextPropName, rootDisplayName) => {
   const contextPropName = generateContextName()
 
+  class ResultStoreInternal extends React.Component {
+    static childContextTypes = {
+      [contextPropName]: resultStoreContextPropType,
+    }
+
+    state = {
+      hasResult: false,
+    }
+
+    getChildContext() {
+      return {
+        [contextPropName]: this._getState(),
+      }
+    }
+
+    componentDidMount() {
+      if (this.props.resolved || this.props.hasOwnProperty('initialValue')) {
+        this.setState({
+          hasResult: true,
+          result: this.props.resolved ? this.props.result : this.props.initialValue,
+        })
+      }
+    }
+
+    componentWillReceiveProps(nextProps) {
+      if (nextProps.reset) {
+        this.reset(false)
+      }
+
+      if (nextProps.resolved && !this.props.resolved) {
+        this.setState(
+          prevState =>
+            prevState.hasResult
+              ? {
+                  result: this.props.reduce(prevState.result, nextProps.result),
+                }
+              : { hasResult: true, result: nextProps.result },
+        )
+      }
+    }
+
+    render() {
+      return (isFunction(this.props.children) ? this.props.children(this._getState()) : this.props.children) || null
+    }
+
+    _getState() {
+      const result = this.state.hasResult ? { result: this.state.result } : {}
+      return {
+        hasResult: this.state.hasResult,
+        reset: this.props.resetFn,
+        ...result,
+      }
+    }
+
+    reset = execute => {
+      this.setState(
+        this.props.hasOwnProperty('initialValue')
+          ? { hasResult: true, result: this.props.initialValue }
+          : {
+              hasResult: false,
+            },
+      )
+      if (execute) {
+        execute()
+      }
+    }
+  }
+
+  if (process.env.NODE_ENV !== 'production') {
+    ResultStoreInternal.propTypes = {
+      children: PropTypes.oneOfType([PropTypes.func, PropTypes.node]).isRequired,
+      reduce: PropTypes.func,
+      reset: PropTypes.bool,
+      initialValue: PropTypes.any,
+      resolved: PropTypes.bool,
+      result: PropTypes.any,
+      resetFn: PropTypes.func.isRequired,
+    }
+  }
+
   /**
    * Type of `children` function of a {@link AsyncCall.ResultStore} component.
    * @function ResultStoreChildrenFunction
@@ -71,10 +151,6 @@ export const createResultStore = (rootContextPropName, rootDisplayName) => {
    * @memberof AsyncCall
    */
   class ResultStore extends React.Component {
-    static childContextTypes = {
-      [contextPropName]: resultStoreContextPropType,
-    }
-
     static contextTypes = {
       [rootContextPropName]: PropTypes.shape({
         resolved: PropTypes.bool,
@@ -86,44 +162,6 @@ export const createResultStore = (rootContextPropName, rootDisplayName) => {
       reduce: (_, value) => value,
     }
 
-    state = {
-      hasResult: false,
-    }
-
-    getChildContext() {
-      return {
-        [contextPropName]: this._getState(),
-      }
-    }
-
-    componentDidMount() {
-      const contextProps = this.context[rootContextPropName]
-
-      if (contextProps.resolved || this.props.hasOwnProperty('initialValue')) {
-        this.setState({
-          hasResult: true,
-          result: contextProps.resolved ? contextProps.result : this.props.initialValue,
-        })
-      }
-    }
-
-    componentWillReceiveProps(nextProps, nextContext) {
-      if (nextProps.reset) {
-        this.reset(false)
-      }
-
-      if (nextContext[rootContextPropName].resolved && !this.context[rootContextPropName].resolved) {
-        this.setState(
-          prevState =>
-            prevState.hasResult
-              ? {
-                  result: this.props.reduce(prevState.result, nextContext[rootContextPropName].result),
-                }
-              : { hasResult: true, result: nextContext[rootContextPropName].result },
-        )
-      }
-    }
-
     render() {
       invariant(this.context[rootContextPropName], INVARIANT_MUST_BE_A_CHILD, ResultStore.displayName, rootDisplayName)
       warning(
@@ -131,16 +169,17 @@ export const createResultStore = (rootContextPropName, rootDisplayName) => {
         'Property `reset` of <AsyncCall.ResultStore> component is deprecated. Use <AsyncCall.ResultStore.Resetter> component instead.',
       )
 
-      return (isFunction(this.props.children) ? this.props.children(this._getState()) : this.props.children) || null
-    }
+      const { children, ...rest } = this.props
 
-    _getState() {
-      const result = this.state.hasResult ? { result: this.state.result } : {}
-      return {
-        hasResult: this.state.hasResult,
-        reset: this.reset,
-        ...result,
-      }
+      return (
+        <ResultStoreInternal
+          ref={ref => (this.ref = ref)}
+          resetFn={this.reset}
+          {...rest}
+          {...this.context[rootContextPropName]}>
+          {children}
+        </ResultStoreInternal>
+      )
     }
 
     /**
@@ -149,16 +188,7 @@ export const createResultStore = (rootContextPropName, rootDisplayName) => {
      * @param {bool} [execute=true] Wether execute promise-returning function after resetting or not.
      */
     reset = (execute = true) => {
-      this.setState(
-        this.props.hasOwnProperty('initialValue')
-          ? { hasResult: true, result: this.props.initialValue }
-          : {
-              hasResult: false,
-            },
-      )
-      if (execute) {
-        this.context[rootContextPropName].execute()
-      }
+      this.ref.reset(execute && this.context[rootContextPropName].execute)
     }
   }
 
