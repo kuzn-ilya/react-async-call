@@ -1,6 +1,7 @@
 import * as React from 'react'
 import * as PropTypes from 'prop-types'
 import createContext from 'create-react-context'
+import { polyfill } from 'react-lifecycles-compat'
 import { isFunction, invariant, warning, INVARIANT_MUST_BE_A_CHILD } from './common'
 import { createHasResult } from './HasResult'
 import { createResetter } from './Resetter'
@@ -8,9 +9,10 @@ import { createResetter } from './Resetter'
 export const createResultStore = (RootConsumer, rootDisplayName) => {
   const { Consumer, Provider } = createContext()
 
-  class ResultStoreInternal extends React.Component {
+  class Internal extends React.Component {
     state = {
       hasResult: false,
+      wasResolved: this.props.resolved,
     }
 
     componentDidMount() {
@@ -18,25 +20,36 @@ export const createResultStore = (RootConsumer, rootDisplayName) => {
         this.setState({
           hasResult: true,
           result: this.props.resolved ? this.props.result : this.props.initialValue,
+          wasResolved: this.props.resolved,
         })
       }
     }
 
-    componentWillReceiveProps(nextProps) {
+    static getDerivedStateFromProps(nextProps, prevState) {
       if (nextProps.reset) {
-        this.reset(false)
+        return { ...getResetState(nextProps), wasResolved: nextProps.resolved }
       }
 
-      if (nextProps.resolved && !this.props.resolved) {
-        this.setState(
-          prevState =>
-            prevState.hasResult
-              ? {
-                  result: this.props.reduce(prevState.result, nextProps.result),
-                }
-              : { hasResult: true, result: nextProps.result },
-        )
+      if (nextProps.resolved && !prevState.wasResolved) {
+        if (prevState.hasResult) {
+          return {
+            result: nextProps.reduce(prevState.result, nextProps.result),
+            wasResolved: nextProps.resolved,
+          }
+        }
+        return {
+          hasResult: true,
+          result: nextProps.result,
+          wasResolved: nextProps.resolved,
+        }
       }
+
+      if (nextProps.resolved !== prevState.wasResolved) {
+        return {
+          wasResolved: nextProps.resolved,
+        }
+      }
+      return null
     }
 
     render() {
@@ -57,21 +70,22 @@ export const createResultStore = (RootConsumer, rootDisplayName) => {
     }
 
     reset = execute => {
-      this.setState(
-        this.props.hasOwnProperty('initialValue')
-          ? { hasResult: true, result: this.props.initialValue }
-          : {
-              hasResult: false,
-            },
-      )
+      this.setState(getResetState(this.props))
       if (execute) {
         execute()
       }
     }
   }
 
+  const getResetState = props =>
+    props.hasOwnProperty('initialValue')
+      ? { hasResult: true, result: props.initialValue }
+      : {
+          hasResult: false,
+        }
+
   if (process.env.NODE_ENV !== 'production') {
-    ResultStoreInternal.propTypes = {
+    Internal.propTypes = {
       children: PropTypes.oneOfType([PropTypes.func, PropTypes.node]).isRequired,
       reduce: PropTypes.func,
       reset: PropTypes.bool,
@@ -81,6 +95,8 @@ export const createResultStore = (RootConsumer, rootDisplayName) => {
       resetFn: PropTypes.func.isRequired,
     }
   }
+
+  const ResultStoreInternal = polyfill(Internal)
 
   /**
    * Type of `children` function of a {@link AsyncCall.ResultStore} component.
