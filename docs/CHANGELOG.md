@@ -1,5 +1,13 @@
 # Change Log
 
+# [0.5.0](https://github.com/kuzn-ilya/react-async-call/compare/v0.4.0...v0.5.0) (2018-10-11)
+
+
+### Features
+
+* **AsyncCall:** AsyncCall and all its sub-components use new context API now ([8f5dace](https://github.com/kuzn-ilya/react-async-call/commit/8f5dace)), closes [#21](https://github.com/kuzn-ilya/react-async-call/issues/21)
+* **AsyncCall.ResultStore:** ResultStore and its sub-components HasResult and Resetter use new context API now ([96144bf](https://github.com/kuzn-ilya/react-async-call/commit/96144bf))
+
 # [0.4.0](https://github.com/kuzn-ilya/react-async-call/compare/v0.3.1...v0.4.0) (2018-10-10)
 
 
