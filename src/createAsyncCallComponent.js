@@ -1,6 +1,6 @@
 import * as React from 'react'
 import * as PropTypes from 'prop-types'
-import { isFunction, generateContextName, invariant, shallowEqual } from './common'
+import { isFunction, invariant, shallowEqual } from './common'
 import { createRunning } from './Running'
 import { createResolved } from './Resolved'
 import { createRejected } from './Rejected'
@@ -8,6 +8,7 @@ import { createExecutor } from './Executor'
 import { createState } from './State'
 import { createResultStore } from './ResultStore'
 import { createCompleted } from './Completed'
+import createContext from 'create-react-context'
 
 /**
  * Asynchronous function (aka asynchronous operation or promise-returning function)
@@ -66,7 +67,7 @@ import { createCompleted } from './Completed'
  */
 
 export const createAsyncCallComponent = (fn, displayName) => {
-  const contextPropName = generateContextName()
+  const { Provider, Consumer } = createContext()
   const rootDisplayName = `${displayName || 'AsyncCall'}`
 
   /**
@@ -113,35 +114,18 @@ export const createAsyncCallComponent = (fn, displayName) => {
    * @extends {React.Component}
    */
   class AsyncCall extends React.Component {
-    static childContextTypes = {
-      [contextPropName]: PropTypes.shape({
-        result: PropTypes.any,
-        running: PropTypes.bool,
-        rejected: PropTypes.bool,
-        resolved: PropTypes.bool,
-        rejectReason: PropTypes.any,
-        execute: PropTypes.func,
-      }),
-    }
-
-    static Running = createRunning(contextPropName, rootDisplayName)
-    static Resolved = createResolved(contextPropName, rootDisplayName)
-    static Rejected = createRejected(contextPropName, rootDisplayName)
-    static Executor = createExecutor(contextPropName, rootDisplayName)
-    static State = createState(contextPropName, rootDisplayName)
-    static ResultStore = createResultStore(contextPropName, rootDisplayName)
-    static Completed = createCompleted(contextPropName, rootDisplayName)
+    static Running = createRunning(Consumer, rootDisplayName)
+    static Resolved = createResolved(Consumer, rootDisplayName)
+    static Rejected = createRejected(Consumer, rootDisplayName)
+    static Executor = createExecutor(Consumer, rootDisplayName)
+    static State = createState(Consumer, rootDisplayName)
+    static ResultStore = createResultStore(Consumer, rootDisplayName)
+    static Completed = createCompleted(Consumer, rootDisplayName)
 
     state = {
       running: true,
       rejected: false,
       resolved: false,
-    }
-
-    getChildContext() {
-      return {
-        [contextPropName]: this._getState(),
-      }
     }
 
     componentDidMount() {
@@ -217,8 +201,10 @@ export const createAsyncCallComponent = (fn, displayName) => {
 
     render() {
       return (
-        this.props.children !== undefined &&
-        (isFunction(this.props.children) ? this.props.children(this._getState()) || null : this.props.children)
+        <Provider value={this._getState()}>
+          {this.props.children !== undefined &&
+            (isFunction(this.props.children) ? this.props.children(this._getState()) || null : this.props.children)}
+        </Provider>
       )
     }
   }
@@ -230,7 +216,7 @@ export const createAsyncCallComponent = (fn, displayName) => {
       children: PropTypes.oneOfType([PropTypes.node, PropTypes.func]),
     }
     AsyncCall.displayName = rootDisplayName
-    AsyncCall.contextPropName = contextPropName
+    AsyncCall.Consumer = Consumer
   }
 
   return AsyncCall

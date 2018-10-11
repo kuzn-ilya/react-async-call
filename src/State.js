@@ -1,7 +1,8 @@
+import * as React from 'react'
 import * as PropTypes from 'prop-types'
 import { isFunction, invariant, INVARIANT_MUST_BE_A_CHILD } from './common'
 
-export const createState = (contextPropName, rootDisplayName) => {
+export const createState = (Consumer, rootDisplayName) => {
   /**
    * Type of children function for {@link AsyncCall.State}
    * @function StateChildrenFunction
@@ -42,31 +43,21 @@ export const createState = (contextPropName, rootDisplayName) => {
    * @extends {React.StatelessComponent}
    * @memberof AsyncCall
    */
-  const State = (props, context) => {
-    const contextProps = context[contextPropName]
+  const State = props => (
+    <Consumer>
+      {contextProps => {
+        invariant(contextProps, INVARIANT_MUST_BE_A_CHILD, State.displayName, rootDisplayName)
 
-    invariant(contextProps, INVARIANT_MUST_BE_A_CHILD, State.displayName, rootDisplayName)
-
-    return (
-      (isFunction(props.children) &&
-        props.children({
-          ...contextProps,
-        })) ||
-      null
-    )
-  }
-
-  State.contextTypes = {
-    [contextPropName]: PropTypes.shape({
-      hasResult: PropTypes.bool,
-      running: PropTypes.bool,
-      rejected: PropTypes.bool,
-      resolved: PropTypes.bool,
-      rejectReason: PropTypes.any,
-      result: PropTypes.any,
-      execute: PropTypes.func,
-    }),
-  }
+        return (
+          (isFunction(props.children) &&
+            props.children({
+              ...contextProps,
+            })) ||
+          null
+        )
+      }}
+    </Consumer>
+  )
 
   if (process.env.NODE_ENV !== 'production') {
     State.propTypes = {

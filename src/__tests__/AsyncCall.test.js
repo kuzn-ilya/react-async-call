@@ -1,5 +1,4 @@
 import * as React from 'react'
-import * as PropTypes from 'prop-types'
 import { shallow, mount } from 'enzyme'
 
 import createAsyncCallComponent from '../'
@@ -266,22 +265,23 @@ describe('<AsyncCall>', () => {
 
   describe('context', () => {
     let rootContext
-    let contextPropName
-    const ContextChecker = (props, context) => {
-      rootContext = context[contextPropName]
-      return null
-    }
+    let Consumer
+    const ContextChecker = props => (
+      <Consumer>
+        {context => {
+          rootContext = context
+          return null
+        }}
+      </Consumer>
+    )
 
     const prepareContextChecker = parent => {
-      contextPropName = parent.contextPropName
-      ContextChecker.contextTypes = {
-        [contextPropName]: PropTypes.shape({}),
-      }
+      Consumer = parent.Consumer
     }
 
     afterEach(() => {
       rootContext = undefined
-      contextPropName = undefined
+      Consumer = undefined
     })
 
     it('should pass its state to a child context', () => {

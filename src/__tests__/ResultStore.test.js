@@ -1,8 +1,7 @@
 import * as React from 'react'
-import { shallow, mount } from 'enzyme'
+import { mount } from 'enzyme'
 
 import createAsyncCallComponent from '../index'
-import { resultStoreContextPropName, resultStoreContextPropType } from '../common'
 import { flushPromises } from './common'
 
 describe('<ResultStore>', () => {

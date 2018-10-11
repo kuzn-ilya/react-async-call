@@ -5,7 +5,7 @@ import { isFunction, invariant, warning, INVARIANT_MUST_BE_A_CHILD } from './com
 import { createHasResult } from './HasResult'
 import { createResetter } from './Resetter'
 
-export const createResultStore = (rootContextPropName, rootDisplayName) => {
+export const createResultStore = (RootConsumer, rootDisplayName) => {
   const { Consumer, Provider } = createContext()
 
   class ResultStoreInternal extends React.Component {
@@ -139,34 +139,30 @@ export const createResultStore = (rootContextPropName, rootDisplayName) => {
    * @memberof AsyncCall
    */
   class ResultStore extends React.Component {
-    static contextTypes = {
-      [rootContextPropName]: PropTypes.shape({
-        resolved: PropTypes.bool,
-        result: PropTypes.any,
-      }),
-    }
-
     static defaultProps = {
       reduce: (_, value) => value,
     }
 
     render() {
-      invariant(this.context[rootContextPropName], INVARIANT_MUST_BE_A_CHILD, ResultStore.displayName, rootDisplayName)
-      warning(
-        !this.props.hasOwnProperty('reset'),
-        'Property `reset` of <AsyncCall.ResultStore> component is deprecated. Use <AsyncCall.ResultStore.Resetter> component instead.',
-      )
-
-      const { children, ...rest } = this.props
-
       return (
-        <ResultStoreInternal
-          ref={ref => (this.ref = ref)}
-          resetFn={this.reset}
-          {...rest}
-          {...this.context[rootContextPropName]}>
-          {children}
-        </ResultStoreInternal>
+        <RootConsumer>
+          {context => {
+            invariant(context, INVARIANT_MUST_BE_A_CHILD, ResultStore.displayName, rootDisplayName)
+            warning(
+              !this.props.hasOwnProperty('reset'),
+              'Property `reset` of <AsyncCall.ResultStore> component is deprecated. Use <AsyncCall.ResultStore.Resetter> component instead.',
+            )
+            this._execute = context.execute
+
+            const { children, ...rest } = this.props
+
+            return (
+              <ResultStoreInternal ref={ref => (this.ref = ref)} resetFn={this.reset} {...rest} {...context}>
+                {children}
+              </ResultStoreInternal>
+            )
+          }}
+        </RootConsumer>
       )
     }
 
@@ -176,7 +172,7 @@ export const createResultStore = (rootContextPropName, rootDisplayName) => {
      * @param {bool} [execute=true] Wether execute promise-returning function after resetting or not.
      */
     reset = (execute = true) => {
-      this.ref.reset(execute && this.context[rootContextPropName].execute)
+      this.ref.reset(execute && this._execute)
     }
   }
 
