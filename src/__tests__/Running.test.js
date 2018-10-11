@@ -17,7 +17,7 @@ describe('<Running>', () => {
   })
 })
 
-describe('Running', () => {
+describe('<Running>', () => {
   let spyOnConsoleError
   beforeEach(() => {
     spyOnConsoleError = jest.spyOn(console, 'error')
