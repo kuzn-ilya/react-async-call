@@ -1,7 +1,8 @@
+import * as React from 'react'
 import * as PropTypes from 'prop-types'
 import { isFunction, invariant, INVARIANT_MUST_BE_A_CHILD } from './common'
 
-export const createRejected = (contextPropName, rootDisplayName) => {
+export const createRejected = (Consumer, rootDisplayName) => {
   /**
    * Type of children function for {@link AsyncCall.Rejected}
    * @function RejectedChildrenFunction
@@ -32,24 +33,21 @@ export const createRejected = (contextPropName, rootDisplayName) => {
    * @extends {React.StatelessComponent}
    * @memberof AsyncCall
    */
-  const Rejected = (props, context) => {
-    const contextProps = context[contextPropName]
+  const Rejected = props => (
+    <Consumer>
+      {contextProps => {
+        invariant(contextProps, INVARIANT_MUST_BE_A_CHILD, Rejected.displayName, rootDisplayName)
 
-    invariant(contextProps, INVARIANT_MUST_BE_A_CHILD, Rejected.displayName, rootDisplayName)
-
-    return (
-      (contextProps.rejected &&
-        (isFunction(props.children) ? props.children({ rejectReason: contextProps.rejectReason }) : props.children)) ||
-      null
-    )
-  }
-
-  Rejected.contextTypes = {
-    [contextPropName]: PropTypes.shape({
-      rejected: PropTypes.bool,
-      rejectReason: PropTypes.any,
-    }),
-  }
+        return (
+          (contextProps.rejected &&
+            (isFunction(props.children)
+              ? props.children({ rejectReason: contextProps.rejectReason })
+              : props.children)) ||
+          null
+        )
+      }}
+    </Consumer>
+  )
 
   if (process.env.NODE_ENV !== 'production') {
     Rejected.propTypes = {

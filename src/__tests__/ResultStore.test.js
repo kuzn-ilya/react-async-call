@@ -1,8 +1,7 @@
 import * as React from 'react'
-import { shallow, mount } from 'enzyme'
+import { mount } from 'enzyme'
 
 import createAsyncCallComponent from '../index'
-import { resultStoreContextPropName, resultStoreContextPropType } from '../common'
 import { flushPromises } from './common'
 
 describe('<ResultStore>', () => {
@@ -325,22 +324,24 @@ describe('<ResultStore>', () => {
 
   describe('child context', () => {
     let rootContext
-    let contextPropName
-    const ContextChecker = (props, context) => {
-      rootContext = context[contextPropName]
-      return null
-    }
+    let Consumer
+
+    const ContextChecker = props => (
+      <Consumer>
+        {value => {
+          rootContext = value
+          return null
+        }}
+      </Consumer>
+    )
 
     const prepareContextChecker = parent => {
-      contextPropName = parent.ResultStore.contextPropName
-      ContextChecker.contextTypes = {
-        [contextPropName]: resultStoreContextPropType,
-      }
+      Consumer = parent.ResultStore.Consumer
     }
 
     afterEach(() => {
       rootContext = undefined
-      contextPropName = undefined
+      Consumer = undefined
     })
 
     it("should pass component's state to child context", () => {

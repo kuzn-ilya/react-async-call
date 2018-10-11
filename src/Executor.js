@@ -1,7 +1,8 @@
+import * as React from 'react'
 import * as PropTypes from 'prop-types'
 import { isFunction, invariant, INVARIANT_MUST_BE_A_CHILD } from './common'
 
-export const createExecutor = (contextPropName, rootDisplayName) => {
+export const createExecutor = (Consumer, rootDisplayName) => {
   /**
    * Type of children function for {@link AsyncCall.Executor}
    * @function ExecutorChildrenFunction
@@ -25,25 +26,21 @@ export const createExecutor = (contextPropName, rootDisplayName) => {
    * @extends {React.StatelessComponent}
    * @memberof AsyncCall
    */
-  const Executor = (props, context) => {
-    const contextProps = context[contextPropName]
+  const Executor = props => (
+    <Consumer>
+      {contextProps => {
+        invariant(contextProps, INVARIANT_MUST_BE_A_CHILD, Executor.displayName, rootDisplayName)
 
-    invariant(contextProps, INVARIANT_MUST_BE_A_CHILD, Executor.displayName, rootDisplayName)
-
-    return (isFunction(props.children) && props.children({ execute: contextProps.execute })) || null
-  }
+        return (isFunction(props.children) && props.children({ execute: contextProps.execute })) || null
+      }}
+    </Consumer>
+  )
 
   if (process.env.NODE_ENV !== 'production') {
     Executor.propTypes = {
       children: PropTypes.func.isRequired,
     }
     Executor.displayName = `${rootDisplayName}.Executor`
-  }
-
-  Executor.contextTypes = {
-    [contextPropName]: PropTypes.shape({
-      execute: PropTypes.func.isRequired,
-    }),
   }
 
   return Executor

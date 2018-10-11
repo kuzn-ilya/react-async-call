@@ -1,7 +1,8 @@
+import * as React from 'react'
 import * as PropTypes from 'prop-types'
 import { invariant, INVARIANT_MUST_BE_A_CHILD } from './common'
 
-export const createRunning = (contextPropName, rootDisplayName) => {
+export const createRunning = (Consumer, rootDisplayName) => {
   /**
    * @class
    * @classdesc
@@ -15,21 +16,20 @@ export const createRunning = (contextPropName, rootDisplayName) => {
    * @extends {React.StatelessComponent}
    * @memberof AsyncCall
    */
-  const Running = (props, context) => {
-    const contextProps = context[contextPropName]
+  const Running = props => (
+    <Consumer>
+      {contextProps => {
+        invariant(contextProps, INVARIANT_MUST_BE_A_CHILD, Running.displayName, rootDisplayName)
 
-    invariant(contextProps, INVARIANT_MUST_BE_A_CHILD, Running.displayName, rootDisplayName)
-
-    return (contextProps.running && props.children) || null
-  }
-
-  Running.contextTypes = {
-    [contextPropName]: PropTypes.shape({
-      running: PropTypes.bool,
-    }),
-  }
+        return (contextProps.running && props.children) || null
+      }}
+    </Consumer>
+  )
 
   if (process.env.NODE_ENV !== 'production') {
+    Running.propTypes = {
+      children: PropTypes.node,
+    }
     Running.displayName = `${rootDisplayName}.Running`
   }
 
