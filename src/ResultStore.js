@@ -1,32 +1,16 @@
 import * as React from 'react'
 import * as PropTypes from 'prop-types'
-import {
-  isFunction,
-  invariant,
-  warning,
-  generateContextName,
-  resultStoreContextPropType,
-  INVARIANT_MUST_BE_A_CHILD,
-} from './common'
+import createContext from 'create-react-context'
+import { isFunction, invariant, warning, INVARIANT_MUST_BE_A_CHILD } from './common'
 import { createHasResult } from './HasResult'
 import { createResetter } from './Resetter'
 
 export const createResultStore = (rootContextPropName, rootDisplayName) => {
-  const contextPropName = generateContextName()
+  const { Consumer, Provider } = createContext()
 
   class ResultStoreInternal extends React.Component {
-    static childContextTypes = {
-      [contextPropName]: resultStoreContextPropType,
-    }
-
     state = {
       hasResult: false,
-    }
-
-    getChildContext() {
-      return {
-        [contextPropName]: this._getState(),
-      }
     }
 
     componentDidMount() {
@@ -56,7 +40,11 @@ export const createResultStore = (rootContextPropName, rootDisplayName) => {
     }
 
     render() {
-      return (isFunction(this.props.children) ? this.props.children(this._getState()) : this.props.children) || null
+      return (
+        <Provider value={this._getState()}>
+          {(isFunction(this.props.children) ? this.props.children(this._getState()) : this.props.children) || null}
+        </Provider>
+      )
     }
 
     _getState() {
@@ -183,7 +171,7 @@ export const createResultStore = (rootContextPropName, rootDisplayName) => {
     }
 
     /**
-     * Resets result store to its intial state.
+     * Resets result store to its initial state.
      * @method
      * @param {bool} [execute=true] Wether execute promise-returning function after resetting or not.
      */
@@ -200,10 +188,10 @@ export const createResultStore = (rootContextPropName, rootDisplayName) => {
       initialValue: PropTypes.any,
     }
     ResultStore.displayName = `${rootDisplayName}.ResultStore`
-    ResultStore.contextPropName = contextPropName
+    ResultStore.Consumer = Consumer
   }
-  ResultStore.HasResult = createHasResult(contextPropName, ResultStore.displayName)
-  ResultStore.Resetter = createResetter(contextPropName, ResultStore.displayName)
+  ResultStore.HasResult = createHasResult(Consumer, ResultStore.displayName)
+  ResultStore.Resetter = createResetter(Consumer, ResultStore.displayName)
 
   return ResultStore
 }

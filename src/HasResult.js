@@ -1,8 +1,8 @@
+import * as React from 'react'
 import * as PropTypes from 'prop-types'
-import { resultStoreContextPropType } from './common'
 import { isFunction, invariant, INVARIANT_MUST_BE_A_CHILD } from './common'
 
-export const createHasResult = (contextPropName, rootDisplayName) => {
+export const createHasResult = (Consumer, rootDisplayName) => {
   /**
    * Type of children function for {@link AsyncCall.ResultStore.HasResult}
    * @function HasResultChildrenFunction
@@ -26,19 +26,17 @@ export const createHasResult = (contextPropName, rootDisplayName) => {
    * @extends {React.StatelessComponent}
    * @memberof AsyncCall.ResultStore
    */
-  const HasResult = (props, context) => {
-    const contextProps = context[contextPropName]
-
-    invariant(contextProps, INVARIANT_MUST_BE_A_CHILD, HasResult.displayName, rootDisplayName)
-
-    return (
-      (contextProps.hasResult && isFunction(props.children) && props.children({ result: contextProps.result })) || null
-    )
-  }
-
-  HasResult.contextTypes = {
-    [contextPropName]: resultStoreContextPropType,
-  }
+  const HasResult = props => (
+    <Consumer>
+      {contextProps => {
+        invariant(contextProps, INVARIANT_MUST_BE_A_CHILD, HasResult.displayName, rootDisplayName)
+        return (
+          (contextProps.hasResult && isFunction(props.children) && props.children({ result: contextProps.result })) ||
+          null
+        )
+      }}
+    </Consumer>
+  )
 
   if (process.env.NODE_ENV !== 'production') {
     HasResult.propTypes = {

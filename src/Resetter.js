@@ -1,8 +1,8 @@
+import * as React from 'react'
 import * as PropTypes from 'prop-types'
-import { resultStoreContextPropType } from './common'
 import { isFunction, invariant, INVARIANT_MUST_BE_A_CHILD } from './common'
 
-export const createResetter = (contextPropName, rootDisplayName) => {
+export const createResetter = (Consumer, rootDisplayName) => {
   /**
    * Reset function
    * @function ResetFunction
@@ -33,17 +33,15 @@ export const createResetter = (contextPropName, rootDisplayName) => {
    * @extends {React.StatelessComponent}
    * @memberof AsyncCall.ResultStore
    */
-  const Resetter = (props, context) => {
-    const contextProps = context[contextPropName]
+  const Resetter = props => (
+    <Consumer>
+      {contextProps => {
+        invariant(contextProps, INVARIANT_MUST_BE_A_CHILD, Resetter.displayName, rootDisplayName)
 
-    invariant(contextProps, INVARIANT_MUST_BE_A_CHILD, Resetter.displayName, rootDisplayName)
-
-    return (isFunction(props.children) && props.children({ reset: contextProps.reset })) || null
-  }
-
-  Resetter.contextTypes = {
-    [contextPropName]: resultStoreContextPropType,
-  }
+        return (isFunction(props.children) && props.children({ reset: contextProps.reset })) || null
+      }}
+    </Consumer>
+  )
 
   if (process.env.NODE_ENV !== 'production') {
     Resetter.propTypes = {
