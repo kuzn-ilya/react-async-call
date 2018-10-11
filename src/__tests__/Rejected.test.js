@@ -122,6 +122,7 @@ describe('<Rejected>', () => {
 
     await flushPromises()
     container.setProps({ params: 'second' })
+    container.update()
 
     const rejectedContainer = getChildrenContainer(container, AsyncCall.Rejected)
     expect(rejectedContainer).toExist()

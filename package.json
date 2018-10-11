@@ -40,11 +40,13 @@
     "test"
   ],
   "dependencies": {
+    "create-react-context": "0.2.3",
     "fbjs": "0.8.0",
-    "prop-types": "^15.6.2"
+    "react-lifecycles-compat": "3.0.4"
   },
   "peerDependencies": {
-    "react": "^16.0.0"
+    "react": "^16.0.0",
+    "prop-types": "^15.6.2"
   },
   "devDependencies": {
     "@semantic-release/changelog": "3.0.0",
@@ -61,7 +63,6 @@
     "babel-preset-react": "^6.24.1",
     "chalk": "2.4.1",
     "codecov": "3.1.0",
-    "create-react-context": "0.2.3",
     "enzyme": "^3.3.0",
     "enzyme-adapter-react-16": "^1.1.1",
     "eslint": "4.19.0",

@@ -144,9 +144,9 @@ export const createAsyncCallComponent = (fn, displayName) => {
       this._mounted = false
     }
 
-    componentWillReceiveProps(nextProps) {
-      if (!nextProps.lazy && !shallowEqual(nextProps.params, this.props.params)) {
-        this._callQueryFunc(nextProps.params)
+    componentDidUpdate(prevProps) {
+      if (!this.props.lazy && !shallowEqual(this.props.params, prevProps.params)) {
+        this._callQueryFunc(this.props.params)
       }
     }
 
