@@ -166,7 +166,7 @@ async function build(options) {
 
     // or write the bundle to disk
     await bundle.write(output)
-    console.log(`${chalk.bgGreen.black(' FINSHED! ')} ${logFileName}`)
+    console.log(`${chalk.bgGreen.black(' FINISHED ')} ${logFileName}`)
   } catch (error) {
     console.log(`${chalk.bgRed.black(' ERROR!!! ')} ${logFileName}`)
     handleRollupError(error)
@@ -223,6 +223,7 @@ async function buildAll() {
   await Promise.all([
     asyncCopyTo(`npm`, `build`),
     asyncCopyTo('README.md', `build/README.md`),
+    asyncCopyTo('LICENSE', `build/LICENSE`),
     asyncCopyTo(`package.json`, `build/package.json`),
     asyncCopyTo(`src/index.d.ts`, `build/index.d.ts`),
   ])
