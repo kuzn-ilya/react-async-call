@@ -1,8 +1,8 @@
 import * as React from 'react'
-import { shallow, mount } from 'enzyme'
+import { mount } from 'enzyme'
 
 import createAsyncCallComponent from '../index'
-import { flushPromises } from './common'
+import { flushPromises, getChildrenContainer } from './common'
 
 describe('<Rejected>', () => {
   afterEach(jest.restoreAllMocks)
@@ -46,7 +46,7 @@ describe('<Rejected>', () => {
       </AsyncCall>,
     )
 
-    const rejectedContainer = container.find(AsyncCall.Rejected)
+    const rejectedContainer = getChildrenContainer(container, AsyncCall.Rejected)
     expect(rejectedContainer).toExist()
     expect(rejectedContainer).toBeEmptyRender()
   })
@@ -61,7 +61,7 @@ describe('<Rejected>', () => {
 
     await flushPromises()
 
-    const rejectedContainer = container.find(AsyncCall.Rejected)
+    const rejectedContainer = getChildrenContainer(container, AsyncCall.Rejected)
     expect(rejectedContainer).toExist()
     expect(rejectedContainer).toBeEmptyRender()
 
@@ -103,7 +103,7 @@ describe('<Rejected>', () => {
     await flushPromises()
     container.update()
 
-    const rejectedContainer = container.find(AsyncCall.Rejected)
+    const rejectedContainer = getChildrenContainer(container, AsyncCall.Rejected)
 
     expect(rejectedContainer.children().length).toBe(2)
     expect(rejectedContainer.childAt(0)).toHaveText('abcdef')
@@ -123,7 +123,7 @@ describe('<Rejected>', () => {
     await flushPromises()
     container.setProps({ params: 'second' })
 
-    const rejectedContainer = container.find(AsyncCall.Rejected)
+    const rejectedContainer = getChildrenContainer(container, AsyncCall.Rejected)
     expect(rejectedContainer).toExist()
     expect(rejectedContainer).toBeEmptyRender()
 

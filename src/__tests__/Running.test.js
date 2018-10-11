@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { shallow, mount } from 'enzyme'
+import { mount } from 'enzyme'
 
 import createAsyncCallComponent from '../'
 import { getChildrenContainer, flushPromises } from './common'
@@ -17,7 +17,7 @@ describe('<Running>', () => {
   })
 })
 
-describe('Running', () => {
+describe('<Running>', () => {
   let spyOnConsoleError
   beforeEach(() => {
     spyOnConsoleError = jest.spyOn(console, 'error')
