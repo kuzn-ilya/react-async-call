@@ -1,0 +1,33 @@
+[
+  {
+    "format": "cjs",
+    "size": 52573,
+    "gzippedSize": 11499
+  },
+  {
+    "format": "cjs",
+    "isProduction": true,
+    "uglify": true,
+    "size": 12881,
+    "gzippedSize": 3782
+  },
+  {
+    "format": "cjs",
+    "isProduction": true,
+    "size": 49213,
+    "gzippedSize": 10810
+  },
+  {
+    "format": "umd",
+    "isProduction": true,
+    "size": 51762,
+    "gzippedSize": 10994
+  },
+  {
+    "format": "umd",
+    "isProduction": true,
+    "uglify": true,
+    "size": 12891,
+    "gzippedSize": 3850
+  }
+]
