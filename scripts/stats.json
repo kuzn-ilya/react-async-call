@@ -1,33 +1,33 @@
 [
   {
     "format": "cjs",
-    "size": 52573,
-    "gzippedSize": 11499
+    "size": 50618,
+    "gzippedSize": 11565
   },
   {
     "format": "cjs",
     "isProduction": true,
     "uglify": true,
-    "size": 12881,
-    "gzippedSize": 3782
+    "size": 11283,
+    "gzippedSize": 3562
   },
   {
     "format": "cjs",
     "isProduction": true,
-    "size": 49213,
-    "gzippedSize": 10810
+    "size": 47206,
+    "gzippedSize": 10740
   },
   {
     "format": "umd",
     "isProduction": true,
-    "size": 51762,
-    "gzippedSize": 10994
+    "size": 49603,
+    "gzippedSize": 10935
   },
   {
     "format": "umd",
     "isProduction": true,
     "uglify": true,
-    "size": 12891,
-    "gzippedSize": 3850
+    "size": 11258,
+    "gzippedSize": 3535
   }
 ]
