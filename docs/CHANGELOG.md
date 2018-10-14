@@ -1,5 +1,14 @@
 # Change Log
 
+## [0.5.1](https://github.com/kuzn-ilya/react-async-call/compare/v0.5.0...v0.5.1) (2018-10-14)
+
+
+### Bug Fixes
+
+* **AsyncCall:** get rid of warnings under React.StrictMode ([d2d318a](https://github.com/kuzn-ilya/react-async-call/commit/d2d318a))
+* **AsyncCall.ResultStore:** get rid of warnings under React.StrictMode ([6292d47](https://github.com/kuzn-ilya/react-async-call/commit/6292d47))
+* reduce bundle size ([ef071df](https://github.com/kuzn-ilya/react-async-call/commit/ef071df))
+
 # [0.5.0](https://github.com/kuzn-ilya/react-async-call/compare/v0.4.0...v0.5.0) (2018-10-11)
 
 

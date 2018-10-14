@@ -91,7 +91,36 @@ const Example = () => (
 <a name="createAsyncCallComponent"></a>
 
 ### `createAsyncCallComponent(fn, [displayName])` ⇒ [<code>AsyncCall</code>](#AsyncCall)
-A factory function that creates React component class and binds async operation to it:```jsxconst Fetcher = createAsyncCallComponent(() => fetch('https://api.github.com/repositories').then(data => data.json()))```After calling of this function you can use returned component and its static sub-components to hook async operation lifecycle:```jsx// Start executing async operation on Fetcher mount<Fetcher>  <Fetcher.Running>    Renders only if async operation is executing  </Fetcher.Running>  <Fetcher.Resolved>    {({ result }) => (      <div>        Renders if async operation has been executed successfully        <pre>{JSON.stringify(result)}></pre>      </div>    )}}  </Fetcher.Resolved>  <Fetcher.Rejected>    Renders only if async operation failed  </Fetcher.Rejected></Fetcher>````createAsyncCallComponent` is the only member exported by react-async-call package.
+A factory function that creates React component class and binds async operation to it:
+```jsx
+const Fetcher = createAsyncCallComponent(() => fetch('https://api.github.com/repositories').then(data => data.json()))
+```
+
+After calling of this function you can use returned component and its static sub-components to hook async operation lifecycle:
+
+```jsx
+// Start executing async operation on Fetcher mount
+<Fetcher>
+  <Fetcher.Running>
+    Renders only if async operation is executing
+  </Fetcher.Running>
+
+  <Fetcher.Resolved>
+    {({ result }) => (
+      <div>
+        Renders if async operation has been executed successfully
+        <pre>{JSON.stringify(result)}></pre>
+      </div>
+    )}}
+  </Fetcher.Resolved>
+
+  <Fetcher.Rejected>
+    Renders only if async operation failed
+  </Fetcher.Rejected>
+</Fetcher>
+```
+
+`createAsyncCallComponent` is the only member exported by react-async-call package.
 
 **Kind**: global function  
 **Params**
@@ -102,7 +131,12 @@ A factory function that creates React component class and binds async operation 
 | fn | [<code>AsyncFunction</code>](#AsyncFunction) |  | See [`AsyncFunction` signature](#AsyncFunction) for details. |
 | [displayName] | <code>String</code> | <code>&quot;AsyncCall&quot;</code> | Component name (visible, for example, in React extension of Chrome Dev Tools). |
 
-**Returns**: [<code>AsyncCall</code>](#AsyncCall) - Returns React [component class `AsyncCall`](#AsyncCall) for the further usage.This class contains extra component classes [`Running`](#AsyncCall.Running),[`Rejected`](#AsyncCall.Rejected), [`Resolved`](#AsyncCall.Resolved),[`Completed`](#AsyncCall.Completed), [`ResultStore`](#AsyncCall.ResultStore),[`Executor`](#AsyncCall.Executor) and [`State`](#AsyncCall.State) which can be used as children(direct or indirect) of `AsyncCall`.  
+**Returns**: [<code>AsyncCall</code>](#AsyncCall) - Returns React [component class `AsyncCall`](#AsyncCall) for the further usage.
+This class contains extra component classes [`Running`](#AsyncCall.Running),
+[`Rejected`](#AsyncCall.Rejected), [`Resolved`](#AsyncCall.Resolved),
+[`Completed`](#AsyncCall.Completed), [`ResultStore`](#AsyncCall.ResultStore),
+[`Executor`](#AsyncCall.Executor) and [`State`](#AsyncCall.State) which can be used as children
+(direct or indirect) of `AsyncCall`.  
 
 * * *
 
@@ -128,18 +162,18 @@ React Component. This class is returned by call of [createAsyncCallComponent](#c
     * _instance_
         * [`.execute()`](#AsyncCall+execute)
     * _static_
-        * [.Running](#AsyncCall.Running) ⇐ <code>React.StatelessComponent</code>
-        * [.Resolved](#AsyncCall.Resolved) ⇐ <code>React.StatelessComponent</code>
-        * [.Rejected](#AsyncCall.Rejected) ⇐ <code>React.StatelessComponent</code>
-        * [.Executor](#AsyncCall.Executor) ⇐ <code>React.StatelessComponent</code>
-        * [.State](#AsyncCall.State) ⇐ <code>React.StatelessComponent</code>
-        * [.Completed](#AsyncCall.Completed) ⇐ <code>React.StatelessComponent</code>
         * [.ResultStore](#AsyncCall.ResultStore) ⇐ <code>React.Component</code>
             * _instance_
                 * [`.reset([execute])`](#AsyncCall.ResultStore+reset)
             * _static_
                 * [.HasResult](#AsyncCall.ResultStore.HasResult) ⇐ <code>React.StatelessComponent</code>
                 * [.Resetter](#AsyncCall.ResultStore.Resetter) ⇐ <code>React.StatelessComponent</code>
+        * [.Running](#AsyncCall.Running) ⇐ <code>React.StatelessComponent</code>
+        * [.Resolved](#AsyncCall.Resolved) ⇐ <code>React.StatelessComponent</code>
+        * [.Rejected](#AsyncCall.Rejected) ⇐ <code>React.StatelessComponent</code>
+        * [.Executor](#AsyncCall.Executor) ⇐ <code>React.StatelessComponent</code>
+        * [.State](#AsyncCall.State) ⇐ <code>React.StatelessComponent</code>
+        * [.Completed](#AsyncCall.Completed) ⇐ <code>React.StatelessComponent</code>
 
 
 * * *
@@ -147,112 +181,18 @@ React Component. This class is returned by call of [createAsyncCallComponent](#c
 <a name="AsyncCall+execute"></a>
 
 #### `asyncCall.execute()`
-Method for executing async operation manually.It is recommended to use [`<Executor>` component](#AsyncCall.Executor) instead.
+Method for executing async operation manually.
+It is recommended to use [`<Executor>` component](#AsyncCall.Executor) instead.
 
 **Kind**: instance method of [<code>AsyncCall</code>](#AsyncCall)  
-
-* * *
-
-<a name="AsyncCall.Running"></a>
-
-#### AsyncCall.Running ⇐ <code>React.StatelessComponent</code>
-React Component. Renders its children whenever async operation was started but is still executing. Otherwise renders nothing.
-
-**Kind**: static class of [<code>AsyncCall</code>](#AsyncCall)  
-**Extends**: <code>React.StatelessComponent</code>  
-**Properties**
-
-| Name | Type |
-| --- | --- |
-| children | <code>ReactNode</code> | 
-
-
-* * *
-
-<a name="AsyncCall.Resolved"></a>
-
-#### AsyncCall.Resolved ⇐ <code>React.StatelessComponent</code>
-React Component. Renders its children whenever async operation has been completed successfully (promise was resolved),but is still not started again. Otherwise renders nothing.Property `children` can be either React node(s) or children function with the only argument receiving object with the only field `result`.
-
-**Kind**: static class of [<code>AsyncCall</code>](#AsyncCall)  
-**Extends**: <code>React.StatelessComponent</code>  
-**Properties**
-
-| Name | Type |
-| --- | --- |
-| children | <code>ReactNode</code> \| [<code>ResolvedChildrenFunction</code>](#ResolvedChildrenFunction) | 
-
-
-* * *
-
-<a name="AsyncCall.Rejected"></a>
-
-#### AsyncCall.Rejected ⇐ <code>React.StatelessComponent</code>
-React Component. Renders its children whenever async operation has been completed with failure (promise was rejected),but is still not started again. Otherwise renders nothing.Property `children` can be either React node(s) or children function with the only argument receiving object with the only field `rejectReason`(promise reject reason).
-
-**Kind**: static class of [<code>AsyncCall</code>](#AsyncCall)  
-**Extends**: <code>React.StatelessComponent</code>  
-**Properties**
-
-| Name | Type |
-| --- | --- |
-| children | <code>ReactNode</code> \| [<code>RejectedChildrenFunction</code>](#RejectedChildrenFunction) | 
-
-
-* * *
-
-<a name="AsyncCall.Executor"></a>
-
-#### AsyncCall.Executor ⇐ <code>React.StatelessComponent</code>
-React Component. Renders its children always. Property `children` must be a function with the only argument receiving an objectwith a function for manual execution of async operation.
-
-**Kind**: static class of [<code>AsyncCall</code>](#AsyncCall)  
-**Extends**: <code>React.StatelessComponent</code>  
-**Properties**
-
-| Name | Type |
-| --- | --- |
-| children | [<code>ExecutorChildrenFunction</code>](#ExecutorChildrenFunction) | 
-
-
-* * *
-
-<a name="AsyncCall.State"></a>
-
-#### AsyncCall.State ⇐ <code>React.StatelessComponent</code>
-React Component. Renders its children always. Property `children` must be a functionwith the only argument receiving an object ([see description of `StateChildrenFunction`](#StateChildrenFunction))with the state of async operation. `State` component is handy for complicated UI cases when none of static components of [AsyncCall](#AsyncCall) suits you.
-
-**Kind**: static class of [<code>AsyncCall</code>](#AsyncCall)  
-**Extends**: <code>React.StatelessComponent</code>  
-**Properties**
-
-| Name | Type |
-| --- | --- |
-| children | [<code>StateChildrenFunction</code>](#StateChildrenFunction) | 
-
-
-* * *
-
-<a name="AsyncCall.Completed"></a>
-
-#### AsyncCall.Completed ⇐ <code>React.StatelessComponent</code>
-React Component. Renders its children whenever async operation has been completed (successfully or not),but is still not started again. Otherwise renders nothing.```jsx<AsyncCall.Completed>  Async operation completed</AsyncCall.Completed>```
-
-**Kind**: static class of [<code>AsyncCall</code>](#AsyncCall)  
-**Extends**: <code>React.StatelessComponent</code>  
-**Properties**
-
-| Name | Type | Description |
-| --- | --- | --- |
-| [children] | <code>ReactNode</code> | React children to be rendered whenever async operation is completed. |
-
 
 * * *
 
 <a name="AsyncCall.ResultStore"></a>
 
 #### AsyncCall.ResultStore ⇐ <code>React.Component</code>
-React Component. Implements store of results of sequential async calls.Useful when you need to accumulate results of async calls (e.g., to glue together sequential calls of server API).
+React Component. Implements store of results of sequential async calls.
+Useful when you need to accumulate results of async calls (e.g., to glue together sequential calls of server API).
 
 **Kind**: static class of [<code>AsyncCall</code>](#AsyncCall)  
 **Extends**: <code>React.Component</code>  
@@ -295,7 +235,8 @@ Resets result store to its initial state.
 <a name="AsyncCall.ResultStore.HasResult"></a>
 
 ##### ResultStore.HasResult ⇐ <code>React.StatelessComponent</code>
-React Component. Renders its children whenever result store is not empty (has result).Property `children` must be a function with the only argument receiving object with the only field `result`.
+React Component. Renders its children whenever result store is not empty (has result).
+Property `children` must be a function with the only argument receiving object with the only field `result`.
 
 **Kind**: static class of [<code>ResultStore</code>](#AsyncCall.ResultStore)  
 **Extends**: <code>React.StatelessComponent</code>  
@@ -311,7 +252,8 @@ React Component. Renders its children whenever result store is not empty (has re
 <a name="AsyncCall.ResultStore.Resetter"></a>
 
 ##### ResultStore.Resetter ⇐ <code>React.StatelessComponent</code>
-React Component. Renders its children always. Property `children` must be a function with the only argument receiving an objectwith a function for manual reset of [ResultStore](#AsyncCall.ResultStore).
+React Component. Renders its children always. Property `children` must be a function with the only argument receiving an object
+with a function for manual reset of [ResultStore](#AsyncCall.ResultStore).
 
 **Kind**: static class of [<code>ResultStore</code>](#AsyncCall.ResultStore)  
 **Extends**: <code>React.StatelessComponent</code>  
@@ -324,12 +266,208 @@ React Component. Renders its children always. Property `children` must be a func
 
 * * *
 
+<a name="AsyncCall.Running"></a>
+
+#### AsyncCall.Running ⇐ <code>React.StatelessComponent</code>
+React Component. Renders its children whenever async operation was started but is still executing. Otherwise renders nothing.
+
+**Kind**: static class of [<code>AsyncCall</code>](#AsyncCall)  
+**Extends**: <code>React.StatelessComponent</code>  
+**Properties**
+
+| Name | Type |
+| --- | --- |
+| children | <code>ReactNode</code> | 
+
+
+* * *
+
+<a name="AsyncCall.Resolved"></a>
+
+#### AsyncCall.Resolved ⇐ <code>React.StatelessComponent</code>
+React Component. Renders its children whenever async operation has been completed successfully (promise was resolved),
+but is still not started again. Otherwise renders nothing.
+Property `children` can be either React node(s) or children function with the only argument receiving object with the only field `result`.
+
+**Kind**: static class of [<code>AsyncCall</code>](#AsyncCall)  
+**Extends**: <code>React.StatelessComponent</code>  
+**Properties**
+
+| Name | Type |
+| --- | --- |
+| children | <code>ReactNode</code> \| [<code>ResolvedChildrenFunction</code>](#ResolvedChildrenFunction) | 
+
+
+* * *
+
+<a name="AsyncCall.Rejected"></a>
+
+#### AsyncCall.Rejected ⇐ <code>React.StatelessComponent</code>
+React Component. Renders its children whenever async operation has been completed with failure (promise was rejected),
+but is still not started again. Otherwise renders nothing.
+Property `children` can be either React node(s) or children function with the only argument receiving object with the only field `rejectReason`
+(promise reject reason).
+
+**Kind**: static class of [<code>AsyncCall</code>](#AsyncCall)  
+**Extends**: <code>React.StatelessComponent</code>  
+**Properties**
+
+| Name | Type |
+| --- | --- |
+| children | <code>ReactNode</code> \| [<code>RejectedChildrenFunction</code>](#RejectedChildrenFunction) | 
+
+
+* * *
+
+<a name="AsyncCall.Executor"></a>
+
+#### AsyncCall.Executor ⇐ <code>React.StatelessComponent</code>
+React Component. Renders its children always. Property `children` must be a function with the only argument receiving an object
+with a function for manual execution of async operation.
+
+**Kind**: static class of [<code>AsyncCall</code>](#AsyncCall)  
+**Extends**: <code>React.StatelessComponent</code>  
+**Properties**
+
+| Name | Type |
+| --- | --- |
+| children | [<code>ExecutorChildrenFunction</code>](#ExecutorChildrenFunction) | 
+
+
+* * *
+
+<a name="AsyncCall.State"></a>
+
+#### AsyncCall.State ⇐ <code>React.StatelessComponent</code>
+React Component. Renders its children always. Property `children` must be a function
+with the only argument receiving an object ([see description of `StateChildrenFunction`](#StateChildrenFunction))
+with the state of async operation. `State` component is handy for complicated UI cases when none of static components of [AsyncCall](#AsyncCall) suits you.
+
+**Kind**: static class of [<code>AsyncCall</code>](#AsyncCall)  
+**Extends**: <code>React.StatelessComponent</code>  
+**Properties**
+
+| Name | Type |
+| --- | --- |
+| children | [<code>StateChildrenFunction</code>](#StateChildrenFunction) | 
+
+
+* * *
+
+<a name="AsyncCall.Completed"></a>
+
+#### AsyncCall.Completed ⇐ <code>React.StatelessComponent</code>
+React Component. Renders its children whenever async operation has been completed (successfully or not),
+but is still not started again. Otherwise renders nothing.
+
+```jsx
+<AsyncCall.Completed>
+  Async operation completed
+</AsyncCall.Completed>
+```
+
+**Kind**: static class of [<code>AsyncCall</code>](#AsyncCall)  
+**Extends**: <code>React.StatelessComponent</code>  
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| [children] | <code>ReactNode</code> | React children to be rendered whenever async operation is completed. |
+
+
+* * *
+
 ## Function Signatures
+
+<a name="ResultStoreChildrenFunction"></a>
+
+### `ResultStoreChildrenFunction(params)` ⇒ <code>ReactNode</code>
+Type of `children` function of a [ResultStore](#AsyncCall.ResultStore) component.
+
+**Params**
+
+
+| Param | Type | Description |
+| --- | --- | --- |
+| params | <code>object</code> |  |
+| params.hasResult | <code>boolean</code> |  |
+| [params.result] | <code>any</code> |  |
+| params.reset | [<code>ResetFunction</code>](#ResetFunction) | Function for manual store cleaning. |
+
+**Returns**: <code>ReactNode</code> - Should return rendered React component(s) depending on supplied params.  
+
+* * *
+
+<a name="ReduceFunction"></a>
+
+### `ReduceFunction(previousResult, currentResult)` ⇒ <code>any</code>
+Type of `reduce` property of a [ResultStore](#AsyncCall.ResultStore) component.
+
+**Params**
+
+
+| Param | Type |
+| --- | --- |
+| previousResult | <code>any</code> | 
+| currentResult | <code>any</code> | 
+
+
+* * *
+
+<a name="HasResultChildrenFunction"></a>
+
+### `HasResultChildrenFunction(params)` ⇒ <code>ReactNode</code>
+Type of children function for [HasResult](#AsyncCall.ResultStore.HasResult)
+
+**Params**
+
+
+| Param | Type |
+| --- | --- |
+| params | <code>object</code> | 
+| params.result | <code>any</code> | 
+
+**Returns**: <code>ReactNode</code> - Should return rendered React component(s) depending on supplied params.  
+
+* * *
+
+<a name="ResetFunction"></a>
+
+### `ResetFunction([execute])`
+Reset function
+
+**Params**
+
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [execute] | <code>bool</code> | <code>false</code> | Wether execute promise-returning function after resetting or not. |
+
+
+* * *
+
+<a name="ResetterChildrenFunction"></a>
+
+### `ResetterChildrenFunction(params)` ⇒ <code>ReactNode</code>
+Type of children function for [Resetter](#AsyncCall.ResultStore.Resetter)
+
+**Params**
+
+
+| Param | Type | Description |
+| --- | --- | --- |
+| params | <code>object</code> |  |
+| params.reset | [<code>ResetFunction</code>](#ResetFunction) | Function for manual clearing of [ResultStore](#AsyncCall.ResultStore). |
+
+**Returns**: <code>ReactNode</code> - Should return rendered React component(s) depending on supplied params.  
+
+* * *
 
 <a name="AsyncFunction"></a>
 
 ### `AsyncFunction(params)` ⇒ <code>Promise</code>
-Asynchronous function (aka asynchronous operation or promise-returning function)which returns promise based on supplied parameter.
+Asynchronous function (aka asynchronous operation or promise-returning function)
+which returns promise based on supplied parameter.
 
 **Params**
 
@@ -340,7 +478,10 @@ Asynchronous function (aka asynchronous operation or promise-returning function)
 
 **Returns**: <code>Promise</code> - Promise object that represents asynchronous operation result.  
 **Example**  
-The function below returns result (`Promise` object) of getting user data from GitHub API by his/her GitHub login:```const getGitHubUserData = userName => fetch(`https://api.github.com/users/${userName}`).then(data => data.json())```
+The function below returns result (`Promise` object) of getting user data from GitHub API by his/her GitHub login:
+```
+const getGitHubUserData = userName => fetch(`https://api.github.com/users/${userName}`).then(data => data.json())
+```
 
 * * *
 
@@ -447,90 +588,6 @@ Type of children function for [State](#AsyncCall.State)
 
 * * *
 
-<a name="ResultStoreChildrenFunction"></a>
-
-### `ResultStoreChildrenFunction(params)` ⇒ <code>ReactNode</code>
-Type of `children` function of a [ResultStore](#AsyncCall.ResultStore) component.
-
-**Params**
-
-
-| Param | Type | Description |
-| --- | --- | --- |
-| params | <code>object</code> |  |
-| params.hasResult | <code>boolean</code> |  |
-| [params.result] | <code>any</code> |  |
-| params.reset | [<code>ResetFunction</code>](#ResetFunction) | Function for manual store cleaning. |
-
-**Returns**: <code>ReactNode</code> - Should return rendered React component(s) depending on supplied params.  
-
-* * *
-
-<a name="ReduceFunction"></a>
-
-### `ReduceFunction(previousResult, currentResult)` ⇒ <code>any</code>
-Type of `reduce` property of a [ResultStore](#AsyncCall.ResultStore) component.
-
-**Params**
-
-
-| Param | Type |
-| --- | --- |
-| previousResult | <code>any</code> | 
-| currentResult | <code>any</code> | 
-
-
-* * *
-
-<a name="HasResultChildrenFunction"></a>
-
-### `HasResultChildrenFunction(params)` ⇒ <code>ReactNode</code>
-Type of children function for [HasResult](#AsyncCall.ResultStore.HasResult)
-
-**Params**
-
-
-| Param | Type |
-| --- | --- |
-| params | <code>object</code> | 
-| params.result | <code>any</code> | 
-
-**Returns**: <code>ReactNode</code> - Should return rendered React component(s) depending on supplied params.  
-
-* * *
-
-<a name="ResetFunction"></a>
-
-### `ResetFunction([execute])`
-Reset function
-
-**Params**
-
-
-| Param | Type | Default | Description |
-| --- | --- | --- | --- |
-| [execute] | <code>bool</code> | <code>false</code> | Wether execute promise-returning function after resetting or not. |
-
-
-* * *
-
-<a name="ResetterChildrenFunction"></a>
-
-### `ResetterChildrenFunction(params)` ⇒ <code>ReactNode</code>
-Type of children function for [Resetter](#AsyncCall.ResultStore.Resetter)
-
-**Params**
-
-
-| Param | Type | Description |
-| --- | --- | --- |
-| params | <code>object</code> |  |
-| params.reset | [<code>ResetFunction</code>](#ResetFunction) | Function for manual clearing of [ResultStore](#AsyncCall.ResultStore). |
-
-**Returns**: <code>ReactNode</code> - Should return rendered React component(s) depending on supplied params.  
-
-* * *
-
 ## Change Log
 
 [You can find change log here][changelog]
@@ -550,7 +607,7 @@ Great thanks to [@kitos](https://github.com/kitos) and [@ventrz](https://github.
 [size-badge]: http://img.badgesize.io/https://unpkg.com/react-async-call/umd/react-async-call.production.min.js?label=size
 [gzip-badge]: http://img.badgesize.io/https://unpkg.com/react-async-call/umd/react-async-call.production.min.js?compression=gzip&label=gzip%20size
 [module-formats-badge]: https://img.shields.io/badge/module%20formats-umd%2C%20cjs-green.svg
-[unpkg-dist]: https://unpkg.com/react-async-call/lib/
+[unpkg-dist]: https://unpkg.com/react-async-call/
 [unpkg]: https:/unpkg.com
 [changelog]: https://github.com/kuzn-ilya/react-async-call/blob/master/docs/CHANGELOG.md
 [fetch-api]: https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API
