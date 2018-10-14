@@ -42,6 +42,19 @@ describe('<AsyncCall>', () => {
     expect(fn).toHaveBeenCalled()
   })
 
+  if (React.StrictMode) {
+    it("should not warn in React's strict mode", () => {
+      const fn = jest.fn(() => Promise.resolve())
+      const AsyncCall = createAsyncCallComponent(fn)
+
+      mount(
+        <React.StrictMode>
+          <AsyncCall params={{}} />
+        </React.StrictMode>,
+      )
+    })
+  }
+
   it("should pass `params` property to a promise-returning function as an argument on component's mount", () => {
     const fn = jest.fn(value => Promise.resolve())
     const AsyncCall = createAsyncCallComponent(fn)

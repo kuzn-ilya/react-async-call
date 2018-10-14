@@ -106,6 +106,23 @@ describe('<ResultStore>', () => {
     expect(resultStoreContainer).toHaveText('ABC')
   })
 
+  if (React.StrictMode) {
+    it("should not warn in React's strict mode", () => {
+      const fn = jest.fn(() => Promise.resolve())
+      const AsyncCall = createAsyncCallComponent(fn)
+
+      mount(
+        <React.StrictMode>
+          <AsyncCall params={{}}>
+            <AsyncCall.ResultStore>
+              <div>ABC</div>
+            </AsyncCall.ResultStore>
+          </AsyncCall>
+        </React.StrictMode>,
+      )
+    })
+  }
+
   it('render props: should call `children` and pass { hasResult: false } if promise has not been resolved yet', () => {
     const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
     const children = jest.fn(() => null)

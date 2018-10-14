@@ -1,77 +1,100 @@
 import * as React from 'react'
 import * as PropTypes from 'prop-types'
 import createContext from 'create-react-context'
-import { isFunction, invariant, warning, INVARIANT_MUST_BE_A_CHILD } from './common'
-import { createHasResult } from './HasResult'
-import { createResetter } from './Resetter'
+import { polyfill } from 'react-lifecycles-compat'
+import {
+  createAsyncCallChild,
+  renderChildren,
+  renderChildrenFn,
+  invariant,
+  warning,
+  INVARIANT_MUST_BE_A_CHILD,
+  requiredFuncPropType,
+  WARNING_PROPERTY_RESET_IS_DEPRECATED,
+  DISPLAY_NAME_HAS_RESULT,
+  DISPLAY_NAME_RESETTER,
+} from './utils'
+
+const INITIAL_VALUE_PROP_NAME = 'initialValue'
 
 export const createResultStore = (RootConsumer, rootDisplayName) => {
   const { Consumer, Provider } = createContext()
 
-  class ResultStoreInternal extends React.Component {
+  class Internal extends React.Component {
     state = {
       hasResult: false,
+      wasResolved: this.props.resolved,
     }
 
     componentDidMount() {
-      if (this.props.resolved || this.props.hasOwnProperty('initialValue')) {
+      const props = this.props
+      const { resolved } = props
+      if (resolved || props.hasOwnProperty(INITIAL_VALUE_PROP_NAME)) {
         this.setState({
           hasResult: true,
-          result: this.props.resolved ? this.props.result : this.props.initialValue,
+          result: resolved ? props.result : props.initialValue,
+          wasResolved: resolved,
         })
       }
     }
 
-    componentWillReceiveProps(nextProps) {
-      if (nextProps.reset) {
-        this.reset(false)
+    static getDerivedStateFromProps(nextProps, prevState) {
+      const { resolved, reset } = nextProps
+      if (reset) {
+        return { ...getResetState(nextProps), wasResolved: resolved }
       }
 
-      if (nextProps.resolved && !this.props.resolved) {
-        this.setState(
-          prevState =>
-            prevState.hasResult
-              ? {
-                  result: this.props.reduce(prevState.result, nextProps.result),
-                }
-              : { hasResult: true, result: nextProps.result },
-        )
+      if (resolved && !prevState.wasResolved) {
+        if (prevState.hasResult) {
+          return {
+            result: nextProps.reduce(prevState.result, nextProps.result),
+            wasResolved: resolved,
+          }
+        }
+        return {
+          hasResult: true,
+          result: nextProps.result,
+          wasResolved: resolved,
+        }
       }
+
+      if (resolved !== prevState.wasResolved) {
+        return {
+          wasResolved: resolved,
+        }
+      }
+      return null
     }
 
     render() {
-      return (
-        <Provider value={this._getState()}>
-          {(isFunction(this.props.children) ? this.props.children(this._getState()) : this.props.children) || null}
-        </Provider>
-      )
-    }
-
-    _getState() {
-      const result = this.state.hasResult ? { result: this.state.result } : {}
-      return {
-        hasResult: this.state.hasResult,
-        reset: this.props.resetFn,
-        ...result,
+      const state = this.state
+      const props = this.props
+      const value = {
+        hasResult: state.hasResult,
+        reset: props.resetFn,
+        ...(state.hasResult ? { result: state.result } : {}),
       }
+
+      return <Provider value={value}>{renderChildren(props, value)}</Provider>
     }
 
     reset = execute => {
-      this.setState(
-        this.props.hasOwnProperty('initialValue')
-          ? { hasResult: true, result: this.props.initialValue }
-          : {
-              hasResult: false,
-            },
-      )
+      this.setState(getResetState(this.props))
       if (execute) {
         execute()
       }
     }
   }
 
+  const getResetState = props =>
+    props.hasOwnProperty(INITIAL_VALUE_PROP_NAME)
+      ? { hasResult: true, result: props.initialValue }
+      : {
+          hasResult: false,
+        }
+
   if (process.env.NODE_ENV !== 'production') {
-    ResultStoreInternal.propTypes = {
+    Internal.propTypes = {
       children: PropTypes.oneOfType([PropTypes.func, PropTypes.node]).isRequired,
       reduce: PropTypes.func,
       reset: PropTypes.bool,
@@ -81,6 +104,8 @@ export const createResultStore = (RootConsumer, rootDisplayName) => {
       resetFn: PropTypes.func.isRequired,
     }
   }
+
+  const ResultStoreInternal = polyfill(Internal)
 
   /**
    * Type of `children` function of a {@link AsyncCall.ResultStore} component.
@@ -148,18 +173,11 @@ export const createResultStore = (RootConsumer, rootDisplayName) => {
         <RootConsumer>
           {context => {
             invariant(context, INVARIANT_MUST_BE_A_CHILD, ResultStore.displayName, rootDisplayName)
-            warning(
-              !this.props.hasOwnProperty('reset'),
-              'Property `reset` of <AsyncCall.ResultStore> component is deprecated. Use <AsyncCall.ResultStore.Resetter> component instead.',
-            )
+            warning(!this.props.hasOwnProperty('reset'), WARNING_PROPERTY_RESET_IS_DEPRECATED)
             this._execute = context.execute
 
-            const { children, ...rest } = this.props
-
             return (
-              <ResultStoreInternal ref={ref => (this.ref = ref)} resetFn={this.reset} {...rest} {...context}>
-                {children}
-              </ResultStoreInternal>
+              <ResultStoreInternal ref={ref => (this.ref = ref)} resetFn={this.reset} {...this.props} {...context} />
             )
           }}
         </RootConsumer>
@@ -186,8 +204,75 @@ export const createResultStore = (RootConsumer, rootDisplayName) => {
     ResultStore.displayName = `${rootDisplayName}.ResultStore`
     ResultStore.Consumer = Consumer
   }
-  ResultStore.HasResult = createHasResult(Consumer, ResultStore.displayName)
-  ResultStore.Resetter = createResetter(Consumer, ResultStore.displayName)
+
+  /**
+   * Type of children function for {@link AsyncCall.ResultStore.HasResult}
+   * @function HasResultChildrenFunction
+   * @param {object} params
+   * @param {any} params.result
+   * @returns {ReactNode} Should return rendered React component(s) depending on supplied params.
+   * @remark type definition
+   */
+
+  /**
+   * @class HasResult
+   * @classdesc
+   * React Component. Renders its children whenever result store is not empty (has result).
+   * Property `children` must be a function with the only argument receiving object with the only field `result`.
+   * @example
+   * ```jsx
+   * <AsyncCall.ResultStore.HasResult>{({result}) => <pre>{JSON.stringify(result)}</pre>}</AsyncCall.ResultStore.HasResult>
+   * ```
+   * @property {HasResultChildrenFunction} children
+   * @static
+   * @extends {React.StatelessComponent}
+   * @memberof AsyncCall.ResultStore
+   */
+  ResultStore.HasResult = createAsyncCallChild(
+    Consumer,
+    ResultStore.displayName,
+    (props, contextProps) => contextProps.hasResult && renderChildrenFn(props, { result: contextProps.result }),
+    DISPLAY_NAME_HAS_RESULT,
+    requiredFuncPropType,
+  )
+
+  /**
+   * Reset function
+   * @function ResetFunction
+   * @param {bool} [execute=false] Wether execute promise-returning function after resetting or not.
+   * @remark type definition
+   */
+
+  /**
+   * Type of children function for {@link AsyncCall.ResultStore.Resetter}
+   * @function ResetterChildrenFunction
+   * @param {object} params
+   * @param {ResetFunction} params.reset Function for manual clearing of {@link AsyncCall.ResultStore}.
+   * @returns {ReactNode} Should return rendered React component(s) depending on supplied params.
+   * @remark type definition
+   */
+
+  /**
+   * @class Resetter
+   * @classdesc
+   * React Component. Renders its children always. Property `children` must be a function with the only argument receiving an object
+   * with a function for manual reset of {@link AsyncCall.ResultStore}.
+   * @example
+   * ```jsx
+   * <AsyncCall.ResultStore.Resetter>{({ reset }) => <button onClick={reset}>Reset</button>}</AsyncCall.ResultStore.Resetter>
+   * ```
+   * @property {ResetterChildrenFunction} children
+   * @static
+   * @extends {React.StatelessComponent}
+   * @memberof AsyncCall.ResultStore
+   */
+  ResultStore.Resetter = createAsyncCallChild(
+    Consumer,
+    ResultStore.displayName,
+    (props, contextProps) => renderChildrenFn(props, { reset: contextProps.reset }),
+    DISPLAY_NAME_RESETTER,
+    requiredFuncPropType,
+  )
 
   return ResultStore
 }
