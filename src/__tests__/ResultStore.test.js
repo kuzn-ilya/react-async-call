@@ -2,7 +2,7 @@ import * as React from 'react'
 import { mount } from 'enzyme'
 
 import createAsyncCallComponent from '../index'
-import { flushPromises } from './common'
+import { flushPromises, MINIFIED_INVARIANT_MESSAGE } from './utils'
 
 describe('<ResultStore>', () => {
   let spyOnConsoleError
@@ -16,23 +16,38 @@ describe('<ResultStore>', () => {
   it('should throw an error if <ResultStore> component is rendered alone', () => {
     const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
     expect(() => mount(<AsyncCall.ResultStore>{result => null}</AsyncCall.ResultStore>)).toThrow(
-      '<AsyncCall.ResultStore> must be a child (direct or indirect) of <AsyncCall>.',
+      process.env.NODE_ENV !== 'production'
+        ? '<AsyncCall.ResultStore> must be a child (direct or indirect) of <AsyncCall>.'
+        : MINIFIED_INVARIANT_MESSAGE,
     )
   })
 
-  it('should throw an error if `children` property is not set', () => {
-    const AsyncCall = createAsyncCallComponent(value => Promise.resolve(value))
-    mount(
-      <AsyncCall params="first">
-        <AsyncCall.ResultStore />
-      </AsyncCall>,
-    )
+  if (process.env.NODE_ENV !== 'production') {
+    it('should throw an error if `children` property is not set', () => {
+      const AsyncCall = createAsyncCallComponent(value => Promise.resolve(value))
+      mount(
+        <AsyncCall params="first">
+          <AsyncCall.ResultStore />
+        </AsyncCall>,
+      )
 
-    expect(spyOnConsoleError).toHaveBeenCalled()
-    expect(spyOnConsoleError.mock.calls[0][0]).toContain(
-      'The prop `children` is marked as required in `AsyncCall.ResultStore`, but its value is `undefined`',
-    )
-  })
+      expect(spyOnConsoleError).toHaveBeenCalled()
+      expect(spyOnConsoleError.mock.calls[0][0]).toContain(
+        'The prop `children` is marked as required in `AsyncCall.ResultStore`, but its value is `undefined`',
+      )
+    })
+  } else {
+    it('should not throw an error if `children` property is not set', () => {
+      const AsyncCall = createAsyncCallComponent(value => Promise.resolve(value))
+      mount(
+        <AsyncCall params="first">
+          <AsyncCall.ResultStore />
+        </AsyncCall>,
+      )
+
+      expect(spyOnConsoleError).not.toHaveBeenCalled()
+    })
+  }
 
   it('should reset result if `reset` property is set', async done => {
     const AsyncCall = createAsyncCallComponent(value => Promise.resolve(value))
@@ -61,9 +76,13 @@ describe('<ResultStore>', () => {
 
     expect(children).toHaveBeenLastCalledWith({ hasResult: true, result: 2, reset: resultStoreInstance.reset })
 
-    expect(spyOnConsoleError).toHaveBeenCalledWith(
-      'Warning: Property `reset` of <AsyncCall.ResultStore> component is deprecated. Use <AsyncCall.ResultStore.Resetter> component instead.',
-    )
+    if (process.env.NODE_ENV !== 'production') {
+      expect(spyOnConsoleError).toHaveBeenCalledWith(
+        'Warning: Property `reset` of <AsyncCall.ResultStore> component is deprecated. Use <AsyncCall.ResultStore.Resetter> component instead.',
+      )
+    } else {
+      expect(spyOnConsoleError).not.toHaveBeenCalledWith()
+    }
 
     done()
   })
@@ -85,10 +104,22 @@ describe('<ResultStore>', () => {
     expect(AsyncCall.ResultStore).toBeDefined()
   })
 
-  it('should expose default display name', () => {
-    const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
-    expect(AsyncCall.ResultStore.displayName).toBe('AsyncCall.ResultStore')
-  })
+  if (process.env.NODE_ENV !== 'production') {
+    it('should expose default display name', () => {
+      const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
+      expect(AsyncCall.ResultStore.displayName).toBe('AsyncCall.ResultStore')
+    })
+  } else {
+    it('should not expose default display name', () => {
+      const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
+      expect(AsyncCall.ResultStore.displayName).not.toBeDefined()
+    })
+
+    it('should not expose propTypes', () => {
+      const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
+      expect(AsyncCall.ResultStore.propTypes).not.toBeDefined()
+    })
+  }
 
   it('should render child "as is" if child is not a function', () => {
     const AsyncCall = createAsyncCallComponent(() => Promise.resolve())

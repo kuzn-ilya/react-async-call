@@ -32,7 +32,9 @@
     "build": "npm run eslint && npm run test && npm run docs && npm run rollup",
     "docs": "jsdoc2md --name-format --separators --helper ./docs/helpers/isTypeDefinition.js --partial ./docs/partials/scope.hbs ./docs/partials/body.hbs ./docs/partials/params.hbs --template ./docs/templates/README.hbs --heading-depth 3 ./src/*.js  > ./README.md",
     "eslint": "eslint ./",
-    "test": "cross-env NODE_ENV=development jest src --coverage",
+    "test:dev": "cross-env NODE_ENV=development jest src --coverage && ncp ./coverage/coverage-final.json ./coverage/coverage-dev-final.json",
+    "test:prod": "cross-env NODE_ENV=production jest src --coverage && ncp ./coverage/coverage-final.json ./coverage/coverage-prod-final.json",
+    "test": "npm run test:dev && npm run test:prod && node ./scripts/coverage.js",
     "format": "prettier --write **/*.{js,jsx,json,d.ts} !build/** !.vscode/**",
     "release": "npm run test && npm run build && npm version patch && npm publish && git push --tags",
     "rollup": "node ./scripts/build.js"
@@ -99,8 +101,9 @@
     "coveragePathIgnorePatterns": [
       "/node_modules/",
       "./__tests__/setup.js",
-      "./__tests__/common.js"
+      "./__tests__/utils.js"
     ],
+    "coverageReporters": ["json"],
     "setupTestFrameworkScriptFile": "./__tests__/setup.js",
     "testMatch": [
       "**/__tests__/**/*.test.js?(x)"

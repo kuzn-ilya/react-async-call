@@ -2,7 +2,7 @@ import * as React from 'react'
 import { mount } from 'enzyme'
 
 import createAsyncCallComponent from '../index'
-import { flushPromises } from './common'
+import { flushPromises, MINIFIED_INVARIANT_MESSAGE } from './utils'
 
 describe('<State>', () => {
   let spyOnConsoleError
@@ -16,22 +16,36 @@ describe('<State>', () => {
   it('should throw an error if <State> component is rendered alone', () => {
     const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
     expect(() => mount(<AsyncCall.State>{() => {}}</AsyncCall.State>)).toThrow(
-      '<AsyncCall.State> must be a child (direct or indirect) of <AsyncCall>.',
+      process.env.NODE_ENV !== 'production'
+        ? '<AsyncCall.State> must be a child (direct or indirect) of <AsyncCall>.'
+        : MINIFIED_INVARIANT_MESSAGE,
     )
   })
 
-  it('should throw an error `children` property is not set', () => {
-    const AsyncCall = createAsyncCallComponent(value => Promise.resolve(value))
-    mount(
-      <AsyncCall params="first">
-        <AsyncCall.State />
-      </AsyncCall>,
-    )
-    expect(spyOnConsoleError).toHaveBeenCalled()
-    expect(spyOnConsoleError.mock.calls[0][0]).toContain(
-      'The prop `children` is marked as required in `AsyncCall.State`, but its value is `undefined`',
-    )
-  })
+  if (process.env.NODE_ENV !== 'production') {
+    it('should throw an error `children` property is not set', () => {
+      const AsyncCall = createAsyncCallComponent(value => Promise.resolve(value))
+      mount(
+        <AsyncCall params="first">
+          <AsyncCall.State />
+        </AsyncCall>,
+      )
+      expect(spyOnConsoleError).toHaveBeenCalled()
+      expect(spyOnConsoleError.mock.calls[0][0]).toContain(
+        'The prop `children` is marked as required in `AsyncCall.State`, but its value is `undefined`',
+      )
+    })
+  } else {
+    it('should not throw an error `children` property is not set', () => {
+      const AsyncCall = createAsyncCallComponent(value => Promise.resolve(value))
+      mount(
+        <AsyncCall params="first">
+          <AsyncCall.State />
+        </AsyncCall>,
+      )
+      expect(spyOnConsoleError).not.toHaveBeenCalled()
+    })
+  }
 })
 
 describe('<State>', () => {
@@ -50,10 +64,22 @@ describe('<State>', () => {
     expect(AsyncCall.State).toBeDefined()
   })
 
-  it('should expose default display name', () => {
-    const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
-    expect(AsyncCall.State.displayName).toBe('AsyncCall.State')
-  })
+  if (process.env.NODE_ENV !== 'production') {
+    it('should expose default display name', () => {
+      const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
+      expect(AsyncCall.State.displayName).toBe('AsyncCall.State')
+    })
+  } else {
+    it('should not expose default display name', () => {
+      const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
+      expect(AsyncCall.State.displayName).not.toBeDefined()
+    })
+
+    it('should not expose propTypes', () => {
+      const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
+      expect(AsyncCall.State.propTypes).not.toBeDefined()
+    })
+  }
 
   it('render props: should call `children` and pass { running: true, rejected: false, resolved: false, execute: <fn> } as an argument if promise has not been resolved yet', () => {
     const AsyncCall = createAsyncCallComponent(() => Promise.resolve())

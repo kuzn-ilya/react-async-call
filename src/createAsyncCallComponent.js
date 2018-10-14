@@ -417,8 +417,8 @@ export const createAsyncCallComponent = (fn, displayName) => {
       children: PropTypes.oneOfType([PropTypes.node, PropTypes.func]),
     }
     AsyncCall.displayName = rootDisplayName
-    AsyncCall.Consumer = Consumer
   }
+  AsyncCall.Consumer = Consumer
 
   return AsyncCall
 }

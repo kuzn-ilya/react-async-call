@@ -2,7 +2,7 @@ import * as React from 'react'
 import { shallow, mount } from 'enzyme'
 
 import createAsyncCallComponent from '../'
-import { getAsyncCallChildrenContainer, flushPromises } from './common'
+import { getAsyncCallChildrenContainer, flushPromises, MINIFIED_INVARIANT_MESSAGE } from './utils'
 
 describe('<AsyncCall>', () => {
   let spyOnConsoleError
@@ -19,7 +19,9 @@ describe('<AsyncCall>', () => {
     const AsyncCall = createAsyncCallComponent(undefined)
 
     expect(() => shallow(<AsyncCall params={{}} />)).toThrow(
-      'Function should be passed to createAsyncCallComponent as a first argument but got undefined.',
+      process.env.NODE_ENV !== 'production'
+        ? 'Function should be passed to createAsyncCallComponent as a first argument but got undefined.'
+        : MINIFIED_INVARIANT_MESSAGE,
     )
   })
 
@@ -28,10 +30,22 @@ describe('<AsyncCall>', () => {
     expect(AsyncCall).toBeDefined()
   })
 
-  it('should expose default display name', () => {
-    const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
-    expect(AsyncCall.displayName).toBe('AsyncCall')
-  })
+  if (process.env.NODE_ENV !== 'production') {
+    it('should expose default display name', () => {
+      const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
+      expect(AsyncCall.displayName).toBe('AsyncCall')
+    })
+  } else {
+    it('should not expose default display name', () => {
+      const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
+      expect(AsyncCall.displayName).not.toBeDefined()
+    })
+
+    it('should not expose propTypes', () => {
+      const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
+      expect(AsyncCall.propTypes).not.toBeDefined()
+    })
+  }
 
   it("should call promise-returning function on component's mount", () => {
     const fn = jest.fn(() => Promise.resolve())
@@ -100,7 +114,9 @@ describe('<AsyncCall>', () => {
   it('should throw an error if promise-returning function does not return promise', () => {
     const AsyncCall = createAsyncCallComponent(() => void 0)
     expect(() => shallow(<AsyncCall params={{}} />)).toThrow(
-      'Function supplied to "createAsyncCallComponent" function should return a promise.',
+      process.env.NODE_ENV !== 'production'
+        ? 'Function supplied to "createAsyncCallComponent" function should return a promise.'
+        : MINIFIED_INVARIANT_MESSAGE,
     )
   })
 

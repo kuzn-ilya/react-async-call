@@ -2,7 +2,7 @@ import * as React from 'react'
 import { mount } from 'enzyme'
 
 import createAsyncCallComponent from '../index'
-import { flushPromises, getChildrenContainer } from './common'
+import { flushPromises, getChildrenContainer, MINIFIED_INVARIANT_MESSAGE } from './utils'
 
 describe('<Rejected>', () => {
   afterEach(jest.restoreAllMocks)
@@ -12,7 +12,9 @@ describe('<Rejected>', () => {
 
     const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
     expect(() => mount(<AsyncCall.Rejected />)).toThrow(
-      '<AsyncCall.Rejected> must be a child (direct or indirect) of <AsyncCall>.',
+      process.env.NODE_ENV !== 'production'
+        ? '<AsyncCall.Rejected> must be a child (direct or indirect) of <AsyncCall>.'
+        : MINIFIED_INVARIANT_MESSAGE,
     )
   })
 })
@@ -33,10 +35,22 @@ describe('<Rejected>', () => {
     expect(AsyncCall.Rejected).toBeDefined()
   })
 
-  it('should expose default display name', () => {
-    const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
-    expect(AsyncCall.Rejected.displayName).toBe('AsyncCall.Rejected')
-  })
+  if (process.env.NODE_ENV !== 'production') {
+    it('should expose default display name', () => {
+      const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
+      expect(AsyncCall.Rejected.displayName).toBe('AsyncCall.Rejected')
+    })
+  } else {
+    it('should not expose default display name', () => {
+      const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
+      expect(AsyncCall.Rejected.displayName).not.toBeDefined()
+    })
+
+    it('should not expose propTypes', () => {
+      const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
+      expect(AsyncCall.Rejected.propTypes).not.toBeDefined()
+    })
+  }
 
   it("should not render <Rejected>'s children if promise has not been resolved yet", () => {
     const AsyncCall = createAsyncCallComponent(() => Promise.resolve())

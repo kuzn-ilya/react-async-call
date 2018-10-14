@@ -2,7 +2,7 @@ import * as React from 'react'
 import { mount } from 'enzyme'
 
 import createAsyncCallComponent from '../'
-import { getChildrenContainer, flushPromises } from './common'
+import { getChildrenContainer, flushPromises, MINIFIED_INVARIANT_MESSAGE } from './utils'
 
 describe('<Completed>', () => {
   afterEach(jest.restoreAllMocks)
@@ -12,7 +12,9 @@ describe('<Completed>', () => {
 
     const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
     expect(() => mount(<AsyncCall.Completed />)).toThrow(
-      '<AsyncCall.Completed> must be a child (direct or indirect) of <AsyncCall>.',
+      process.env.NODE_ENV !== 'production'
+        ? '<AsyncCall.Completed> must be a child (direct or indirect) of <AsyncCall>.'
+        : MINIFIED_INVARIANT_MESSAGE,
     )
   })
 })
@@ -33,10 +35,22 @@ describe('<Completed>', () => {
     expect(AsyncCall.Completed).toBeDefined()
   })
 
-  it('should expose default display name', () => {
-    const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
-    expect(AsyncCall.Completed.displayName).toBe('AsyncCall.Completed')
-  })
+  if (process.env.NODE_ENV !== 'production') {
+    it('should expose default display name', () => {
+      const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
+      expect(AsyncCall.Completed.displayName).toBe('AsyncCall.Completed')
+    })
+  } else {
+    it('should not expose default display name', () => {
+      const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
+      expect(AsyncCall.Completed.displayName).not.toBeDefined()
+    })
+
+    it('should not expose propTypes', () => {
+      const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
+      expect(AsyncCall.Completed.propTypes).not.toBeDefined()
+    })
+  }
 
   it("should not render <Completed>'s children if promise has not been resolved yet", () => {
     const AsyncCall = createAsyncCallComponent(() => Promise.resolve())

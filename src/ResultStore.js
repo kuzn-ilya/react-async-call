@@ -202,8 +202,8 @@ export const createResultStore = (RootConsumer, rootDisplayName) => {
       initialValue: PropTypes.any,
     }
     ResultStore.displayName = `${rootDisplayName}.ResultStore`
-    ResultStore.Consumer = Consumer
   }
+  ResultStore.Consumer = Consumer
 
   /**
    * Type of children function for {@link AsyncCall.ResultStore.HasResult}

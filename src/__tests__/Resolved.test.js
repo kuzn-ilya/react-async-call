@@ -1,8 +1,9 @@
 import * as React from 'react'
 import { mount } from 'enzyme'
+import { MINIFIED_INVARIANT_MESSAGE } from './utils'
 
 import createAsyncCallComponent from '../index'
-import { getChildrenContainer, getAsyncCallChildrenContainer, flushPromises } from './common'
+import { getChildrenContainer, getAsyncCallChildrenContainer, flushPromises } from './utils'
 
 describe('<Resolved>', () => {
   afterEach(jest.restoreAllMocks)
@@ -12,7 +13,9 @@ describe('<Resolved>', () => {
 
     const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
     expect(() => mount(<AsyncCall.Resolved />)).toThrow(
-      '<AsyncCall.Resolved> must be a child (direct or indirect) of <AsyncCall>.',
+      process.env.NODE_ENV !== 'production'
+        ? '<AsyncCall.Resolved> must be a child (direct or indirect) of <AsyncCall>.'
+        : MINIFIED_INVARIANT_MESSAGE,
     )
   })
 })
@@ -33,10 +36,22 @@ describe('<Resolved>', () => {
     expect(AsyncCall.Resolved).toBeDefined()
   })
 
-  it('should expose default display name', () => {
-    const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
-    expect(AsyncCall.Resolved.displayName).toBe('AsyncCall.Resolved')
-  })
+  if (process.env.NODE_ENV !== 'production') {
+    it('should expose default display name', () => {
+      const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
+      expect(AsyncCall.Resolved.displayName).toBe('AsyncCall.Resolved')
+    })
+  } else {
+    it('should not expose default display name', () => {
+      const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
+      expect(AsyncCall.Resolved.displayName).not.toBeDefined()
+    })
+
+    it('should not expose propTypes', () => {
+      const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
+      expect(AsyncCall.Resolved.propTypes).not.toBeDefined()
+    })
+  }
 
   it("render props: should not call <Resolved>'s `children` function if promise has not been resolved yet", () => {
     const AsyncCall = createAsyncCallComponent(() => Promise.resolve())

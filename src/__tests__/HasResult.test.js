@@ -2,7 +2,12 @@ import * as React from 'react'
 import { mount } from 'enzyme'
 
 import createAsyncCallComponent from '../index'
-import { getChildrenContainer, getResultStoreChildrenContainer, flushPromises } from './common'
+import {
+  getChildrenContainer,
+  getResultStoreChildrenContainer,
+  flushPromises,
+  MINIFIED_INVARIANT_MESSAGE,
+} from './utils'
 
 describe('<HasResult>', () => {
   let spyOnConsoleError
@@ -22,32 +27,54 @@ describe('<HasResult>', () => {
           <AsyncCall.ResultStore.HasResult>{() => null}</AsyncCall.ResultStore.HasResult>
         </AsyncCall>,
       ),
-    ).toThrow('<AsyncCall.ResultStore.HasResult> must be a child (direct or indirect) of <AsyncCall.ResultStore>.')
+    ).toThrow(
+      process.env.NODE_ENV !== 'production'
+        ? '<AsyncCall.ResultStore.HasResult> must be a child (direct or indirect) of <AsyncCall.ResultStore>.'
+        : MINIFIED_INVARIANT_MESSAGE,
+    )
   })
 
   it('should throw an error if <HasResult> component is rendered alone', () => {
     const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
     expect(() => mount(<AsyncCall.ResultStore.HasResult>{() => null}</AsyncCall.ResultStore.HasResult>)).toThrow(
-      '<AsyncCall.ResultStore.HasResult> must be a child (direct or indirect) of <AsyncCall.ResultStore>.',
+      process.env.NODE_ENV !== 'production'
+        ? '<AsyncCall.ResultStore.HasResult> must be a child (direct or indirect) of <AsyncCall.ResultStore>.'
+        : MINIFIED_INVARIANT_MESSAGE,
     )
   })
 
-  it('should throw an error if `children` property is not set', () => {
-    const AsyncCall = createAsyncCallComponent(value => Promise.resolve(value))
+  if (process.env.NODE_ENV !== 'production') {
+    it('should throw an error if `children` property is not set', () => {
+      const AsyncCall = createAsyncCallComponent(value => Promise.resolve(value))
 
-    mount(
-      <AsyncCall params="first">
-        <AsyncCall.ResultStore>
-          <AsyncCall.ResultStore.HasResult />
-        </AsyncCall.ResultStore>
-      </AsyncCall>,
-    )
+      mount(
+        <AsyncCall params="first">
+          <AsyncCall.ResultStore>
+            <AsyncCall.ResultStore.HasResult />
+          </AsyncCall.ResultStore>
+        </AsyncCall>,
+      )
 
-    expect(spyOnConsoleError).toHaveBeenCalled()
-    expect(spyOnConsoleError.mock.calls[0][0]).toContain(
-      'The prop `children` is marked as required in `AsyncCall.ResultStore.HasResult`, but its value is `undefined`',
-    )
-  })
+      expect(spyOnConsoleError).toHaveBeenCalled()
+      expect(spyOnConsoleError.mock.calls[0][0]).toContain(
+        'The prop `children` is marked as required in `AsyncCall.ResultStore.HasResult`, but its value is `undefined`',
+      )
+    })
+  } else {
+    it('should not throw an error if `children` property is not set', () => {
+      const AsyncCall = createAsyncCallComponent(value => Promise.resolve(value))
+
+      mount(
+        <AsyncCall params="first">
+          <AsyncCall.ResultStore>
+            <AsyncCall.ResultStore.HasResult />
+          </AsyncCall.ResultStore>
+        </AsyncCall>,
+      )
+
+      expect(spyOnConsoleError).not.toHaveBeenCalled()
+    })
+  }
 })
 
 describe('<HasResult>', () => {
@@ -66,10 +93,22 @@ describe('<HasResult>', () => {
     expect(AsyncCall.ResultStore.HasResult).toBeDefined()
   })
 
-  it('should expose default display name', () => {
-    const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
-    expect(AsyncCall.ResultStore.HasResult.displayName).toBe('AsyncCall.ResultStore.HasResult')
-  })
+  if (process.env.NODE_ENV !== 'production') {
+    it('should expose default display name', () => {
+      const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
+      expect(AsyncCall.ResultStore.HasResult.displayName).toBe('AsyncCall.ResultStore.HasResult')
+    })
+  } else {
+    it('should not expose default display name', () => {
+      const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
+      expect(AsyncCall.ResultStore.HasResult.displayName).not.toBeDefined()
+    })
+
+    it('should not expose propTypes', () => {
+      const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
+      expect(AsyncCall.ResultStore.HasResult.propTypes).not.toBeDefined()
+    })
+  }
 
   it('render props: should not call `children` if promise has not been resolved yet', () => {
     const AsyncCall = createAsyncCallComponent(() => Promise.resolve())
