@@ -4,7 +4,6 @@ node_js:
   - '8'
 
 env:
-  - REACT_VERSION=~16.0.0
   - REACT_VERSION=~16.1.0
   - REACT_VERSION=~16.2.0
   - REACT_VERSION=~16.3.0
@@ -15,6 +14,7 @@ install:
   - npm install
   - npm install react@$REACT_VERSION --save-dev
   - npm install react-dom@$REACT_VERSION --save-dev
+  - npm install react-test-renderer@$REACT_VERSION --save-dev
 
 script:
   - npm run build
