@@ -3,6 +3,7 @@
   "version": "0.3.1",
   "description": "Declarative promise handling in React",
   "main": "index.js",
+  "module": "esm/react-async-call.js",
   "unpkg": "umd/react-async-call.production.min.js",
   "author": "Ilya Kuznetsov <kuzn.ilya@gmail.com>",
   "repository": "https://github.com/kuzn-ilya/react-async-call.git",
@@ -13,7 +14,8 @@
     "index.js",
     "index.d.ts",
     "cjs/",
-    "umd/"
+    "umd/",
+    "esm/"
   ],
   "keywords": [
     "react",

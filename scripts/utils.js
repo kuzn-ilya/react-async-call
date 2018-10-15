@@ -95,7 +95,7 @@ function asyncRimRaf(filepath) {
 }
 
 function getOutputFileName({ format, isProduction, uglify }) {
-  const env = isProduction ? '.production' : '.development'
+  const env = isProduction === undefined ? '' : isProduction ? '.production' : '.development'
   const min = uglify ? '.min' : ''
   return `build/${format}/react-async-call${env}${min}.js`
 }

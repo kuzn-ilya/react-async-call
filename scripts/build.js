@@ -19,6 +19,7 @@ const builds = [
     output: {
       format: 'cjs',
     },
+    isProduction: false,
   },
   {
     output: {
@@ -32,6 +33,11 @@ const builds = [
       format: 'cjs',
     },
     isProduction: true,
+  },
+  {
+    output: {
+      format: 'esm',
+    },
   },
   {
     output: {
@@ -96,9 +102,10 @@ function getInputOptions(options) {
         exclude: 'node_modules/**',
         plugins: ['external-helpers'],
       }),
-      replace({
-        'process.env.NODE_ENV': options.isProduction ? "'production'" : "'development'",
-      }),
+      options.isProduction !== undefined &&
+        replace({
+          'process.env.NODE_ENV': options.isProduction ? "'production'" : "'development'",
+        }),
       resolve(),
       commonjs(),
       options.uglify &&
@@ -127,6 +134,7 @@ async function build(options) {
       ...outputOptions,
       ...options.output,
       file,
+      sourcemap: options.uglify,
     }
 
     // create a bundle

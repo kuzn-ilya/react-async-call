@@ -11,11 +11,10 @@ const diff = (prev, next) => (prev === undefined || next === undefined ? undefin
 const percent = (prev, next) =>
   prev === undefined || next === undefined || prev === 0 ? undefined : 100 * ((next - prev) / prev)
 
+const areEntriesEqual = (a, b) => a.format === b.format && a.isProduction === b.isProduction && a.uglify === b.uglify
+
 const calculateEntryStats = (newStats, entry) => {
-  const newEntryStats =
-    newStats.find(
-      item => item.format === entry.format && item.isProduction === entry.isProduction && item.uglify === entry.uglify,
-    ) || {}
+  const newEntryStats = newStats.find(item => areEntriesEqual(item, entry)) || {}
   return {
     format: entry.format,
     isProduction: entry.isProduction,
@@ -59,25 +58,34 @@ const formatDiffPercent = diff =>
       : chalk.red.bold(('+' + diff).substr(0, 5))
     : chalk.gray.bold(na(diff))
 
-const formatBool = arg => (arg ? '✓' : '✗')
+const formatBool = arg => (arg !== undefined ? (arg ? '✓' : '✗') : '-')
 const printStats = newStats => {
   const table = new Table({
     head: headers.map(label => chalk.gray.yellow(label)),
   })
 
-  prevStats.forEach(result => {
-    const entry = calculateEntryStats(newStats, result)
+  const stats = prevStats.map(item => calculateEntryStats(newStats, item)).concat(
+    newStats.filter(item => !prevStats.find(old => areEntriesEqual(item, old))).map(item => ({
+      format: item.format,
+      isProduction: item.isProduction,
+      uglify: item.uglify,
+      oldSize: item.size,
+      oldGzippedSize: item.gzippedSize,
+    })),
+  )
+
+  stats.forEach(entry => {
     table.push([
       chalk.white.bold(`${entry.format}`),
       chalk.white.bold(`${formatBool(entry.isProduction)}`),
-      chalk.white.bold(`${formatBool(entry.uglify)}`),
+      chalk.white.bold(`${formatBool(!!entry.uglify)}`),
       chalk.gray.bold(na(entry.oldSize)),
-      chalk.white.bold(entry.newSize),
+      chalk.white.bold(na(entry.newSize)),
       formatDiff(entry.diffSize),
       formatDiffPercent(entry.diffSizePercent),
       chalk.gray.bold(na(entry.oldGzippedSize)),
       //   percentChangeString(result.prevFileSizeChange),
-      chalk.white.bold(entry.newGzippedSize),
+      chalk.white.bold(na(entry.newGzippedSize)),
       //   percentChangeString(result.prevGzipSizeChange),
       formatDiff(entry.diffGzippedSize),
       formatDiffPercent(entry.diffGzippedSizePercent),
