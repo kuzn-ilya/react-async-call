@@ -117,7 +117,7 @@
       "**/__tests__/**/*.test.js?(x)"
     ],
     "transform": {
-      "^.+\\.jsx?$": "../jest/transform.js"
+      "^.+\\.jsx?$": "../scripts/jest-transform.js"
     },
     "rootDir": "./src",
     "testURL": "http://localhost"
