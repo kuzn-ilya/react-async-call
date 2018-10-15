@@ -66,7 +66,7 @@ interface IHasResultProps<Result> {
 }
 
 interface IResetterChildrenFunctionParams {
-  reset: (execute: boolean = true) => void
+  reset: (execute?: boolean) => void
 }
 
 type ResetterChildrenFunction = (params: IResetterChildrenFunctionParams) => RenderResult
@@ -112,7 +112,7 @@ interface IResultStore<Result> {
 }
 
 declare class AsyncCall<Params, Result> extends React.Component<IAsyncCallProps<Params, Result>> {
-  execute()
+  execute(): void
 }
 
 interface IAsyncCall<Params, Result> {
