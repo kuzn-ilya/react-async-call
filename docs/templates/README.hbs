@@ -14,10 +14,12 @@ Declarative promise handling in React.
   * [Motivation](#motivation)
   * [Install](#install)
   * [Usage](#usage)
-    * [Basic Usage](#basic-usage)
+    * [Hello World](#hello-world)
     * [Data Fetching](#data-fetching)
     * [Incremental Data Fetching](#incremental-data-fetching)
   * [API Reference](#api-reference)
+  * [Recipes](#recipes)
+    * [Memoization](#memoization)
   * [Change Log](#change-log)
   * [Credits](#credits)
 
@@ -41,11 +43,15 @@ import createAsyncCallComponent from 'react-async-call'
 var createAsyncCallComponent = require('react-async-call').createAsyncCallComponent
 ```
 
+It's worth to note that you should also have `react` and `prop-types` packages installed because `react-async-call` uses them as peer dependencies.
+
 ### UMD build
 
 The UMD build is also available on [unpkg][unpkg]:
 
 ```HTML
+<script src="https://unpkg.com/react"></script>
+<script src="https://unpkg.com/prop-types"></script>
 <script src="https://unpkg.com/react-async-call"></script>
 ```
 
@@ -53,14 +59,12 @@ The package is avalable on `window.ReactAsyncCall`
 
 ## Usage
 
-### Basic Usage
+### Hello World
 
 * [JavaScript Example](https://codesandbox.io/s/y7349vl4oj)
 * [TypeScript Example](https://codesandbox.io/s/w76rq8jjx8)
 
 ```jsx
-import createAsyncCallComponent from 'react-async-call'
-
 const AsyncCall = createAsyncCallComponent(value => Promise.resolve(42))
 
 const Example = () => (
@@ -78,6 +82,54 @@ const Example = () => (
 
 * [JavaScript Example](https://codesandbox.io/s/vn8qmr43yy)
 * [TypeScript Example](https://codesandbox.io/s/ryxwnkl34)
+
+```jsx
+const fetchUser = userName =>
+  fetch(`https://api.github.com/users/${userName}`).then(data => {
+    if (data.ok) {
+      return data.json();
+    }
+    throw new Error(data.statusText);
+  });
+
+const AsyncCall = createAsyncCallComponent(fetchUser);
+
+class App extends React.Component {
+  state = {
+    userName: "kuzn-ilya"
+  };
+
+  render() {
+    return (
+      <AsyncCall params={this.state.userName}>
+        <div>
+          <input
+            value={this.state.userName}
+            onChange={e => this.setState({ userName: e.target.value })}
+          />
+          <AsyncCall.Running>
+            <div>Loading...</div>
+          </AsyncCall.Running>
+          <AsyncCall.Resolved>
+            {({ result }) => (
+              <div>
+                <div>name: {result.name}</div>
+                <img alt="avatar" width="64px" src={result.avatar_url} />
+                <div>
+                  url: <a href={result.html_url}>{result.html_url}</a>
+                </div>
+              </div>
+            )}
+          </AsyncCall.Resolved>
+          <AsyncCall.Rejected>
+            {({ rejectReason }) => <div>Error: {rejectReason.message}</div>}
+          </AsyncCall.Rejected>
+        </div>
+      </AsyncCall>
+    );
+  }
+}
+```
 
 ### Incremental Data Fetching
 
@@ -106,6 +158,29 @@ const Example = () => (
   {{/if~}}
 {{/identifiers~}}
 
+## Recipes
+### Memoization
+
+Say, you have a promise-returning function for fetching something from a particular end-point and render its result via `react-async-call`:
+```jsx
+const fetchResource = id => fetch(`https://<api_url>/${id}`)
+
+const AsyncCall = createAsyncCallComponent(fetchResource)
+
+...
+
+```
+
+You can easily cache results of calling `fetchResource` function with the same arguments by wrapping it into [`lodash.memoize`][lodash-memoize] (or similar function from other package, e.g. from [`ramda`][ramda-memoize]):
+```jsx
+import memoize from 'lodash.memoize' // or import { memoize } from 'ramda'
+
+const fetchResource = memoize(id => fetch(`https://<api_url>/${id}`))
+
+...
+
+```
+
 ## Change Log
 
 [You can find change log here][changelog]
@@ -131,3 +206,5 @@ Great thanks to [@kitos](https://github.com/kitos) and [@ventrz](https://github.
 [fetch-api]: https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API
 [holen]: https://github.com/tkh44/holen
 [react-request]: https://github.com/jamesplease/react-request
+[lodash-memoize]: https://lodash.com/docs/#memoize
+[ramda-memoize]: https://ramdajs.com/docs/#memoize
