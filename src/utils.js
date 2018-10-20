@@ -6,10 +6,9 @@ import shallowEqual from 'fbjs/lib/shallowEqual'
 
 export const isFunction = value => !!(value && value.constructor && value.call && value.apply)
 
-export const renderChildren = (props, arg) =>
-  (isFunction(props.children) ? props.children(arg) : props.children) || null
+export const renderChildren = ({ children }, arg) => (isFunction(children) ? children(arg) : children) || null
 
-export const renderChildrenFn = (props, arg) => (isFunction(props.children) && props.children(arg)) || null
+export const renderChildrenFn = ({ children }, arg) => (isFunction(children) && children(arg)) || null
 
 export const createAsyncCallChild = (Consumer, rootDisplayName, renderFn, displayName, childrenPropType) => {
   const Child = props => (
