@@ -3,21 +3,19 @@ import * as PropTypes from 'prop-types'
 import createContext from 'create-react-context'
 import { polyfill } from 'react-lifecycles-compat'
 import {
-  createAsyncCallChild,
+  createAsyncCallChildFactory,
   renderChildren,
-  renderChildrenFn,
   invariant,
   warning,
   INVARIANT_MUST_BE_A_CHILD,
   requiredFuncPropType,
   WARNING_PROPERTY_RESET_IS_DEPRECATED,
-  DISPLAY_NAME_HAS_RESULT,
-  DISPLAY_NAME_RESETTER,
 } from './utils'
+import { registerComponent } from './components'
 
 const INITIAL_VALUE_PROP_NAME = 'initialValue'
 
-export const createResultStore = (RootConsumer, rootDisplayName) => {
+registerComponent('ResultStore', (RootConsumer, rootDisplayName) => {
   const { Consumer, Provider } = createContext()
 
   class Internal extends React.Component {
@@ -75,7 +73,7 @@ export const createResultStore = (RootConsumer, rootDisplayName) => {
         ...(state.hasResult ? { result: state.result } : {}),
       }
 
-      return <Provider value={value}>{renderChildren(props, value)}</Provider>
+      return <Provider value={value}>{renderChildren({ children: props.children, ...value })}</Provider>
     }
 
     reset = execute => {
@@ -228,13 +226,11 @@ export const createResultStore = (RootConsumer, rootDisplayName) => {
    * @extends {React.StatelessComponent}
    * @memberof AsyncCall.ResultStore
    */
-  ResultStore.HasResult = createAsyncCallChild(
-    Consumer,
-    ResultStore.displayName,
-    (props, contextProps) => contextProps.hasResult && renderChildrenFn(props, { result: contextProps.result }),
-    DISPLAY_NAME_HAS_RESULT,
+  ResultStore.HasResult = createAsyncCallChildFactory(
+    props => props.hasResult && renderChildren({ children: props.children, result: props.result }),
     requiredFuncPropType,
-  )
+    process.env.NODE_ENV !== 'production' && 'HasResult',
+  )(Consumer, process.env.NODE_ENV !== 'production' && ResultStore.displayName)
 
   /**
    * Reset function
@@ -266,13 +262,11 @@ export const createResultStore = (RootConsumer, rootDisplayName) => {
    * @extends {React.StatelessComponent}
    * @memberof AsyncCall.ResultStore
    */
-  ResultStore.Resetter = createAsyncCallChild(
-    Consumer,
-    ResultStore.displayName,
-    (props, contextProps) => renderChildrenFn(props, { reset: contextProps.reset }),
-    DISPLAY_NAME_RESETTER,
+  ResultStore.Resetter = createAsyncCallChildFactory(
+    props => renderChildren({ children: props.children, reset: props.reset }),
     requiredFuncPropType,
-  )
+    process.env.NODE_ENV !== 'production' && 'Resetter',
+  )(Consumer, process.env.NODE_ENV !== 'production' && ResultStore.displayName)
 
   return ResultStore
-}
+})

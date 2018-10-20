@@ -1,6 +1,7 @@
 [
   {
     "format": "cjs",
+    "isProduction": false,
     "size": 50277,
     "gzippedSize": 11546
   },

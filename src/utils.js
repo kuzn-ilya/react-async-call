@@ -6,17 +6,15 @@ import shallowEqual from 'fbjs/lib/shallowEqual'
 
 export const isFunction = value => !!(value && value.constructor && value.call && value.apply)
 
-export const renderChildren = ({ children }, arg) => (isFunction(children) ? children(arg) : children) || null
+export const renderChildren = ({ children, ...arg }) => (isFunction(children) ? children(arg) : children)
 
-export const renderChildrenFn = ({ children }, arg) => (isFunction(children) && children(arg)) || null
-
-export const createAsyncCallChild = (Consumer, rootDisplayName, renderFn, displayName, childrenPropType) => {
+export const createAsyncCallChildFactory = (renderFn, childrenPropType, displayName) => (Consumer, rootDisplayName) => {
   const Child = props => (
     <Consumer>
       {contextProps => {
         invariant(contextProps, INVARIANT_MUST_BE_A_CHILD, Child.displayName, rootDisplayName)
 
-        return renderFn(props, contextProps) || null
+        return renderFn({ ...props, ...contextProps }) || null
       }}
     </Consumer>
   )
@@ -38,18 +36,8 @@ export let nodeOrFuncPropType
 export let INVARIANT_MUST_BE_A_CHILD
 export let INVARIANT_FUNCTION_SHOULD_BE_PASSED
 export let INVARIANT_FUNCTION_SHOULD_RETURN_PROMISE
+export let INVARIANT_COMPONENT_WAS_ALREADY_REGISTERED
 export let WARNING_PROPERTY_RESET_IS_DEPRECATED
-
-export let DISPLAY_NAME_ASYNC_CALL
-export let DISPLAY_NAME_COMPLETED
-export let DISPLAY_NAME_EXECUTOR
-export let DISPLAY_NAME_REJECTED
-export let DISPLAY_NAME_RESOLVED
-export let DISPLAY_NAME_RESULT_STORE
-export let DISPLAY_NAME_RUNNING
-export let DISPLAY_NAME_STATE
-export let DISPLAY_NAME_RESETTER
-export let DISPLAY_NAME_HAS_RESULT
 
 if (process.env.NODE_ENV !== 'production') {
   nodePropType = PropTypes.node
@@ -60,18 +48,9 @@ if (process.env.NODE_ENV !== 'production') {
     'Function should be passed to createAsyncCallComponent as a first argument but got %s.'
   INVARIANT_FUNCTION_SHOULD_RETURN_PROMISE =
     'Function supplied to "createAsyncCallComponent" function should return a promise.'
+  INVARIANT_COMPONENT_WAS_ALREADY_REGISTERED = 'Component `%s` was already registered.'
   WARNING_PROPERTY_RESET_IS_DEPRECATED =
     'Property `reset` of <AsyncCall.ResultStore> component is deprecated. Use <AsyncCall.ResultStore.Resetter> component instead.'
-
-  DISPLAY_NAME_COMPLETED = 'Completed'
-  DISPLAY_NAME_EXECUTOR = 'Executor'
-  DISPLAY_NAME_REJECTED = 'Rejected'
-  DISPLAY_NAME_RESOLVED = 'Resolved'
-  DISPLAY_NAME_RESULT_STORE = 'ResultStore'
-  DISPLAY_NAME_RUNNING = 'Running'
-  DISPLAY_NAME_STATE = 'State'
-  DISPLAY_NAME_RESETTER = 'Resetter'
-  DISPLAY_NAME_HAS_RESULT = 'HasResult'
 }
 
 /**
