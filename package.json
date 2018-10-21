@@ -31,15 +31,14 @@
   "homepage": "https://github.com/kuzn-ilya/react-async-call#readme",
   "scripts": {
     "clean": "rimraf build",
-    "build": "npm run eslint && npm run test && npm run docs && npm run rollup",
+    "build": "yarn eslint && yarn test && yarn docs && yarn rollup",
     "docs": "jsdoc2md --name-format --separators --helper ./docs/helpers/isTypeDefinition.js --partial ./docs/partials/scope.hbs ./docs/partials/body.hbs ./docs/partials/params.hbs --template ./docs/templates/README.hbs --heading-depth 3 ./src/*.js  > ./README.md",
     "eslint": "eslint ./",
     "test:dev": "cross-env NODE_ENV=development jest src --coverage && ncp ./coverage/coverage-final.json ./coverage/coverage-dev-final.json",
     "test:prod": "cross-env NODE_ENV=production jest src --coverage && ncp ./coverage/coverage-final.json ./coverage/coverage-prod-final.json",
     "test:ts": "typings-tester --dir ./src/ts-tests",
-    "test": "npm run test:dev && npm run test:prod && node ./scripts/coverage.js && npm run test:ts",
+    "test": "yarn test:dev && yarn test:prod && node ./scripts/coverage.js && yarn test:ts",
     "format": "prettier --write **/*.{js,jsx,json,d.ts} !build/** !.vscode/**",
-    "release": "npm run test && npm run build && npm version patch && npm publish && git push --tags",
     "rollup": "node ./scripts/build.js"
   },
   "pre-commit": [
