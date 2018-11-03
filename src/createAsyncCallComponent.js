@@ -381,7 +381,6 @@ export const createAsyncCallComponent = (fn, displayName) => {
 
     _getState = () => {
       let { running, resolved, rejected, result, rejectReason } = this.state
-      result = resolved ? { result } : {}
       rejectReason = rejected ? { rejectReason } : {}
 
       return {
@@ -389,7 +388,7 @@ export const createAsyncCallComponent = (fn, displayName) => {
         rejected,
         resolved,
         execute: this.execute,
-        ...result,
+        result,
         ...rejectReason,
       }
     }

@@ -146,6 +146,7 @@ describe('<State>', () => {
       running: true,
       rejected: false,
       resolved: false,
+      result: 'first',
       execute: container.instance().execute,
     })
 

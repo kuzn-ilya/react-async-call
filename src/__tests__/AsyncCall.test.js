@@ -312,7 +312,7 @@ describe('<AsyncCall>', () => {
       expect(rootContext).toHaveProperty('resolved')
       expect(rootContext).toHaveProperty('execute')
       expect(rootContext).not.toHaveProperty('rejectReason')
-      expect(rootContext).not.toHaveProperty('result')
+      expect(rootContext).toHaveProperty('result')
     })
 
     it('should pass appropriate properties to a child context when component is mounted', () => {
@@ -329,7 +329,7 @@ describe('<AsyncCall>', () => {
       expect(rootContext.resolved).toBe(false)
       expect(rootContext.execute).toBe(container.instance().execute)
       expect(rootContext).not.toHaveProperty('rejectReason')
-      expect(rootContext).not.toHaveProperty('result')
+      expect(rootContext).toHaveProperty('result')
     })
 
     it('should pass appropriate properties to a child context on promise resolving', async done => {
@@ -370,7 +370,7 @@ describe('<AsyncCall>', () => {
       expect(rootContext.resolved).toBe(false)
       expect(rootContext.execute).toBe(container.instance().execute)
       expect(rootContext.rejectReason).toBe('rejected')
-      expect(rootContext).not.toHaveProperty('result')
+      expect(rootContext).toHaveProperty('result')
 
       done()
     })
@@ -391,7 +391,7 @@ describe('<AsyncCall>', () => {
       expect(rootContext.rejected).toBe(false)
       expect(rootContext.resolved).toBe(false)
       expect(rootContext.execute).toBe(container.instance().execute)
-      expect(rootContext).not.toHaveProperty('result')
+      expect(rootContext).toHaveProperty('result')
       expect(rootContext).not.toHaveProperty('rejectReason')
 
       done()
@@ -413,7 +413,7 @@ describe('<AsyncCall>', () => {
       expect(rootContext.rejected).toBe(false)
       expect(rootContext.resolved).toBe(false)
       expect(rootContext.execute).toBe(container.instance().execute)
-      expect(rootContext).not.toHaveProperty('result')
+      expect(rootContext).toHaveProperty('result')
       expect(rootContext).not.toHaveProperty('rejectReason')
 
       done()
